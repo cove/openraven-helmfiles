@@ -1,0 +1,12 @@
+repositories:
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+
+releases:
+- name: ingress
+  namespace: kube-system
+  chart: stable/nginx-ingress
+  # https://github.com/helm/charts/blob/master/stable/nginx-ingress/Chart.yaml#L3
+  version: 1.27.0
+  values:
+  - ./values/nginx-ingress/1.27.0.yaml

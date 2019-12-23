@@ -1,0 +1,5 @@
+distributed:
+  enabled: true
+image:
+  # https://hub.docker.com/_/orientdb?tab=tags
+  tag: 3.0.26

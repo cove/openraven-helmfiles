@@ -1,0 +1,13 @@
+{{- $version := "0.1.2" }}
+repositories:
+- name: incubator
+  url: https://kubernetes-charts-incubator.storage.googleapis.com
+
+releases:
+- name: odb
+  namespace: odb
+  chart: incubator/orientdb
+  # https://hub.helm.sh/charts/incubator/orientdb/0.1.2
+  version: {{ $version }}
+  values:
+  - ./values/orientdb/{{ $version }}.yaml

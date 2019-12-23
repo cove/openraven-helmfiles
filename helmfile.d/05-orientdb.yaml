@@ -4,6 +4,21 @@ repositories:
   url: https://kubernetes-charts-incubator.storage.googleapis.com
 
 releases:
+- name: odb-namespace
+  namespace: kube-system
+  chart: incubator/raw
+  # https://hub.helm.sh/charts/incubator/raw/0.2.3
+  version: 0.2.3
+  wait: true
+  force: true
+  recreatePods: false
+  values:
+  - resources:
+    - apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: odb
+
 - name: odb
   namespace: odb
   chart: incubator/orientdb

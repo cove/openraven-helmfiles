@@ -1,0 +1,38 @@
+{{- $version := "v0.12.0" }}
+repositories:
+- name: jetstack
+  url: https://charts.jetstack.io
+
+releases:
+- name: cert-manager
+  namespace: cert-manager
+  chart: jetstack/cert-manager
+  # https://hub.helm.sh/charts/jetstack/cert-manager/v0.12.0
+  version: {{ $version }}
+  wait: true
+  values:
+  - ./values/cert-manager/{{ $version }}.yaml
+
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: kubectl
+    args:
+    ## IMPORTANT: you MUST install the cert-manager CRDs **before** installing the
+    ## cert-manager Helm chart
+    - --v=5
+    - apply
+    - --validate=false
+    - -f
+    - https://github.com/jetstack/cert-manager/releases/download/{{ $version }}/cert-manager.yaml
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi
+      kubectl label --overwrite namespace $my_ns "certmanager.k8s.io/disable-validation=true"

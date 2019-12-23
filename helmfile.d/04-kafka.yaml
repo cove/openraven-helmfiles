@@ -9,7 +9,8 @@ releases:
   chart: bitnami/kafka
   # https://hub.helm.sh/charts/bitnami/kafka/5.2.2
   version: {{ $version }}
-  needs:
-  - kube-system/default-storage-class
+  # this apparently needs some TLC
+  # needs:
+  # - kube-system/default-storage-class
   values:
   - ./values/kafka/{{ $version }}.yaml

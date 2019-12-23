@@ -6,5 +6,5 @@ releases:
 - name: default-storage-class
   namespace: kube-system
   chart: openraven/default-storage-class
-  version: 0.0.0
+  version: 0.0.1
   wait: true

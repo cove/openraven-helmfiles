@@ -1,0 +1,15 @@
+{{- $version := "5.2.2" }}
+repositories:
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+
+releases:
+- name: kafka
+  namespace: kafka
+  chart: bitnami/kafka
+  # https://hub.helm.sh/charts/bitnami/kafka/5.2.2
+  version: {{ $version }}
+  needs:
+  - kube-system/default-storage-class
+  values:
+  - ./values/kafka/{{ $version }}.yaml

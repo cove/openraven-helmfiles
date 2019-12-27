@@ -1,0 +1,41 @@
+{{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
+repositories:
+- name: incubator
+  url: https://kubernetes-charts-incubator.storage.googleapis.com
+- name: openraven
+  url: https://{{ $s3Bucket }}.s3-us-west-2.amazonaws.com/charts
+
+releases:
+- name: productui-ns
+  namespace: kube-system
+  chart: incubator/raw
+  # https://hub.helm.sh/charts/incubator/raw/0.2.3
+  version: 0.2.3
+  wait: true
+  force: true
+  recreatePods: false
+  values:
+  - resources:
+    - apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: ui
+
+- name: ui
+  namespace: ui
+  chart: openraven/productui
+  version: 0.0.1
+  missingFileHandler: Warn
+  wait: true
+  timeout: 300
+  recreatePods: true
+  force: true
+  installed: true
+  atomic: true
+  values:
+  - global:
+      frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
+      groupId: {{ requiredEnv "GROUP_ID" }}
+      serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
+      serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
+      openravenIngressHostname: {{ requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}

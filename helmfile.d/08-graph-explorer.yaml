@@ -1,0 +1,31 @@
+releases:
+- name: explorer
+  namespace: ui
+  chart: openraven/graph-explorer
+  version: 0.0.0
+  missingFileHandler: Warn
+  wait: true
+  timeout: 300
+  recreatePods: true
+  force: true
+  installed: true
+  atomic: true
+  # this is true because "ui/productui" has the Namespace declaration in it
+  # needs:
+  # - ui/productui
+  hooks:
+  - events: ["prepare"]
+    showlogs: true
+    command: bash
+    args:
+    - -ec
+    - |
+      if kubectl -n ui get secret -o name odb-orientdb-secret; then exit 0; fi
+      kubectl get secret odb-orientdb-secret --namespace=odb -oyaml | sed s/"namespace: odb"/"namespace: ui"/ | kubectl apply --namespace=ui -f -
+  values:
+  - global:
+      frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
+      groupId: {{ requiredEnv "GROUP_ID" }}
+      serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
+      serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
+      openravenIngressHostname: {{ requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}

@@ -1,5 +1,8 @@
 {{- $version := "v0.12.0" }}
 repositories:
+- name: incubator
+  url: https://kubernetes-charts-incubator.storage.googleapis.com
+
 - name: jetstack
   url: https://charts.jetstack.io
 
@@ -38,3 +41,25 @@ releases:
         kubectl create namespace $my_ns
       fi
       kubectl label --overwrite namespace $my_ns "certmanager.k8s.io/disable-validation=true"
+
+- name: self-signed-issuer
+  namespace: cert-manager
+  chart: incubator/raw
+  # https://hub.helm.sh/charts/incubator/raw/0.2.3
+  version: 0.2.3
+  wait: true
+  force: true
+  recreatePods: false
+  values:
+  - resources:
+    - apiVersion: cert-manager.io/v1alpha2
+      kind: ClusterIssuer
+      metadata:
+        name: self-signed
+      spec:
+        selfSigned: {}
+# now one can use the cert-manager annotation on the Ingress resources:
+# annotations:
+#    cert-manager.io/cluster-issuer: self-signed
+# with "self-signed" matching the CI's "metadata.name"
+# see: https://cert-manager.io/docs/usage/ingress/#supported-annotations

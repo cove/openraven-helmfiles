@@ -4,21 +4,6 @@ repositories:
   url: https://kubernetes-charts-incubator.storage.googleapis.com
 
 releases:
-- name: odb-namespace
-  namespace: kube-system
-  chart: incubator/raw
-  # https://hub.helm.sh/charts/incubator/raw/0.2.3
-  version: 0.2.3
-  wait: true
-  force: true
-  recreatePods: false
-  values:
-  - resources:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: odb
-
 - name: odb
   namespace: odb
   chart: incubator/orientdb
@@ -26,3 +11,14 @@ releases:
   version: {{ $version }}
   values:
   - ./values/orientdb/{{ $version }}.yaml
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

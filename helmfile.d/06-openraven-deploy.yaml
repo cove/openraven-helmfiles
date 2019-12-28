@@ -6,21 +6,6 @@ repositories:
   url: https://{{ $s3Bucket }}.s3-us-west-2.amazonaws.com/charts
 
 releases:
-- name: aws-ns
-  namespace: kube-system
-  chart: incubator/raw
-  # https://hub.helm.sh/charts/incubator/raw/0.2.3
-  version: 0.2.3
-  wait: true
-  force: true
-  recreatePods: false
-  values:
-  - resources:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: aws
-
 - name: aws                            # name of this release
   namespace: aws                       # target namespace
   chart: openraven/openraven-deploy    # the chart being installed to create this release, referenced by `repository/chart` syntax
@@ -39,14 +24,18 @@ releases:
   # restores previous state in case of failed release
   atomic: true
   hooks:
-  - events: ["prepare"]
+  - events: ["presync"]
     showlogs: true
     command: bash
     args:
-    - -ec
+    - -exc
     - |
-      if kubectl -n aws get secret -o name odb-orientdb-secret; then exit 0; fi
-      kubectl get secret odb-orientdb-secret --namespace=odb -oyaml | sed s/"namespace: odb"/"namespace: aws"/ | kubectl apply --namespace=aws -f -
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi
+      if kubectl -n $my_ns get secret -o name odb-orientdb-secret; then exit 0; fi
+      kubectl -n odb get secret odb-orientdb-secret -oyaml | sed s/"namespace: odb"/"namespace: $my_ns"/ | kubectl apply -f -
   values:
   - global:
       frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}

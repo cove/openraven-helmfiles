@@ -2,25 +2,8 @@
 repositories:
 - name: bitnami
   url: https://charts.bitnami.com/bitnami
-- name: incubator
-  url: https://kubernetes-charts-incubator.storage.googleapis.com
 
 releases:
-- name: kafka-ns
-  namespace: kube-system
-  chart: incubator/raw
-  # https://hub.helm.sh/charts/incubator/raw/0.2.3
-  version: 0.2.3
-  wait: true
-  force: true
-  recreatePods: false
-  values:
-  - resources:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: kafka
-
 - name: kafka
   namespace: kafka
   chart: bitnami/kafka
@@ -29,3 +12,14 @@ releases:
   # this apparently needs some TLC
   # needs:
   # - kube-system/default-storage-class
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

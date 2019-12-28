@@ -14,10 +14,12 @@ releases:
   - global:
       frontEndClientId: {{ env "FRONTEND_CLIENT_ID" }}
       groupId: {{ env "GROUP_ID" }}
-      helmBucket: {{ $s3Bucket }}
       serviceClientId: {{ env "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ env "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ env "OPENRAVEN_INGRESS_HOSTNAME" }}
+    helmS3Bucket: {{ $s3Bucket }}
+    # helmS3Key:
+    # helmS3Region:
   hooks:
   - events: ['presync']
     showlogs: true

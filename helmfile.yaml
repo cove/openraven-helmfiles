@@ -1,0 +1,13 @@
+{{- $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
+{{- $gitRef := env "HELMFILE_GIT_REF" | default "129aec50e978018fb4bd8d8741e1abae14d971ab" }}
+helmfiles:
+- path: {{ $gitUrl }}@helmfile.d/00-storage-class.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/01-ingress.yaml?ref={{ $gitRef }}
+# oops, 02- was skipped
+- path: {{ $gitUrl }}@helmfile.d/03-cert-manager.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/04-kafka.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/05-orientdb.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/06-openraven-deploy.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/07-productui.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/08-graph-explorer.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/09-cluster-upgrade.yaml?ref={{ $gitRef }}

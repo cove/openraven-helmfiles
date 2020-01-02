@@ -1,0 +1,16 @@
+stages:
+- deploy
+
+variables:
+  # for consistency with the other repos, please don't put the trailing slash
+  HELM_S3_PATH: s3://openraven-deploy/charts
+
+patch and copy to s3:
+  stage: deploy
+  image: docker.openraven.io/open/build-image:790
+  when: manual
+  script: |
+    set -euo pipefail
+    # we could also update HELMFILE_GIT_URL here if necessary, too
+    sed -i.bak -e '/"HELMFILE_GIT_REF"/s@default "[^"]*"@default "'${CI_COMMIT_SHA}'"@' helmfile.yaml
+    aws s3 cp helmfile.yaml ${HELM_S3_PATH}/

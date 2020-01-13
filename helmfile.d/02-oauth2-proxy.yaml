@@ -23,8 +23,8 @@ releases:
       clientSecret: {{ $clientSecret }}
       cookieSecret: {{ $cookieSecret }}
   - extraArgs:
-      upstream: http://{{ $ingHostname }}
-      redirect-url: http://{{ $ingHostname }}
+      upstream: https://{{ $ingHostname }}
+      redirect-url: https://{{ $ingHostname }}
   - ingress:
       hosts:
         - {{ $ingHostname }}

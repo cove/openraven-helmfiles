@@ -10,7 +10,13 @@ stages:
   tags:
   - docker
 
+.only_with_helm_s3_bucket_set: &force_helm_s3_bucket
+  only:
+    variables:
+    - $HELM_S3_BUCKET
+
 package helm charts:
+  <<: *force_helm_s3_bucket
   # while this strictly speaking isn't required
   # it'll help the caching story
   <<: *force_onto_aws_runners
@@ -25,6 +31,7 @@ package helm charts:
   - .gitlab/package_helm_charts.sh
 
 publish helm charts:
+  <<: *force_helm_s3_bucket
   <<: *force_onto_aws_runners
   dependencies:
   - package helm charts
@@ -38,11 +45,9 @@ publish helm charts:
     pip3 install awscli
   script:
   - .gitlab/publish_helm_charts.sh
-  only:
-    variables:
-    - $HELM_S3_BUCKET
 
 patch and copy to s3:
+  <<: *force_helm_s3_bucket
   <<: *force_onto_aws_runners
   dependencies: []
   stage: deploy

@@ -1,6 +1,6 @@
 helmfiles:
 {{- $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
-{{- $gitRef := env "HELMFILE_GIT_REF" | default "a313650f75105bb87f26bfc70605fc3b8a5a8401" }}
+{{- $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
 #- path: {{ $gitUrl }}@helmfile.d/00-storage-class.yaml?ref={{ $gitRef }}
 #- path: {{ $gitUrl }}@helmfile.d/01-ingress.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/02-oauth2-proxy.yaml?ref={{ $gitRef }}

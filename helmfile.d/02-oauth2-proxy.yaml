@@ -1,0 +1,42 @@
+{{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
+{{ $clientId := requiredEnv "SERVICE_CLIENT_ID" }}
+{{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
+
+repositories:
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+
+releases:
+- name: oauth2-proxy
+  namespace: ui
+  chart: stable/oauth2-proxy
+  # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
+  version: 2.1.1
+  values:
+  - global:
+      serviceClientId: {{ $clientId }}
+      serviceClientSecret: {{ $clientSecret }}
+      openravenIngressHostname: {{ $ingHostname }}
+  - config:
+      clientID: {{ $clientId }}
+      clientSecret: {{ $clientSecret }}
+      cookieSecret: {{ $cookieSecret }}
+  - extraArgs:
+      upstream: http://{{ $ingHostname }}
+      redirect-url: http://{{ $ingHostname }}
+  - ingress:
+      hosts:
+        - {{ $ingHostname }}
+      {{ if not (env "CERT_MANAGER_EMAIL") }}
+      annotations:
+        cert-manager.io/cluster-issuer: self-signed
+      {{ end }}
+      tls:
+        # this name doesn't *mean* anything, and will be created by cert-manager
+        # thanks to the annotation above, although be careful because graph-explorer
+        # needs(?) the same name
+        - secretName: productui-tls
+          hosts:
+            - {{ $ingHostname }}
+  - ./values/oauth2-proxy/2.1.1.yaml

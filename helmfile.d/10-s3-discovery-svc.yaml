@@ -1,15 +1,14 @@
 repositories:
-  {{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
-  {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
-  {{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
   - name: openraven
     url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
 
 releases:
-- name: explorer
-  namespace: ui
-  chart: openraven/graph-explorer
-  version: 0.1929.0
+- name: s3-discovery-svc
+  namespace: aws
+  chart: openraven/s3-discovery-svc
+  version: 0.1542.0
   missingFileHandler: Warn
   wait: true
   timeout: 300
@@ -36,15 +35,4 @@ releases:
       groupId: {{ requiredEnv "GROUP_ID" }}
       serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
-      openravenIngressHostname: {{ $ingHostname }}
-  - ingress:
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
-      # thank goodness, it appears to *merge* this with the one in the chart's values.yaml
-      annotations:
-        cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
-      tls:
-      # be careful, this needs to be the same name from productui.yaml
-      - secretName: productui-tls
-        hosts:
-        - {{ $ingHostname }}
+      openravenIngressHostname: {{ requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}

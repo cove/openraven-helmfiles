@@ -1,13 +1,14 @@
-{{- $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
-{{- $gitRef := env "HELMFILE_GIT_REF" | default "129aec50e978018fb4bd8d8741e1abae14d971ab" }}
 helmfiles:
-- path: {{ $gitUrl }}@helmfile.d/00-storage-class.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/01-ingress.yaml?ref={{ $gitRef }}
-# oops, 02- was skipped
+{{- $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
+{{- $gitRef := env "HELMFILE_GIT_REF" | default "a313650f75105bb87f26bfc70605fc3b8a5a8401" }}
+#- path: {{ $gitUrl }}@helmfile.d/00-storage-class.yaml?ref={{ $gitRef }}
+#- path: {{ $gitUrl }}@helmfile.d/01-ingress.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/02-oauth2-proxy.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/03-cert-manager.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/04-kafka.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/05-orientdb.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/06-openraven-deploy.yaml?ref={{ $gitRef }}
+#- path: {{ $gitUrl }}@helmfile.d/04-kafka.yaml?ref={{ $gitRef }}
+#- path: {{ $gitUrl }}@helmfile.d/05-orientdb.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/07-productui.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/08-graph-explorer.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/09-cluster-upgrade.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/09-ec2-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/10-s3-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/11-cluster-upgrade.yaml?ref={{ $gitRef }}

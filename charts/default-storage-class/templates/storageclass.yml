@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    'storageclass.kubernetes.io/is-default-class': 'true'
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+provisioner: {{ .Values.provisioner }}
+volumeBindingMode: {{ .Values.volumeBindingMode }}
+parameters:
+  encrypted: {{ .Values.aws.encrypted | quote }}
+  fsType: {{ .Values.aws.fsType }}
+  type: {{ .Values.aws.type }}

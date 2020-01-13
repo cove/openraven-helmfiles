@@ -1,19 +1,26 @@
-{{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
-{{ $clientId := requiredEnv "SERVICE_CLIENT_ID" }}
-{{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-{{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
-
 repositories:
 - name: stable
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
+{{ $clientId     := requiredEnv "SERVICE_CLIENT_ID" }}
+{{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
+{{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ define "cert-issuer-name" }}
+{{- if not (env "CERT_MANAGER_EMAIL") -}}
+self-signed
+{{- else -}}
+letsencrypt-prod
+{{- end -}}
+{{ end }}
 - name: oauth2-proxy
-  namespace: ui
+  namespace: kube-system
   chart: stable/oauth2-proxy
   # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
   version: 2.1.1
   values:
+  - ./values/oauth2-proxy/2.1.1.yaml
   - global:
       serviceClientId: {{ $clientId }}
       serviceClientSecret: {{ $clientSecret }}
@@ -28,15 +35,9 @@ releases:
   - ingress:
       hosts:
         - {{ $ingHostname }}
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
       annotations:
-        cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
+        cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
-        # this name doesn't *mean* anything, and will be created by cert-manager
-        # thanks to the annotation above, although be careful because graph-explorer
-        # needs(?) the same name
-        - secretName: productui-tls
+        - secretName: oauth2-proxy-tls
           hosts:
             - {{ $ingHostname }}
-  - ./values/oauth2-proxy/2.1.1.yaml

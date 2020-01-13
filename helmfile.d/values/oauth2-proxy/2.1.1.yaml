@@ -9,11 +9,15 @@ extraArgs:
   pass-user-headers: "true"
   pass-host-header: "true"
   pass-authorization-header: "true"
+  set-xauthrequest: "true"
+  set-authorization-header: "true"
   cookie-secure: "false"
   cookie-httponly: "true"
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt"
   skip-jwt-bearer-tokens: "true"
+  ssl-upstream-insecure-skip-verify: "true"
+  ssl-insecure-skip-verify: "true"
 
 image:
   tag: "v4.0.0"

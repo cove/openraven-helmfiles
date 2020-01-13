@@ -1,7 +1,8 @@
-{{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
 repositories:
+  {{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
+  {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 - name: openraven
-  url: https://{{ $s3Bucket }}.s3-us-west-2.amazonaws.com/charts
+  url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
 releases:
 - name: default-storage-class
   namespace: kube-system

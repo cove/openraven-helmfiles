@@ -1,4 +1,4 @@
-{{- $version := "v0.12.0" }}
+{{- $version := "v0.12.0" -}}
 repositories:
 - name: incubator
   url: https://kubernetes-charts-incubator.storage.googleapis.com
@@ -40,7 +40,7 @@ releases:
       if ! kubectl get namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
-      kubectl label --overwrite namespace $my_ns "certmanager.k8s.io/disable-validation=true"
+      kubectl label --overwrite namespace $my_ns "cert-manager.io/disable-validation=true"
 
 - name: self-signed-issuer
   namespace: cert-manager
@@ -63,3 +63,46 @@ releases:
 #    cert-manager.io/cluster-issuer: self-signed
 # with "self-signed" matching the CI's "metadata.name"
 # see: https://cert-manager.io/docs/usage/ingress/#supported-annotations
+
+{{ if env "CERT_MANAGER_EMAIL" }}
+- name: letsencrypt-prod-issuer
+  namespace: cert-manager
+  chart: incubator/raw
+  version: 0.2.3
+  wait: true
+  force: true
+  recreatePods: false
+  values:
+  - resources:
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        namespace: cert-manager
+        name: orvn-r53-aws-secret
+      stringData:
+        aws-secret-access-key: {{ requiredEnv "CERT_MANAGER_AWS_SECRET" | toJson }}
+
+    - apiVersion: cert-manager.io/v1alpha2
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-prod
+      spec:
+        acme:
+          email: {{ requiredEnv "CERT_MANAGER_EMAIL" | toJson }}
+          server: https://acme-v02.api.letsencrypt.org/directory
+          privateKeySecretRef:
+            name: letsencrypt-prod-key
+          solvers:
+          - dns01:
+              route53:
+                region: {{ requiredEnv "CERT_MANAGER_REGION" | toJson }}
+                hostedZoneID: {{ requiredEnv "CERT_MANAGER_ZONE_ID" | toJson }}
+                accessKeyID: {{ requiredEnv "CERT_MANAGER_AWS_KEY" | toJson }}
+                secretAccessKeySecretRef:
+                  name: orvn-r53-aws-secret
+                  key: aws-secret-access-key
+            selector:
+              # https://cert-manager.io/docs/configuration/acme/#dns-zones
+              dnsZones:
+              - {{ requiredEnv "CERT_MANAGER_DOMAIN" | toJson }}
+{{ end }}

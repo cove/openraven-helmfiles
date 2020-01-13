@@ -1,0 +1,13 @@
+provisioner: kubernetes.io/aws-ebs
+
+# reclaimPolicy: Delete
+# the default is: reclaimPolicy: Retain
+
+# be careful about this, as it might create the volume in an AZ in which there are no Nodes
+# volumeBindingMode: Immediate
+volumeBindingMode: WaitForFirstConsumer
+
+aws:
+  encrypted: "true"
+  fsType: ext4
+  type: gp2

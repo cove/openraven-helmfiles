@@ -1,0 +1,108 @@
+{{- $vMap := $.Chart.Version | split "." -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cluster-upgrade.fullname" . }}
+  labels:
+{{ include "cluster-upgrade.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "cluster-upgrade.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "cluster-upgrade.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "cluster-upgrade.serviceAccountName" . }}
+      securityContext:
+          {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default, prod
+              # These values come from the environment of the current container and are set during initial install
+            - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
+              value: {{ .Values.global.groupId }}
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            {{ if .Values.helmS3Bucket }}
+            - name: OPENRAVEN_UPGRADES_NAME
+              value: {{ .Values.helmS3Bucket }}
+            {{ end }}
+            {{ if .Values.helmS3Key }}
+            - name: OPENRAVEN_UPGRADES_KEY
+              value: {{ .Values.helmS3Key }}
+            {{ end }}
+            {{ if .Values.helmS3Region }}
+            - name: OPENRAVEN_UPGRADES_REGION
+              value: {{ .Values.helmS3Region }}
+            {{ end }}
+            - name: CERT_MANAGER_AWS_KEY
+              value: '{{ .Values.global.certManagerAwsKey}}'
+            - name: CERT_MANAGER_AWS_REGION
+              value: '{{ .Values.global.certManagerAwsRegion}}'
+            - name: CERT_MANAGER_AWS_SECRET
+              value: '{{ .Values.global.certManagerAwsSecret}}'
+            - name: CERT_MANAGER_DOMAIN
+              value: '{{ .Values.global.certManagerDomain}}'
+            - name: CERT_MANAGER_EMAIL
+              value: '{{ .Values.global.certManagerEmail}}'
+            - name: CERT_MANAGER_ZONE_ID
+              value: '{{ .Values.global.certManagerZoneId}}'
+            - name: COOKIE_SECRET
+              value: '{{ .Values.global.cookieSecret}}'
+            # Carries the current FRONTEND_CLIENT_ID forward during upgrades when the pod is recreated
+            - name: FRONTEND_CLIENT_ID
+              value: {{ .Values.global.frontEndClientId }}
+              # Carries the current GROUP_ID forward during upgrades when the pod is recreated
+            - name: GROUP_ID
+              value: {{ .Values.global.groupId }}
+              # Carries the current SERVICE_CLIENT_ID forward during upgrades when the pod is recreated
+            - name: SERVICE_CLIENT_ID
+              value: {{ .Values.global.serviceClientId }}
+              # Carries the current SERVICE_CLIENT_SECRET forward during upgrades when the pod is recreated
+            - name: SERVICE_CLIENT_SECRET
+              value: {{ .Values.global.serviceClientSecret }}
+              # Carries the current OPENRAVEN_INGRESS_HOSTNAME forward during upgrades when the pod is recreated
+            - name: OPENRAVEN_INGRESS_HOSTNAME
+              value: {{ .Values.global.openravenIngressHostname }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

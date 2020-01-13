@@ -1,0 +1,41 @@
+extraArgs:
+  provider: oidc
+  email-domain: "*"
+  oidc-issuer-url: https://login.openraven.net/oauth2/aus1i055qhbS5kjvB0h8
+  cookie-name: _oauth2_proxy
+  request-logging: "true"
+  pass-access-token: "true"
+  pass-basic-auth: "true"
+  pass-user-headers: "true"
+  pass-host-header: "true"
+  pass-authorization-header: "true"
+  cookie-secure: "false"
+  cookie-httponly: "true"
+  skip-provider-button: "true"
+  skip-auth-regex: "/robots.txt"
+  skip-jwt-bearer-tokens: "true"
+
+image:
+  tag: "v4.0.0"
+  pullPolicy: "IfNotPresent"
+
+service:
+  type: ClusterIP
+  port: 4180
+  annotations: {}
+
+ingress:
+  enabled: true
+  path: "/oauth2"
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+  periodSeconds: 10
+  successThreshold: 1

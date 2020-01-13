@@ -1,16 +1,55 @@
 stages:
+- build
 - deploy
 
-variables:
-  # for consistency with the other repos, please don't put the trailing slash
-  HELM_S3_PATH: s3://openraven-deploy/charts
+# variables:
+#   HELM_S3_BUCKET: openraven-deploy-REPLACE_ME_WITH_YOUR_OWN
+
+.force_onto_aws_runners: &force_onto_aws_runners
+  # force it onto the AWS runners
+  tags:
+  - docker
+
+package helm charts:
+  # while this strictly speaking isn't required
+  # it'll help the caching story
+  <<: *force_onto_aws_runners
+  stage: build
+  image: &img quay.io/roboll/helmfile:v0.98.2
+  artifacts:
+    name: helm artifacts
+    expire_in: 30 days
+    paths:
+    - charts/*.tgz
+  script:
+  - .gitlab/package_helm_charts.sh
+
+publish helm charts:
+  <<: *force_onto_aws_runners
+  dependencies:
+  - package helm charts
+  stage: deploy
+  image: *img
+  before_script: &before_script
+  - |
+    set -euo pipefail
+    apk update
+    apk add python3
+    pip3 install awscli
+  script:
+  - .gitlab/publish_helm_charts.sh
+  only:
+    variables:
+    - $HELM_S3_BUCKET
 
 patch and copy to s3:
+  <<: *force_onto_aws_runners
+  dependencies: []
   stage: deploy
-  image: docker.openraven.io/open/build-image:790
-  when: manual
-  script: |
-    set -euo pipefail
-    # we could also update HELMFILE_GIT_URL here if necessary, too
-    sed -i.bak -e '/"HELMFILE_GIT_REF"/s@default "[^"]*"@default "'${CI_COMMIT_SHA}'"@' helmfile.yaml
-    aws s3 cp helmfile.yaml ${HELM_S3_PATH}/
+  image: *img
+  before_script: *before_script
+  script:
+  - .gitlab/patch_and_copy_to_s3.sh
+  only:
+    variables:
+    - $HELM_S3_BUCKET

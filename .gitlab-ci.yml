@@ -34,7 +34,7 @@ publish_helm_charts:
   <<: *force_helm_s3_bucket
   <<: *force_onto_aws_runners
   dependencies:
-  - package helm charts
+  - package_helm_charts
   stage: deploy
   image: *img
   before_script: &before_script

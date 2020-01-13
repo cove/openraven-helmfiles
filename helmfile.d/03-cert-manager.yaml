@@ -17,7 +17,7 @@ releases:
   - ./values/cert-manager/{{ $version }}.yaml
 
   hooks:
-  - events: ['presync']
+  - events: ['prepare']
     showlogs: true
     command: kubectl
     args:
@@ -30,7 +30,7 @@ releases:
     # no, don't do this, it has *everything* in it, which defeats the purpose of using helm
     # - https://github.com/jetstack/cert-manager/releases/download/{{ $version }}/cert-manager.yaml
     - https://github.com/jetstack/cert-manager/raw/{{ $version }}/deploy/manifests/00-crds.yaml
-  - events: ['presync']
+  - events: ['prepare']
     showlogs: true
     command: bash
     args:

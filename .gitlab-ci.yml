@@ -15,7 +15,7 @@ stages:
     variables:
     - $HELM_S3_BUCKET
 
-package_helm_charts:
+package-helm-charts:
   <<: *force_helm_s3_bucket
   # while this strictly speaking isn't required
   # it'll help the caching story
@@ -30,11 +30,11 @@ package_helm_charts:
   script:
   - .gitlab/package_helm_charts.sh
 
-publish_helm_charts:
+publish-helm-charts:
   <<: *force_helm_s3_bucket
   <<: *force_onto_aws_runners
   dependencies:
-  - package_helm_charts
+  - package-helm-charts
   stage: deploy
   image: *img
   before_script: &before_script
@@ -46,7 +46,7 @@ publish_helm_charts:
   script:
   - .gitlab/publish_helm_charts.sh
 
-publish_helmfile_to_s3:
+publish-helmfile-to-s3:
   <<: *force_helm_s3_bucket
   <<: *force_onto_aws_runners
   dependencies: []

@@ -3,10 +3,11 @@ repositories:
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
+{{ $version := "1.29.0" }}
 - name: ingress
   namespace: kube-system
   chart: stable/nginx-ingress
   # https://github.com/helm/charts/blob/master/stable/nginx-ingress/Chart.yaml#L3
-  version: 1.27.0
+  version: {{ $version }}
   values:
-  - ./values/nginx-ingress/1.27.0.yaml
+  - ./values/nginx-ingress/{{ $version }}.yaml

@@ -11,7 +11,7 @@ extraArgs:
   pass-authorization-header: "true"
   set-xauthrequest: "true"
   set-authorization-header: "true"
-  cookie-secure: "false"
+  cookie-secure: "true"
   cookie-httponly: "true"
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt"

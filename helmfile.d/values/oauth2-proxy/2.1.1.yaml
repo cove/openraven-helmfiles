@@ -16,6 +16,7 @@ extraArgs:
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt"
   skip-jwt-bearer-tokens: "true"
+  silence-ping-logging: "true"
   ssl-upstream-insecure-skip-verify: "true"
   ssl-insecure-skip-verify: "true"
 

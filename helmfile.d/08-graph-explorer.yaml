@@ -45,6 +45,6 @@ releases:
       {{ end }}
       tls:
       # be careful, this needs to be the same name from productui.yaml
-      - secretName: productui-tls
+      - secretName: www-tls
         hosts:
         - {{ $ingHostname }}

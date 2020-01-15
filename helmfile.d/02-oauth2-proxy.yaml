@@ -15,7 +15,14 @@ letsencrypt-prod
 {{- end -}}
 {{ end }}
 - name: oauth2-proxy
-  namespace: kube-system
+
+  # sorry, this is a concession because this ingress and the "main" ingress hostnames
+  # are the same, and Let's Encrypt whines if the secret key for a hostname
+  # doesn't square up (as will be the case for a secret created in kube-system
+  # versus another one for the same hostname in "ui"; a possible fix for that
+  # is to put oauth2-proxy on `login.whatever.openraven.net` but that's a bigger change)
+  namespace: ui
+
   chart: stable/oauth2-proxy
   # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
   version: 2.1.1
@@ -38,6 +45,6 @@ letsencrypt-prod
       annotations:
         cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
-        - secretName: oauth2-proxy-tls
+        - secretName: www-tls
           hosts:
             - {{ $ingHostname }}

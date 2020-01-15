@@ -33,7 +33,7 @@ releases:
       # this name doesn't *mean* anything, and will be created by cert-manager
       # thanks to the annotation above, although be careful because graph-explorer
       # needs(?) the same name
-      - secretName: productui-tls
+      - secretName: www-tls
         hosts:
         - {{ $ingHostname }}
   hooks:

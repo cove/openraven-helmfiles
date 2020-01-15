@@ -3,7 +3,7 @@ repositories:
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
-{{ $version := "1.29.0" }}
+{{ $version := "1.29.2" }}
 - name: ingress
   namespace: kube-system
   chart: stable/nginx-ingress

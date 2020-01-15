@@ -31,7 +31,7 @@ letsencrypt-prod
       cookieSecret: {{ $cookieSecret }}
   - extraArgs:
       upstream: https://{{ $ingHostname }}
-      redirect-url: https://{{ $ingHostname }}
+      redirect-url: https://{{ $ingHostname }}/oauth2/callback
   - ingress:
       hosts:
         - {{ $ingHostname }}

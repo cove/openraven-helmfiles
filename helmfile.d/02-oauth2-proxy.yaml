@@ -48,3 +48,14 @@ letsencrypt-prod
         - secretName: www-tls
           hosts:
             - {{ $ingHostname }}
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

@@ -23,3 +23,41 @@ releases:
       if ! kubectl get -o name namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
+  - events: ['postsync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      # this is a concession for non CFN deployment setups
+      if [[ ! -x /opt/ansible/bin/ansible-playbook ]]; then
+        exit 0
+      fi
+      # that KUBECONFIG comes from helmfile0's environment
+      export K8S_AUTH_KUBECONFIG="${KUBECONFIG}"
+      export K8S_AUTH_NAMESPACE='{{`{{ .Release.Namespace }}`}}'
+      export K8S_AUTH_POD=''
+      for i in $(seq 1 30); do
+        K8S_AUTH_POD=$(kubectl -n "$K8S_AUTH_NAMESPACE" \
+          get -o name pod -l app.kubernetes.io/component=zookeeper || true)
+        [[ -n "$K8S_AUTH_POD" ]] && break
+        sleep 1
+      done
+      if [[ -z "${K8S_AUTH_POD}" ]]; then
+        echo 'Unable to sniff out any zookeeper Pod' >&2
+        exit 1
+      fi
+      # TODO ideally this would wait for Ready :-(
+      sleep 30
+      playbook_fn=kafka-zookeeper-defaults.yml
+      if [[ ! -e "$playbook_fn" ]]; then
+        cat     >"$playbook_fn"<<YML
+      - hosts: all
+        gather_facts: no
+        roles:
+        - zookeeper-defaults
+      YML
+      fi
+      /opt/ansible/bin/ansible-playbook -vv -c kubectl \
+          -i ${K8S_AUTH_POD}, \
+          zk-playbook.yml

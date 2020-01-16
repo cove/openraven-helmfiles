@@ -49,22 +49,6 @@ spec:
           {{ end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{ if .Values.global.wantFrontendClientId }}
-          volumeMounts:
-          - name: envjs
-            mountPath: /app/build/runtime-env.js
-            subPath: runtime-env.js
-            readOnly: true
-          {{ end }}
-      {{ if .Values.global.wantFrontendClientId }}
-      volumes:
-        - name: envjs
-          configMap:
-            name: {{ .Release.Name }}
-            items:
-              - key: runtime-env.js
-                path: runtime-env.js
-      {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

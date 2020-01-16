@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-data:
-  runtime-env.js: |
-    var runtimeEnv = {
-    "REACT_APP_API_ENDPOINT": "https://api.openraven.com",
-    "OKTA_CLIENT_ID": {{ .Values.global.frontendClientId | toJson }},
-    "CORP_WEBSITE_URL": "https://www.openraven.com"
-    };

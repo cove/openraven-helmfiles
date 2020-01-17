@@ -21,7 +21,7 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       if ! kubectl get -o name namespace $my_ns; then
-        kubectl create namespace $my_ns
+           kubectl create      namespace $my_ns
       fi
   - events: ['postsync']
     showlogs: true
@@ -30,7 +30,7 @@ releases:
     - -exc
     - |
       # this is a concession for non CFN deployment setups
-      if [[ ! -x /opt/ansible/bin/ansible-playbook ]]; then
+      if ! type ansible-playbook >/dev/null 2>&1; then
         exit 0
       fi
       # that KUBECONFIG comes from helmfile0's environment
@@ -58,6 +58,4 @@ releases:
         - zookeeper-defaults
       YML
       fi
-      /opt/ansible/bin/ansible-playbook -vv -c kubectl \
-          -i ${K8S_AUTH_POD}, \
-          zk-playbook.yml
+      ansible-playbook -vv -c kubectl -i ${K8S_AUTH_POD}, "$playbook_fn"

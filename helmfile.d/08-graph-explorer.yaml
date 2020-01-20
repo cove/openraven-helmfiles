@@ -1,7 +1,7 @@
 repositories:
-  {{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
+  {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
   {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
-  {{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+  {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
   - name: openraven
     url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
 
@@ -9,7 +9,7 @@ releases:
 - name: explorer
   namespace: ui
   chart: openraven/graph-explorer
-  version: 0.2003.0
+  version: 0.2179.0
   missingFileHandler: Warn
   wait: true
   timeout: 300
@@ -26,7 +26,7 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       if ! kubectl get -o name namespace $my_ns; then
-        kubectl create namespace $my_ns
+           kubectl create      namespace $my_ns
       fi
       if kubectl -n $my_ns get secret -o name odb-orientdb-secret; then exit 0; fi
       kubectl -n odb get secret odb-orientdb-secret -oyaml | sed s/"namespace: odb"/"namespace: $my_ns"/ | kubectl apply -f -

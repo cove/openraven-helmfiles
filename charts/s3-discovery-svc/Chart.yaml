@@ -4,4 +4,4 @@ description: A Helm chart to install the s3 discovery service
 name: s3-discovery-svc
 # Minor version is our image tag, no need to set in values
 # Please use patch for multiple revs of a specific build
-version: 0.1542.0
+version: 0.2256.0

@@ -17,7 +17,7 @@ releases:
   - ./values/cert-manager/{{ $version }}.yaml
 
   hooks:
-  - events: ['prepare']
+  - events: ['presync']
     showlogs: true
     command: kubectl
     args:
@@ -30,7 +30,7 @@ releases:
     # no, don't do this, it has *everything* in it, which defeats the purpose of using helm
     # - https://github.com/jetstack/cert-manager/releases/download/{{ $version }}/cert-manager.yaml
     - https://github.com/jetstack/cert-manager/raw/{{ $version }}/deploy/manifests/00-crds.yaml
-  - events: ['prepare']
+  - events: ['presync']
     showlogs: true
     command: bash
     args:
@@ -95,7 +95,7 @@ releases:
           solvers:
           - dns01:
               route53:
-                region: {{ requiredEnv "CERT_MANAGER_REGION" | toJson }}
+                region: {{ requiredEnv "CERT_MANAGER_AWS_REGION" | toJson }}
                 hostedZoneID: {{ requiredEnv "CERT_MANAGER_ZONE_ID" | toJson }}
                 accessKeyID: {{ requiredEnv "CERT_MANAGER_AWS_KEY" | toJson }}
                 secretAccessKeySecretRef:

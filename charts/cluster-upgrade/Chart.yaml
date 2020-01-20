@@ -3,4 +3,4 @@ appVersion: "1.0"
 description: the Open Raven service which keeps the cluster up-to-date
 name: cluster-upgrade
 # 1499 is the one with the helmfile upgrade
-version: 0.1951.0
+version: 0.2269.0

@@ -73,12 +73,7 @@ publish-em:
   - require_chat_input
   - *before_script
   - export HELM_S3_BUCKET="$CHAT_INPUT"
-  - chat_start
   - *package_charts_sh
-  - chat_stop
-  - chat_start
   - *publish_charts_sh
-  - chat_stop
-  - chat_start
   - *publish_helmfile
-  - chat_stop
+  - chat_start; echo Deployed charts and helmfile.yaml to $HELM_S3_BUCKET; chat_stop

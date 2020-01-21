@@ -40,21 +40,20 @@ package-helm-charts:
   dependencies:
   - package-helm-charts
   image: *img
-  before_script: &before_script
-  - |
+  script:
+  - &before_script |
     set -euo pipefail
     apk update
     apk add python3
     pip3 install awscli
-  script:
   - &publish_chart_sh .gitlab/publish_helm_charts.sh
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
   <<: *force_onto_aws_runners
   dependencies: []
   image: *img
-  before_script: *before_script
   script:
+  - *before_script
   - &publish_helmfile .gitlab/patch_and_copy_to_s3.sh
 
 publish-helm-charts:
@@ -74,7 +73,8 @@ publish-charts:
   extends: .chatops-shell-functions
   only: [chat]
   script:
-  - ${chat_start_fn}; ${chat_stop_fn}
+  - require_chat_input
+  - *before_script
   - export HELM_S3_BUCKET="$CHAT_INPUT"
   - chat_start
   - *publish_chart_sh
@@ -86,7 +86,8 @@ publish-helmfile:
   extends: .chatops-shell-functions
   only: [chat]
   script:
-  - ${chat_start_fn}; ${chat_stop_fn}
+  - require_chat_input
+  - *before_script
   - export HELM_S3_BUCKET="$CHAT_INPUT"
   - chat_start
   - *publish_helmfile

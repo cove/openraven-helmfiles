@@ -12,3 +12,4 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/09-ec2-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/10-s3-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/11-cluster-upgrade.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/12-aws-discovery-svc.yaml?ref={{ $gitRef }}

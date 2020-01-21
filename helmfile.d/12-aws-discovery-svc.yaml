@@ -1,0 +1,67 @@
+repositories:
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+  - name: openraven
+    url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
+
+templates:
+  default: &default
+    namespace: "aws"
+    chart: "openraven/aws-discovery-svc"
+    version: 0.2267.0
+    missingFileHandler: Warn
+    wait: true
+    timeout: 300
+    recreatePods: true
+    force: true
+    installed: true
+    atomic: true
+    values:
+    - global:
+        frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
+        groupId: {{ requiredEnv "GROUP_ID" }}
+        serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
+        serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
+        openravenIngressHostname: {{ requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+
+releases:
+  - name: aws-consumer-svc
+    <<: *default
+    hooks:
+    - events: ["presync"]
+      showlogs: true
+      command: bash
+      args:
+      - -exc
+      - |
+        my_ns="{{`{{ .Release.Namespace }}`}}"
+        if ! kubectl get -o name namespace $my_ns; then
+          kubectl create namespace $my_ns
+        fi
+        if kubectl -n $my_ns get secret -o name odb-orientdb-secret; then exit 0; fi
+        kubectl -n odb get secret odb-orientdb-secret -oyaml | sed s/"namespace: odb"/"namespace: $my_ns"/ | kubectl apply -f -
+    values:
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, consumer, prod
+          
+  - name: s3-discovery-svc
+    <<: *default
+    values:
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, S3
+
+  - name: ec2-discovery-svc
+    <<: *default
+    values:
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, EC2
+
+  - name: rds-discovery-svc
+    <<: *default
+    values:
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, RDS

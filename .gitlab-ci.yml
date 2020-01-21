@@ -1,6 +1,11 @@
 stages:
 - build
 - deploy
+- chatops
+
+include:
+- project: open/gitlab-ci
+  file: /chatops-shell.yml
 
 # variables:
 #   HELM_S3_BUCKET: openraven-deploy-REPLACE_ME_WITH_YOUR_OWN
@@ -30,12 +35,10 @@ package-helm-charts:
   script:
   - .gitlab/package_helm_charts.sh
 
-publish-helm-charts:
-  <<: *force_helm_s3_bucket
+.publish-helm-charts: &publish_helm_charts
   <<: *force_onto_aws_runners
   dependencies:
   - package-helm-charts
-  stage: deploy
   image: *img
   before_script: &before_script
   - |
@@ -44,17 +47,47 @@ publish-helm-charts:
     apk add python3
     pip3 install awscli
   script:
-  - .gitlab/publish_helm_charts.sh
+  - &publish_chart_sh .gitlab/publish_helm_charts.sh
 
-publish-helmfile-to-s3:
-  <<: *force_helm_s3_bucket
+.publish-helmfile-to-s3: &publish_helmfile_to_s3
   <<: *force_onto_aws_runners
   dependencies: []
-  stage: deploy
   image: *img
   before_script: *before_script
   script:
-  - .gitlab/patch_and_copy_to_s3.sh
-  only:
-    variables:
-    - $HELM_S3_BUCKET
+  - &publish_helmfile .gitlab/patch_and_copy_to_s3.sh
+
+publish-helm-charts:
+  <<: *force_helm_s3_bucket
+  <<: *publish_helm_charts
+  stage: deploy
+
+publish-helmfile-to-s3:
+  <<: *force_helm_s3_bucket
+  <<: *publish_helmfile_to_s3
+  stage: deploy
+
+
+publish-charts:
+  <<: *publish_helm_charts
+  stage: chatops
+  extends: .chatops-shell-functions
+  only: [chat]
+  script:
+  - ${chat_start_fn}; ${chat_stop_fn}
+  - export HELM_S3_BUCKET="$CHAT_INPUT"
+  - chat_start
+  - *publish_chart_sh
+  - chat_stop
+
+publish-helmfile:
+  <<: *publish_helmfile_to_s3
+  stage: chatops
+  extends: .chatops-shell-functions
+  only: [chat]
+  script:
+  - ${chat_start_fn}; ${chat_stop_fn}
+  - export HELM_S3_BUCKET="$CHAT_INPUT"
+  - chat_start
+  - *publish_helmfile
+  - chat_stop

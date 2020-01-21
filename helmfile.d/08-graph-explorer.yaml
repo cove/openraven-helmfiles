@@ -13,10 +13,8 @@ releases:
   missingFileHandler: Warn
   wait: true
   timeout: 300
-  recreatePods: true
   force: true
   installed: true
-  atomic: true
   hooks:
   - events: ["presync"]
     showlogs: true

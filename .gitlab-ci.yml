@@ -66,6 +66,7 @@ publish-helmfile-to-s3:
 publish-em:
   <<: *force_onto_aws_runners
   stage: chatops
+  image: *img
   extends: .chatops-shell-functions
   only: [chat]
   script:

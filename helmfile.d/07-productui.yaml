@@ -1,7 +1,7 @@
 repositories:
-{{ $s3Bucket := env "HELM_S3_BUCKET" | default "openraven-deploy" }}
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
-{{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 - name: openraven
   url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
 
@@ -33,7 +33,7 @@ releases:
       # this name doesn't *mean* anything, and will be created by cert-manager
       # thanks to the annotation above, although be careful because graph-explorer
       # needs(?) the same name
-      - secretName: productui-tls
+      - secretName: www-tls
         hosts:
         - {{ $ingHostname }}
   hooks:
@@ -45,5 +45,5 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       if ! kubectl get -o name namespace $my_ns; then
-        kubectl create namespace $my_ns
+           kubectl create      namespace $my_ns
       fi

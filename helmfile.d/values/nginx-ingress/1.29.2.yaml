@@ -1,6 +1,10 @@
 controller:
   hostNetwork: true
   config:
+    client-header-buffer-size: 4k
+    # error-log-level: debug
+    http2-max-field-size: 8k
+    proxy-buffer-size: 16k
     location-snippet: |
       # only if LB Proto is "http", not "tcp": if ($http_x_forwarded_proto = "http") {
       if ($scheme = "http") {

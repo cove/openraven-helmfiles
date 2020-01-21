@@ -1,19 +1,33 @@
-{{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
-{{ $clientId := requiredEnv "SERVICE_CLIENT_ID" }}
-{{ $ingHostname := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-{{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
-
 repositories:
 - name: stable
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
+{{ $clientId     := requiredEnv "SERVICE_CLIENT_ID" }}
+{{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
+{{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ define "cert-issuer-name" }}
+{{- if not (env "CERT_MANAGER_EMAIL") -}}
+self-signed
+{{- else -}}
+letsencrypt-prod
+{{- end -}}
+{{ end }}
 - name: oauth2-proxy
+
+  # sorry, this is a concession because this ingress and the "main" ingress hostnames
+  # are the same, and Let's Encrypt whines if the secret key for a hostname
+  # doesn't square up (as will be the case for a secret created in kube-system
+  # versus another one for the same hostname in "ui"; a possible fix for that
+  # is to put oauth2-proxy on `login.whatever.openraven.net` but that's a bigger change)
   namespace: ui
+
   chart: stable/oauth2-proxy
   # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
   version: 2.1.1
   values:
+  - ./values/oauth2-proxy/2.1.1.yaml
   - global:
       serviceClientId: {{ $clientId }}
       serviceClientSecret: {{ $clientSecret }}
@@ -24,19 +38,24 @@ releases:
       cookieSecret: {{ $cookieSecret }}
   - extraArgs:
       upstream: https://{{ $ingHostname }}
-      redirect-url: https://{{ $ingHostname }}
+      redirect-url: https://{{ $ingHostname }}/oauth2/callback
   - ingress:
       hosts:
         - {{ $ingHostname }}
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
       annotations:
-        cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
+        cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
-        # this name doesn't *mean* anything, and will be created by cert-manager
-        # thanks to the annotation above, although be careful because graph-explorer
-        # needs(?) the same name
-        - secretName: productui-tls
+        - secretName: www-tls
           hosts:
             - {{ $ingHostname }}
-  - ./values/oauth2-proxy/2.1.1.yaml
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

@@ -21,9 +21,6 @@ include:
     - $HELM_S3_BUCKET
 
 package-helm-charts:
-  <<: *force_helm_s3_bucket
-  # while this strictly speaking isn't required
-  # it'll help the caching story
   <<: *force_onto_aws_runners
   stage: build
   image: &img quay.io/roboll/helmfile:v0.98.2

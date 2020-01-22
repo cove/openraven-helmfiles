@@ -17,7 +17,7 @@ templates:
     installed: true
     atomic: true
     values:
-    - global:
+    - global: &global
         frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
         groupId: {{ requiredEnv "GROUP_ID" }}
         serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
@@ -41,6 +41,7 @@ releases:
         if kubectl -n $my_ns get secret -o name odb-orientdb-secret; then exit 0; fi
         kubectl -n odb get secret odb-orientdb-secret -oyaml | sed s/"namespace: odb"/"namespace: $my_ns"/ | kubectl apply -f -
     values:
+    - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
@@ -48,6 +49,7 @@ releases:
   - name: s3-discovery-svc
     <<: *default
     values:
+    - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, S3
@@ -55,6 +57,7 @@ releases:
   - name: ec2-discovery-svc
     <<: *default
     values:
+    - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EC2
@@ -62,6 +65,7 @@ releases:
   - name: rds-discovery-svc
     <<: *default
     values:
+    - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, RDS

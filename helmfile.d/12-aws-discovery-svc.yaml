@@ -46,7 +46,7 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
           
-  - name: s3-discovery-svc
+  - name: aws-s3-discovery-svc
     <<: *default
     values:
     - global: *global
@@ -54,7 +54,7 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, S3
 
-  - name: ec2-discovery-svc
+  - name: aws-ec2-discovery-svc
     <<: *default
     values:
     - global: *global
@@ -62,7 +62,7 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EC2
 
-  - name: rds-discovery-svc
+  - name: aws-rds-discovery-svc
     <<: *default
     values:
     - global: *global

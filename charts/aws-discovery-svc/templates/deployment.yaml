@@ -38,6 +38,10 @@ spec:
               path: /actuator/health
               port: 8080
           env:
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            - name: SERVER_PORT
+              value: "80"
             - name: GREMLIN_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -45,8 +49,10 @@ spec:
                   name: odb-orientdb-secret
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
+            - name: SENTRY_DSN
+              value: https://bf2f2b3796f7452397dc8a65b6657400@sentry.io/1894813
         {{- if .Values.extraEnv }}
-{{ toYaml .Values.extraEnv | indent 8 }}
+{{ toYaml .Values.extraEnv | indent 12 }}
         {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

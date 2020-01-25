@@ -1,5 +1,6 @@
 stages:
 - build
+- test
 - deploy
 - chatops
 
@@ -31,6 +32,19 @@ package-helm-charts:
     - charts/*.tgz
   script:
   - &package_charts_sh .gitlab/package_helm_charts.sh
+
+template-the-charts:
+  dependencies:
+  - package-helm-charts
+  stage: test
+  image: *img
+  script:
+  - cd charts
+  - helm repo index .
+  - cd $CI_PROJECT_DIR
+  - .gitlab/helmfile_template.sh
+  - echo 'cleaning up test-only index.yaml'
+  - rm charts/index.yaml
 
 .publish-helm-charts: &publish_helm_charts
   <<: *force_onto_aws_runners

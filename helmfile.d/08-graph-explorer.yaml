@@ -1,9 +1,10 @@
 repositories:
   {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
   {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+  {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
   - name: openraven
-    url: https://{{ $s3Bucket }}.{{ $s3BucketHost }}/charts
+    url: {{ $ourUrl }}
 
 releases:
 - name: explorer

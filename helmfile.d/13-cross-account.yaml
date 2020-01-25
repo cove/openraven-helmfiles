@@ -6,35 +6,35 @@ repositories:
 - name: openraven
   url: {{ $ourUrl }}
 
+
+{{/* these "env" values come from the helmfile0.pod.yml */}}
+{{ define "cert-issuer-name" }}
+{{- if not (env "CERT_MANAGER_EMAIL") -}}
+self-signed
+{{- else -}}
+letsencrypt-prod
+{{- end -}}
+{{ end }}
+
 releases:
-- name: ui
+- name: cross-account
   namespace: ui
-  chart: openraven/productui
-  version: 0.2192.0
-  missingFileHandler: Warn
-  wait: true
-  timeout: 300
-  force: true
-  installed: true
+  chart: openraven/cross-account
+  version: 0.2195.0
+  wait: false
   values:
   - global:
-      frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
-      groupId: {{ requiredEnv "GROUP_ID" }}
-      serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
-      serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
+      groupId: {{ env "GROUP_ID" }}
       openravenIngressHostname: {{ $ingHostname }}
+
   - ingress:
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
       annotations:
-          cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
+        cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
-      # this name doesn't *mean* anything, and will be created by cert-manager
-      # thanks to the annotation above, although be careful because graph-explorer
-      # needs(?) the same name
       - secretName: www-tls
         hosts:
         - {{ $ingHostname }}
+
   hooks:
   - events: ['presync']
     showlogs: true
@@ -44,5 +44,5 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       if ! kubectl get -o name namespace $my_ns; then
-           kubectl create      namespace $my_ns
+        kubectl create namespace $my_ns
       fi

@@ -94,6 +94,15 @@ spec:
               # Carries the current OPENRAVEN_INGRESS_HOSTNAME forward during upgrades when the pod is recreated
             - name: OPENRAVEN_INGRESS_HOSTNAME
               value: {{ .Values.global.openravenIngressHostname }}
+              # The service application's client id, used to auth to asgard
+            - name: ADMIN_SERVICE_ID
+              value: {{ .Values.global.adminServiceId }}
+              # The service application's secret, used to auth to asgard
+            - name: ADMIN_SERVICE_SECRET
+              value: {{ .Values.global.adminServiceSecret }}
+              # The name of the cluster selected during provisioning
+            - name: CLUSTER_NAME
+              value: {{ .Values.global.clusterName | quote}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

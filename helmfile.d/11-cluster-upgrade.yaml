@@ -27,8 +27,8 @@ releases:
       serviceClientId: {{ env "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ env "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ env "OPENRAVEN_INGRESS_HOSTNAME" }}
-      adminServiceId: {{ env "ADMIN_SERVICE_ID" }}
-      adminServiceSecret: {{ env "ADMIN_SERVICE_SECRET" }}
+      adminClientId: {{ env "ADMIN_CLIENT_ID" }}
+      adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
 
     helmS3Bucket: {{ $s3Bucket }}

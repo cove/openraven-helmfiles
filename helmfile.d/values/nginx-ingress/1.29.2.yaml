@@ -7,7 +7,7 @@ controller:
     http2-max-field-size: 64k
     http2-max-header-size: 64k
     # http://nginx.org/en/docs/http/ngx_http_core_module.html#large_client_header_buffers
-    large-client-header-buffers: 464k
+    large-client-header-buffers: 4 64k
     proxy-buffer-size: 64k
     ssl-buffer-size: 16k
     location-snippet: |

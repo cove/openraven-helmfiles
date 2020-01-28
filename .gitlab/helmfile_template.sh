@@ -38,9 +38,17 @@ export SERVICE_CLIENT_SECRET=scSec
 # test all of them, and don't go through the git ref
 rm -v helmfile.yaml
 
-helmfile --log-level ${HELMFILE_LOG_LEVEL} template || {
+{ helmfile --log-level "${HELMFILE_LOG_LEVEL}" template | tee k8s.yml; } || {
     echo 'the rendered values files: ' >&2
     cat /tmp/values*
     exit 1
 }
+
+python3 -c '
+import json
+import sys
+import yaml
+all_docs = list(yaml.safe_load_all(sys.stdin))
+json.dump(all_docs, sys.stdout)
+' < k8s.yml | jq .
 git checkout helmfile.yaml

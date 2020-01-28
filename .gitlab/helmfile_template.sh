@@ -25,7 +25,10 @@ if [[ "$CI" == "true" ]]; then
 fi
 
 
+export ADMIN_CLIENT_ID=AdMiNCliE-nt-id
+export ADMIN_CLIENT_SECRET='ZeAdmen/Sekrit-123'
 export COOKIE_SECRET=c00kieS3krit
+export CLUSTER_NAME='Spaces Are Awesome!'
 export FRONTEND_CLIENT_ID=feCID
 export GROUP_ID=ThEgRoUpId
 export OPENRAVEN_INGRESS_HOSTNAME=www.example.com

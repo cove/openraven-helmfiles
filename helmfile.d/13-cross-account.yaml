@@ -20,7 +20,7 @@ releases:
 - name: cross-account
   namespace: ui
   chart: openraven/cross-account
-  version: 0.2195.0
+  version: 0.2746.0
   wait: false
   values:
   - global:

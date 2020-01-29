@@ -48,9 +48,14 @@ git add "$helmfile_fn" "$chart_yaml_fn"
 if [[ -n "$CI" ]]; then
     set +x
     push_url="${CI_REPOSITORY_URL//${CI_REGISTRY_USER}[^@]*@/oauth2:${GLR_PAT}@/}"
+    git config --local user.name  "$GITLAB_USER_NAME"
+    git config --local user.email "$GITLAB_USER_EMAIL"
     git remote set-url --push origin "$push_url"
     trace_on
-    git commit -m"Bump $chart_name to $chart_ver"
+    git commit -m"Bump $chart_name to $chart_ver
+
+    By request of @${GITLAB_USER_LOGIN}
+    "
     # skip CI jobs to (a) avoid any CI cycles (b) avoid any accidental rollouts
     # maybe make this a job parameter?
     git push -o ci.skip=true origin "$CI_COMMIT_REF_NAME"

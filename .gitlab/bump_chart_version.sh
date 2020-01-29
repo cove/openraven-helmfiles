@@ -39,6 +39,12 @@ if [[ ! -e "$helmfile_fn" ]]; then
     exit 1
 fi
 
+if [[ -n "$CI" ]]; then
+  echo "Putting the working copy back onto $CI_COMMIT_REF_NAME (was in detached head)" >&2
+  git checkout --force "$CI_COMMIT_REF_NAME"
+  git reset --hard "$CI_COMMIT_SHA"
+fi
+
 # watch out, this won't work for more complex setups like 13-aws-discovery-svc.yaml
 sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" "$helmfile_fn"
 sed -i.bak -e "s/^version: .*/version: $chart_ver/" "$chart_yaml_fn"

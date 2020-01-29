@@ -9,7 +9,7 @@ releases:
 - name: s3-discovery-svc
   namespace: aws
   chart: openraven/s3-discovery-svc
-  version: 0.2724.0
+  version: 0.2787.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

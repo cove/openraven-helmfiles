@@ -40,18 +40,18 @@ if [[ ! -e "$helmfile_fn" ]]; then
 fi
 
 # watch out, this won't work for more complex setups like 13-aws-discovery-svc.yaml
-sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" $helmfile_fn
-sed -i.bak -e "s/^version: .*/version: $chart_ver/" $chart_yaml_fn
+sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" "$helmfile_fn"
+sed -i.bak -e "s/^version: .*/version: $chart_ver/" "$chart_yaml_fn"
 
-git add $helmfile_fn $chart_yaml_fn
+git add "$helmfile_fn" "$chart_yaml_fn"
 
 if [[ -n "$CI" ]]; then
     set +x
-    git remote set-url --push origin \
-        $(echo $CI_REPOSITORY_URL | sed -e "s/${CI_REGISTRY_USER}[^@]*@/oauth2:${GLR_PAT}@/")
+    push_url="${CI_REPOSITORY_URL//${CI_REGISTRY_USER}[^@]*@/oauth2:${GLR_PAT}@/}"
+    git remote set-url --push origin "$push_url"
     trace_on
     git commit -m"Bump $chart_name to $chart_ver"
     # skip CI jobs to (a) avoid any CI cycles (b) avoid any accidental rollouts
     # maybe make this a job parameter?
-    git push -o ci.skip=true origin $CI_COMMIT_REF_NAME
+    git push -o ci.skip=true origin "$CI_COMMIT_REF_NAME"
 fi

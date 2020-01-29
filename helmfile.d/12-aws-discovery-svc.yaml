@@ -62,11 +62,3 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EC2
-
-  - name: aws-rds-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, RDS

@@ -84,3 +84,14 @@ publish-em:
   - *publish_charts_sh
   - *publish_helmfile
   - chat_start; echo Deployed charts and helmfile.yaml to $HELM_S3_BUCKET; chat_stop
+
+bump-chart:
+  stage: chatops
+  image: *img
+  extends: .chatops-shell-functions
+  only: [chat]
+  script:
+  - require_chat_input
+  - set -- $CHAT_INPUT
+  - .gitlab/bump_chart_version.sh "$@"
+  - chat_start; echo "Version bumped $CI_PROJECT_PATH with $@"; chat_stop

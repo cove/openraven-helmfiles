@@ -11,6 +11,7 @@ releases:
   version: {{ $version }}
   values:
   - ./values/orientdb/{{ $version }}.yaml
+  - ./values/odbRootPassword.yaml
   hooks:
   - events: ['presync']
     showlogs: true

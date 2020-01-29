@@ -54,7 +54,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: root-password
-                  name: odb-orientdb-secret
+                  name: '{{ include "graph-explorer.fullname" . }}-secret'
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

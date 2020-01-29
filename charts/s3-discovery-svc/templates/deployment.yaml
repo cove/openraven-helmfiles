@@ -70,7 +70,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: root-password
-                  name: odb-orientdb-secret
+                  name: {{ include "s3-discovery-svc.fullname" . }}-secret
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
       {{- with .Values.nodeSelector }}

@@ -31,9 +31,9 @@ releases:
       if ! kubectl get -o name namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
-      if kubectl -n $my_ns get secret -o name odb-orientdb-secret; then exit 0; fi
-      kubectl -n odb get secret odb-orientdb-secret -oyaml | sed s/"namespace: odb"/"namespace: $my_ns"/ | kubectl apply -f -
+
   values:
+  - ./values/odbRootPassword.yaml
   - global:
       frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
       groupId: {{ requiredEnv "GROUP_ID" }}

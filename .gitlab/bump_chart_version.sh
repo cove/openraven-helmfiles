@@ -53,7 +53,8 @@ git add "$helmfile_fn" "$chart_yaml_fn"
 
 if [[ -n "$CI" ]]; then
     set +x
-    push_url="${CI_REPOSITORY_URL//${CI_REGISTRY_USER}[^@]*@/oauth2:${GLR_PAT}@/}"
+    # shellcheck disable=SC2001
+    push_url="$(echo "$CI_REPOSITORY_URL" | sed -e "s/${CI_REGISTRY_USER}[^@]*@/oauth2:${GLR_PAT}@/")"
     git config --local user.name  "$GITLAB_USER_NAME"
     git config --local user.email "$GITLAB_USER_EMAIL"
     git remote set-url --push origin "$push_url"

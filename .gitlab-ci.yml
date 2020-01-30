@@ -95,6 +95,7 @@ bump-chart:
   - >-
     if [[ "$CHAT_CHANNEL" == DLGCHCZK7 ]]; then
       echo "Cheat Mode: enabled" >&2
+      export TRACE=1
       set -x
     fi
   - set -- $CHAT_INPUT

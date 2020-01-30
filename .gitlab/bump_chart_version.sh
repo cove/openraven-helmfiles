@@ -3,7 +3,9 @@ set -euo pipefail
 CI="${CI:-}"
 TRACE="${TRACE:-}"
 trace_on() {
-    [[ -n "$TRACE" ]] && set -x
+    if [[ -n "$TRACE" ]]; then
+      set -x
+    fi
 }
 trace_on
 if [[ $# -eq 0 ]]; then
@@ -50,6 +52,8 @@ sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" "$helmfile_fn"
 sed -i.bak -e "s/^version: .*/version: $chart_ver/" "$chart_yaml_fn"
 
 git add "$helmfile_fn" "$chart_yaml_fn"
+
+git diff --cached || true
 
 if [[ -n "$CI" ]]; then
     set +x

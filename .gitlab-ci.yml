@@ -92,7 +92,11 @@ bump-chart:
   only: [chat]
   script:
   - require_chat_input
-  - if [[ "$CHAT_CHANNEL" == DLGCHCZK7 ]]; then echo "Cheat Mode: enabled" >&2; set -x; fi
+  - >-
+    if [[ "$CHAT_CHANNEL" == DLGCHCZK7 ]]; then
+      echo "Cheat Mode: enabled" >&2
+      set -x
+    fi
   - set -- $CHAT_INPUT
   - .gitlab/bump_chart_version.sh "$@"
   - chat_start; echo "Version bumped $CI_PROJECT_PATH with $@"; chat_stop

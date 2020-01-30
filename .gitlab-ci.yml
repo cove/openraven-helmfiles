@@ -24,7 +24,7 @@ include:
 package-helm-charts:
   <<: *force_onto_aws_runners
   stage: build
-  image: &img quay.io/roboll/helmfile:v0.98.2
+  image: &img docker.openraven.io/openraven/ci/helmfile-awscli:2588
   artifacts:
     name: helm artifacts
     expire_in: 30 days
@@ -52,11 +52,6 @@ template-the-charts:
   - package-helm-charts
   image: *img
   script:
-  - &before_script |
-    set -euo pipefail
-    apk update
-    apk add python3
-    pip3 install awscli
   - &publish_charts_sh .gitlab/publish_helm_charts.sh
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
@@ -64,7 +59,6 @@ template-the-charts:
   dependencies: []
   image: *img
   script:
-  - *before_script
   - &publish_helmfile .gitlab/patch_and_copy_to_s3.sh
 
 publish-helm-charts:
@@ -85,9 +79,19 @@ publish-em:
   only: [chat]
   script:
   - require_chat_input
-  - *before_script
   - export HELM_S3_BUCKET="$CHAT_INPUT"
   - *package_charts_sh
   - *publish_charts_sh
   - *publish_helmfile
   - chat_start; echo Deployed charts and helmfile.yaml to $HELM_S3_BUCKET; chat_stop
+
+bump-chart:
+  stage: chatops
+  image: *img
+  extends: .chatops-shell-functions
+  only: [chat]
+  script:
+  - require_chat_input
+  - set -- $CHAT_INPUT
+  - .gitlab/bump_chart_version.sh "$@"
+  - chat_start; echo "Version bumped $CI_PROJECT_PATH with $@"; chat_stop

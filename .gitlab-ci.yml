@@ -93,6 +93,7 @@ bump-chart:
   script:
   - require_chat_input
   - >-
+    echo "current chat channel: $CHAT_CHANNEL" >&2
     if [[ "$CHAT_CHANNEL" == DLGCHCZK7 ]]; then
       echo "Cheat Mode: enabled" >&2
       export TRACE=1

@@ -2,6 +2,7 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+{{ $includeRds   := false}}
   - name: openraven
     url: {{ $ourUrl }}
 
@@ -45,7 +46,6 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
-
   - name: aws-s3-discovery-svc
     <<: *default
     values:
@@ -64,6 +64,7 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EC2
 
+{{ if $includeRds }}
   - name: aws-rds-discovery-svc
     <<: *default
     values:
@@ -72,3 +73,4 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, RDS
+{{ end }}

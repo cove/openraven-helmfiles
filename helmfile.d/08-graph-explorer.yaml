@@ -36,11 +36,6 @@ releases:
       serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ $ingHostname }}
   - ingress:
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
-      # thank goodness, it appears to *merge* this with the one in the chart's values.yaml
-      annotations:
-        cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
       tls:
       # be careful, this needs to be the same name from productui.yaml
       - secretName: www-tls

@@ -24,10 +24,6 @@ releases:
       serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ $ingHostname }}
   - ingress:
-      {{ if not (env "CERT_MANAGER_EMAIL") }}
-      annotations:
-          cert-manager.io/cluster-issuer: self-signed
-      {{ end }}
       tls:
       # this name doesn't *mean* anything, and will be created by cert-manager
       # thanks to the annotation above, although be careful because graph-explorer

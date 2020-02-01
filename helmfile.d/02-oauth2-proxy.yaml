@@ -7,13 +7,7 @@ releases:
 {{ $clientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
 {{ $cookieSecret := requiredEnv "COOKIE_SECRET" }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-{{ define "cert-issuer-name" }}
-{{- if not (env "CERT_MANAGER_EMAIL") -}}
-self-signed
-{{- else -}}
-letsencrypt-prod
-{{- end -}}
-{{ end }}
+
 - name: oauth2-proxy
 
   # sorry, this is a concession because this ingress and the "main" ingress hostnames
@@ -42,8 +36,6 @@ letsencrypt-prod
   - ingress:
       hosts:
         - {{ $ingHostname }}
-      annotations:
-        cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
         - secretName: www-tls
           hosts:

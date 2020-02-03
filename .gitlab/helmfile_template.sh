@@ -25,7 +25,10 @@ if [[ "$CI" == "true" ]]; then
 fi
 
 
+export ADMIN_CLIENT_ID=AdMiNCliE-nt-id
+export ADMIN_CLIENT_SECRET='ZeAdmen/Sekrit-123'
 export COOKIE_SECRET=c00kieS3krit
+export CLUSTER_NAME='Spaces Are Awesome!'
 export FRONTEND_CLIENT_ID=feCID
 export GROUP_ID=ThEgRoUpId
 export OPENRAVEN_INGRESS_HOSTNAME=www.example.com
@@ -35,9 +38,17 @@ export SERVICE_CLIENT_SECRET=scSec
 # test all of them, and don't go through the git ref
 rm -v helmfile.yaml
 
-helmfile --log-level ${HELMFILE_LOG_LEVEL} template || {
+{ helmfile --log-level "${HELMFILE_LOG_LEVEL}" template | tee k8s.yml; } || {
     echo 'the rendered values files: ' >&2
     cat /tmp/values*
     exit 1
 }
+
+python3 -c '
+import json
+import sys
+import yaml
+all_docs = list(yaml.safe_load_all(sys.stdin))
+json.dump(all_docs, sys.stdout)
+' < k8s.yml | jq .
 git checkout helmfile.yaml

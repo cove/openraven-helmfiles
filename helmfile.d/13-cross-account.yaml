@@ -6,16 +6,6 @@ repositories:
 - name: openraven
   url: {{ $ourUrl }}
 
-
-{{/* these "env" values come from the helmfile0.pod.yml */}}
-{{ define "cert-issuer-name" }}
-{{- if not (env "CERT_MANAGER_EMAIL") -}}
-self-signed
-{{- else -}}
-letsencrypt-prod
-{{- end -}}
-{{ end }}
-
 releases:
 - name: cross-account
   namespace: ui
@@ -28,8 +18,6 @@ releases:
       openravenIngressHostname: {{ $ingHostname }}
 
   - ingress:
-      annotations:
-        cert-manager.io/cluster-issuer: {{ template "cert-issuer-name" .}}
       tls:
       - secretName: www-tls
         hosts:

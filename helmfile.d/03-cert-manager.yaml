@@ -1,4 +1,4 @@
-{{- $version := "v0.12.0" -}}
+{{- $version := "v0.13.0" -}}
 repositories:
 - name: incubator
   url: https://kubernetes-charts-incubator.storage.googleapis.com
@@ -10,11 +10,12 @@ releases:
 - name: cert-manager
   namespace: cert-manager
   chart: jetstack/cert-manager
-  # https://hub.helm.sh/charts/jetstack/cert-manager/v0.12.0
+  # https://hub.helm.sh/charts/jetstack/cert-manager
   version: {{ $version }}
   wait: true
   values:
-  - ./values/cert-manager/{{ $version }}.yaml
+  - global:
+      logLevel: 3
 
   hooks:
   - events: ['presync']
@@ -27,9 +28,11 @@ releases:
     - apply
     - --validate=false
     - -f
-    # no, don't do this, it has *everything* in it, which defeats the purpose of using helm
-    # - https://github.com/jetstack/cert-manager/releases/download/{{ $version }}/cert-manager.yaml
     - https://github.com/jetstack/cert-manager/raw/{{ $version }}/deploy/manifests/00-crds.yaml
+    # WARNING:
+    # Don't use this one, as it has *everything* in it, which defeats the purpose of using helm
+    # https://github.com/jetstack/cert-manager/releases/download/{{ $version }}/cert-manager.yaml
+
   - events: ['presync']
     showlogs: true
     command: bash
@@ -64,7 +67,7 @@ releases:
 # with "self-signed" matching the CI's "metadata.name"
 # see: https://cert-manager.io/docs/usage/ingress/#supported-annotations
 
-{{ if env "CERT_MANAGER_EMAIL" }}
+{{ if env "CERT_MANAGER_ZONE_ID" }}
 - name: letsencrypt-prod-issuer
   namespace: cert-manager
   chart: incubator/raw

@@ -45,7 +45,7 @@ releases:
         k get -o name pod -l app.kubernetes.io/component=zookeeper | head -1
       }
       k_pod_phase() {
-        k -o jsonpath='{.status.phase}' "$1"
+        k get -o jsonpath='{.status.phase}' "$1"
       }
       for i in $(seq 1 30); do
         K8S_AUTH_POD="$(k_first_pod || true)"
@@ -59,10 +59,10 @@ releases:
         exit 1
       fi
       for i in $(seq 1 30); do
-        if [[ Running != "$(k_pod_phase "${K8S_AUTH_POD}")" ]]; then
-          sleep 1
-          continue
+        if [[ Running == "$(k_pod_phase "${K8S_AUTH_POD}")" ]]; then
+          break
         fi
+        sleep 1
       done
       playbook_fn=kafka-zookeeper-defaults.yml
       if [[ ! -e "$playbook_fn" ]]; then

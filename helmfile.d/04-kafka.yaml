@@ -47,6 +47,9 @@ releases:
       k_pod_phase() {
         k get -o jsonpath='{.status.phase}' "$1"
       }
+      k_c_ready() {
+        k get -o jsonpath='{.status.containerStatuses[*].ready}' "$1"
+      }
       for i in $(seq 1 30); do
         K8S_AUTH_POD="$(k_first_pod || true)"
         if [[ -n "$K8S_AUTH_POD" ]]; then
@@ -59,7 +62,7 @@ releases:
         exit 1
       fi
       for i in $(seq 1 30); do
-        if [[ Running == "$(k_pod_phase "${K8S_AUTH_POD}")" ]]; then
+        if [[ 'true' == "$(k_c_ready "${K8S_AUTH_POD}")" ]]; then
           break
         fi
         sleep 1
@@ -73,4 +76,7 @@ releases:
         - zookeeper-defaults
       YML
       fi
-      exec ansible-playbook -vv -c kubectl -i ${K8S_AUTH_POD}, "$playbook_fn"
+      for i in $(seq 1 5); do
+        ansible-playbook -vv -c kubectl -i ${K8S_AUTH_POD}, "$playbook_fn" && exit 0
+        sleep 10
+      done

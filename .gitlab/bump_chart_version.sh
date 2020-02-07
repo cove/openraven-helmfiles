@@ -47,9 +47,20 @@ if [[ -n "$CI" ]]; then
   git reset --hard "$CI_COMMIT_SHA"
 fi
 
+exit_if_not_dirty() {
+  local fn="$1"
+  if ! git status --porc "$fn" | grep -- "$fn"; then
+    echo "Expected the change to dirty \"$fn\" but nope" >&2
+    exit 1
+  fi
+}
+
 # watch out, this won't work for more complex setups like 13-aws-discovery-svc.yaml
 sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" "$helmfile_fn"
+exit_if_not_dirty "$helmfile_fn"
+
 sed -i.bak -e "s/^version: .*/version: $chart_ver/" "$chart_yaml_fn"
+exit_if_not_dirty "$chart_yaml_fn"
 
 git add "$helmfile_fn" "$chart_yaml_fn"
 

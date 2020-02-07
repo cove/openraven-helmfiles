@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 2
 
 image:
   registry: docker.openraven.io
@@ -16,6 +16,8 @@ imagePullSecrets: []
 
 nameOverride: ""
 fullnameOverride: ""
+
+sentry_dns: https://e15f77de7d2545dc86e9c9c9e987b45b@sentry.io/2311649
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -48,10 +48,10 @@ spec:
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
             - name: SENTRY_DSN
-              value: https://bf2f2b3796f7452397dc8a65b6657400@sentry.io/1894813
-        {{- if .Values.extraEnv }}
+              value: {{ .Values.sentry_dsn | quote }}
+{{ if .Values.extraEnv }}
             {{- toYaml .Values.extraEnv | indent 12 }}
-        {{- end }}
+{{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

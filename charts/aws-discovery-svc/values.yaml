@@ -3,11 +3,16 @@ replicaCount: 1
 image:
   registry: docker.openraven.io
   repository: open/aws-discovery
-  tag: ~  
+  tag: ~
   pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
+
+extraEnv: []
+# - name: foo
+#   value: bar
+sentry_dsn: https://bf2f2b3796f7452397dc8a65b6657400@sentry.io/1894813
 
 service:
   type: ClusterIP

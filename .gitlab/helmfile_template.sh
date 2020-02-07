@@ -44,6 +44,10 @@ rm -v helmfile.yaml
     exit 1
 }
 
+echo '<editor-fold desc="k8s.yml">'
+cat k8s.yml
+echo '</editor-fold>'
+
 python3 -c '
 import json
 import sys

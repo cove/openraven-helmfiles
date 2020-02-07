@@ -52,6 +52,10 @@ spec:
               value: "80"
             - name: SENTRY_DSN
               value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_RELEASE
+              value: "{{ .Chart.Version }}"
+            - name: SENTRY_EXTRA
+              value: "groupId:{{ .Values.global.groupId }}"
             - name: GREMLIN_PASSWORD
               valueFrom:
                 secretKeyRef:

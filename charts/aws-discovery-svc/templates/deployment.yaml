@@ -49,6 +49,10 @@ spec:
               value: {{ .Values.global.groupId }}
             - name: SENTRY_DSN
               value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_RELEASE
+              value: "{{ .Chart.Version }}"
+            - name: SENTRY_EXTRA
+              value: "groupId:{{ .Values.global.groupId }}"
 {{ if .Values.extraEnv }}
             {{- toYaml .Values.extraEnv | indent 12 }}
 {{ end }}

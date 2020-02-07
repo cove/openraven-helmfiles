@@ -12,7 +12,7 @@ fullnameOverride: ""
 extraEnv: []
 # - name: foo
 #   value: bar
-sentry_dsn: https://bf2f2b3796f7452397dc8a65b6657400@sentry.io/1894813
+sentry_dsn: ""
 
 service:
   type: ClusterIP

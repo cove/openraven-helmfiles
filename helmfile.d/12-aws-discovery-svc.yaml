@@ -2,7 +2,6 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-{{ $includeRds   := false }}
   - name: openraven
     url: {{ $ourUrl }}
 
@@ -10,7 +9,7 @@ templates:
   default: &default
     namespace: "aws"
     chart: "openraven/aws-discovery-svc"
-    version: 0.2753.0
+    version: 0.2961.0
     missingFileHandler: Warn
     wait: true
     timeout: 300
@@ -46,6 +45,7 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
+
   - name: aws-s3-discovery-svc
     <<: *default
     values:
@@ -64,7 +64,6 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EC2
 
-{{ if $includeRds }}
   - name: aws-rds-discovery-svc
     <<: *default
     values:
@@ -73,4 +72,12 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, RDS
-{{ end }}
+
+  - name: aws-efs-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, EFS

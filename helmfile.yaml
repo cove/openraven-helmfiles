@@ -17,3 +17,4 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/12-aws-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/13-cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/14-portscan.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/15-account-management.yaml?ref={{ $gitRef }}

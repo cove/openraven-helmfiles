@@ -1,0 +1,39 @@
+repositories:
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+{{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+- name: openraven
+  url: {{ $ourUrl }}
+
+releases:
+- name: account-management
+  namespace: ui
+  chart: openraven/account-management
+  version: 0.3542.0
+  wait: false
+  values:
+  - global:
+      groupId: {{ env "GROUP_ID" }}
+      openravenIngressHostname: {{ $ingHostname }}
+      serviceClientId: {{ env "SERVICE_CLIENT_ID" }}
+      serviceClientSecret: {{ env "SERVICE_CLIENT_SECRET" }}
+      clusterName: {{ env "CLUSTER_NAME" | quote }}
+
+  - ingress:
+      tls:
+      - secretName: www-tls
+        hosts:
+        - {{ $ingHostname }}
+
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

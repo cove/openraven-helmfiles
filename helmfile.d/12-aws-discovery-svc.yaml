@@ -9,12 +9,10 @@ templates:
   default: &default
     namespace: "aws"
     chart: "openraven/aws-discovery-svc"
-    version: 0.3566.1
+    version: 0.3719.0
     missingFileHandler: Warn
     wait: true
     timeout: 300
-    recreatePods: true
-    force: true
     installed: true
     atomic: true
     values:
@@ -81,3 +79,66 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EFS
+
+  - name: aws-dynamodb-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, dynamoDb
+
+  - name: aws-redshift-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, RSH
+
+  - name: aws-docdb-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, DOC
+
+  - name: aws-fsx-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, FSX
+
+  - name: aws-backup-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, BACKUP
+
+  - name: aws-ebs-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, EBS
+
+  - name: aws-ess-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, ESS

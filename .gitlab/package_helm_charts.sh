@@ -6,6 +6,6 @@ tgz_dir="$PWD/charts"
 for i in charts/*/Chart.yaml; do
   cd "$(dirname "$i")"
   helm ${TRACE:+--debug} package .
-  mv -iv *.tgz "$tgz_dir/"
+  mv -nv *.tgz "$tgz_dir/"
   cd ../..
 done

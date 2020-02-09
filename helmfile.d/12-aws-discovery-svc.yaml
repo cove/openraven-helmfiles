@@ -9,7 +9,7 @@ templates:
   default: &default
     namespace: "aws"
     chart: "openraven/aws-discovery-svc"
-    version: 0.3719.0
+    version: 0.3869.0
     missingFileHandler: Warn
     wait: true
     timeout: 300
@@ -80,50 +80,50 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, EFS
 
-  # - name: aws-dynamodb-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, dynamoDb
+  - name: aws-dynamodb-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, dynamoDb
 
-  # - name: aws-redshift-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, RSH
+  - name: aws-redshift-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, RSH
 
-  # - name: aws-docdb-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, DOC
+  - name: aws-docdb-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, DOC
 
-  # - name: aws-fsx-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, FSX
+  - name: aws-fsx-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, FSX
 
-  # - name: aws-backup-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, BACKUP
+  - name: aws-backup-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, BACKUP
 
   # - name: aws-ebs-discovery-svc
   #   <<: *default
@@ -134,11 +134,11 @@ releases:
   #       - name: SPRING_PROFILES_ACTIVE
   #         value: default, producer, prod, EBS
 
-  # - name: aws-ess-discovery-svc
-  #   <<: *default
-  #   values:
-  #   - ./values/odbRootPassword.yaml
-  #   - global: *global
-  #   - extraEnv:
-  #       - name: SPRING_PROFILES_ACTIVE
-  #         value: default, producer, prod, ESS
+  - name: aws-ess-discovery-svc
+    <<: *default
+    values:
+    - ./values/odbRootPassword.yaml
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, ESS

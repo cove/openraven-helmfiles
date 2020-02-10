@@ -4,14 +4,12 @@ repositories:
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   - name: openraven
     url: {{ $ourUrl }}
+
 releases:
-- name: portscan
+- name: dmap
   namespace: dmap
-  chart: openraven/portscan
-  version: 0.3919.0
-  missingFileHandler: Warn
-  wait: true
-  timeout: 300
+  chart: openraven/dmap
+  version: 0.3920.0
   installed: true
   hooks:
   - events: ["presync"]

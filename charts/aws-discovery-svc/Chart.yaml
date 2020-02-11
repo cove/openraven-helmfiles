@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "0.0.0"
 description: A Helm chart to install aws discovery services
 name: aws-discovery-svc
-version: 0.4129.0
+version: 0.4272.0

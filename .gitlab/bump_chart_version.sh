@@ -56,7 +56,7 @@ exit_if_not_dirty() {
 }
 
 # watch out, this won't work for more complex setups like 13-aws-discovery-svc.yaml
-sed -i.bak -e "s/^  version: .*/  version: $chart_ver/" "$helmfile_fn"
+sed -i.bak -E -e 's/^( {2,4}version: ).*/\1'"$chart_ver/" "$helmfile_fn"
 exit_if_not_dirty "$helmfile_fn"
 
 sed -i.bak -e "s/^version: .*/version: $chart_ver/" "$chart_yaml_fn"

@@ -16,8 +16,8 @@ releases:
   - global:
       groupId: {{ env "GROUP_ID" }}
       openravenIngressHostname: {{ $ingHostname }}
-      serviceClientId: {{ env "SERVICE_CLIENT_ID" }}
-      serviceClientSecret: {{ env "SERVICE_CLIENT_SECRET" }}
+      adminClientId: {{ env "ADMIN_CLIENT_ID" }}
+      adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
 
   - ingress:

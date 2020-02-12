@@ -53,13 +53,13 @@ spec:
             - name: SERVER_PORT
               value: "80"
             - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OKTA_CLIENT-ID
-              value: {{ .Values.global.serviceClientId }}
+              value: {{ .Values.global.adminClientId }}
             - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OKTA_CLIENT-SECRET
-              value: {{ .Values.global.serviceClientSecret}}
+              value: {{ .Values.global.adminClientSecret}}
             - name: OPENRAVEN_APP_V1_CLUSTER_ADMIN-CLIENT-ID
-              value: {{ .Values.global.serviceClientId }}
+              value: {{ .Values.global.adminClientId }}
             - name: OPENRAVEN_APP_V1_CLUSTER_ADMIN-CLIENT-SECRET
-              value: {{ .Values.global.serviceClientSecret}}
+              value: {{ .Values.global.adminClientSecret}}
             - name: OPENRAVEN_APP_V1_CLUSTER_NAME
               value: {{ .Values.global.clusterName | quote }}
             - name: SENTRY_RELEASE

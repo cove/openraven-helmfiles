@@ -12,7 +12,6 @@ extraArgs:
   set-xauthrequest: "true"
   set-authorization-header: "true"
   cookie-secure: "true"
-  cookie-httponly: "true"
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt|/favicon.ico"
   skip-jwt-bearer-tokens: "true"
@@ -21,7 +20,7 @@ extraArgs:
   ssl-insecure-skip-verify: "true"
 
 image:
-  tag: "v4.0.0"
+  tag: "v5.0.0"
   pullPolicy: "IfNotPresent"
 
 service:

@@ -8,7 +8,7 @@ releases:
 - name: portscan
   namespace: dmap
   chart: openraven/portscan
-  version: 0.3919.0
+  version: 0.4531.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

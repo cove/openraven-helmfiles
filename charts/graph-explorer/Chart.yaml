@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: A Helm chart for Open Raven graph-explorer
 name: graph-explorer
-version: 0.4425.0
+version: 0.4547.0

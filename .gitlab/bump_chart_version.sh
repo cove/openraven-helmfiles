@@ -78,7 +78,5 @@ if [[ -n "$CI" ]]; then
 
     By request of @${GITLAB_USER_LOGIN}
     "
-    # skip CI jobs to (a) avoid any CI cycles (b) avoid any accidental rollouts
-    # maybe make this a job parameter?
-    git push -o ci.skip=true origin "$CI_COMMIT_REF_NAME"
+    git push origin "$CI_COMMIT_REF_NAME"
 fi

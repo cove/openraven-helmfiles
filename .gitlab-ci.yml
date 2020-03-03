@@ -65,13 +65,30 @@ publish-helm-charts:
   <<: *force_helm_s3_bucket
   <<: *publish_helm_charts
   stage: deploy
+  except:
+    refs:
+      - master
+
+publish-helmfile-to-s3:
+  <<: *force_helm_s3_bucket
+  <<: *publish_helmfile_to_s3
+  stage: deploy
+  except:
+    refs:
+      - master
+
+publish-helm-charts-staging:
+  <<: *force_helm_s3_bucket
+  <<: *publish_helm_charts
+  stage: deploy
   variables:
     HELM_S3_BUCKET: openraven-deploy-staging
   only:
     refs:
       - master
+  resource_group: staging
 
-publish-helmfile-to-s3:
+publish-helmfile-to-s3-staging:
   <<: *force_helm_s3_bucket
   <<: *publish_helmfile_to_s3
   stage: deploy
@@ -80,6 +97,7 @@ publish-helmfile-to-s3:
   only:
     refs:
       - master
+  resource_group: staging
 
 publish-em:
   <<: *force_onto_aws_runners

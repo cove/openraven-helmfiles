@@ -11,7 +11,6 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/05-orientdb.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/07-productui.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/08-graph-explorer.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/11-cluster-upgrade.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/12-aws-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/13-cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/15-account-management.yaml?ref={{ $gitRef }}
@@ -21,3 +20,4 @@ helmfiles:
 {{ if (env "INCLUDE_PORTSCAN") }}
 - path: {{ $gitUrl }}@helmfile.d/14-portscan.yaml?ref={{ $gitRef }}
 {{ end }}
+- path: {{ $gitUrl }}@helmfile.d/11-cluster-upgrade.yaml?ref={{ $gitRef }}

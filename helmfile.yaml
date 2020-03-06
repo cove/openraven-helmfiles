@@ -1,23 +1,23 @@
 helmfiles:
 {{ $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
 {{ $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
-- path: {{ $gitUrl }}@helmfile.d/00-storage-class.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/01-ingress.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/02-oauth2-proxy.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/storage-class.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/ingress.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/oauth2-proxy.yaml?ref={{ $gitRef }}
 {{ if (env "CERT_MANAGER_ZONE_ID") }}
-- path: {{ $gitUrl }}@helmfile.d/03-cert-manager.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/cert-manager.yaml?ref={{ $gitRef }}
 {{ end }}
-- path: {{ $gitUrl }}@helmfile.d/04-kafka.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/05-orientdb.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/07-productui.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/08-graph-explorer.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/12-aws-discovery-svc.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/13-cross-account.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/15-account-management.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/kafka.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/orientdb.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/productui.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/graph-explorer.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
 {{ if (env "INCLUDE_DMAP") }}
-- path: {{ $gitUrl }}@helmfile.d/16-dmap.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/dmap.yaml?ref={{ $gitRef }}
 {{ end }}
 {{ if (env "INCLUDE_PORTSCAN") }}
-- path: {{ $gitUrl }}@helmfile.d/14-portscan.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/portscan.yaml?ref={{ $gitRef }}
 {{ end }}
-- path: {{ $gitUrl }}@helmfile.d/11-cluster-upgrade.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}

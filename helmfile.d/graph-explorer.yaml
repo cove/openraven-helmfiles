@@ -10,7 +10,7 @@ releases:
 - name: explorer
   namespace: ui
   chart: openraven/graph-explorer
-  version: 0.5195.0
+  version: 0.5120.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

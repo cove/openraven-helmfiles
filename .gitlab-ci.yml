@@ -21,8 +21,13 @@ include:
     variables:
     - $HELM_S3_BUCKET
 
+.dont_run_on_external_pipelines: &dont_run_on_external_pipelines
+  except:
+    - pipelines
+
 package-helm-charts:
   <<: *force_onto_aws_runners
+  <<: *dont_run_on_external_pipelines
   stage: build
   image: &img docker.openraven.io/openraven/ci/helmfile-awscli:2588
   artifacts:
@@ -34,6 +39,7 @@ package-helm-charts:
   - &package_charts_sh .gitlab/package_helm_charts.sh
 
 template-the-charts:
+  <<: *dont_run_on_external_pipelines
   dependencies:
   - package-helm-charts
   stage: test
@@ -48,6 +54,7 @@ template-the-charts:
 
 .publish-helm-charts: &publish_helm_charts
   <<: *force_onto_aws_runners
+  <<: *dont_run_on_external_pipelines
   dependencies:
   - package-helm-charts
   image: *img
@@ -56,6 +63,7 @@ template-the-charts:
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
   <<: *force_onto_aws_runners
+  <<: *dont_run_on_external_pipelines
   dependencies: []
   image: *img
   script:
@@ -64,6 +72,7 @@ template-the-charts:
 publish-helm-charts:
   <<: *force_helm_s3_bucket
   <<: *publish_helm_charts
+  <<: *dont_run_on_external_pipelines
   stage: deploy
   except:
     refs:
@@ -72,6 +81,7 @@ publish-helm-charts:
 publish-helmfile-to-s3:
   <<: *force_helm_s3_bucket
   <<: *publish_helmfile_to_s3
+  <<: *dont_run_on_external_pipelines
   stage: deploy
   except:
     refs:
@@ -80,6 +90,7 @@ publish-helmfile-to-s3:
 publish-helm-charts-staging:
   <<: *force_helm_s3_bucket
   <<: *publish_helm_charts
+  <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
     HELM_S3_BUCKET: openraven-deploy-staging
@@ -91,6 +102,7 @@ publish-helm-charts-staging:
 publish-helmfile-to-s3-staging:
   <<: *force_helm_s3_bucket
   <<: *publish_helmfile_to_s3
+  <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
     HELM_S3_BUCKET: openraven-deploy-staging
@@ -98,6 +110,17 @@ publish-helmfile-to-s3-staging:
     refs:
       - master
   resource_group: staging
+
+bump-from-external-pipeline:
+  stage: build
+  image: *img
+  script:
+    - .gitlab/bump_chart_version.sh ${HELMFILE_NAME} ${CHART_NAME} 0.${UPSTREAM_TAG}.0
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "pipeline" && $HELMFILE_NAME && $CHART_NAME && $UPSTREAM_TAG'
+      when: always
+    - when: never
+  resource_group: upstream
 
 publish-em:
   <<: *force_onto_aws_runners

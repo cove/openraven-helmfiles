@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 set -euo pipefail
 CI="${CI:-}"
+CHATOPS="${CHAT_CHANNEL:-}"
 TRACE="${TRACE:-}"
 trace_on() {
     if [[ -n "$TRACE" ]]; then
@@ -23,7 +24,7 @@ shift
 chart_yaml_fn=charts/${chart_name}/Chart.yaml
 helmfile_fn=helmfile.d/$helmfile_name
 
-if [[ -z "$CI" ]]; then
+if [[ -z "$CHATOPS" ]]; then
     chat_start() {
         :
     }

@@ -46,7 +46,9 @@ ingress:
       proxy_set_header cookie "";
   hosts:
     - host: #Check in ingress.yml
-      paths: ["/api/orgs"]
+      paths:
+        - "/api/orgs"
+        - "/api/server"
 
   tls: []
   #  - secretName: chart-example-tls

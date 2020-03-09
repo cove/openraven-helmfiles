@@ -11,11 +11,6 @@ include:
 # variables:
 #   HELM_S3_BUCKET: openraven-deploy-REPLACE_ME_WITH_YOUR_OWN
 
-.force_onto_aws_runners: &force_onto_aws_runners
-  # force it onto the AWS runners
-  tags:
-  - docker
-
 .only_with_helm_s3_bucket_set: &force_helm_s3_bucket
   only:
     variables:
@@ -26,7 +21,6 @@ include:
     - pipelines
 
 package-helm-charts:
-  <<: *force_onto_aws_runners
   <<: *dont_run_on_external_pipelines
   stage: build
   image: &img docker.openraven.io/openraven/ci/helmfile-awscli:2588
@@ -53,7 +47,6 @@ template-the-charts:
   - rm charts/index.yaml
 
 .publish-helm-charts: &publish_helm_charts
-  <<: *force_onto_aws_runners
   <<: *dont_run_on_external_pipelines
   dependencies:
   - package-helm-charts
@@ -62,7 +55,6 @@ template-the-charts:
   - &publish_charts_sh .gitlab/publish_helm_charts.sh
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
-  <<: *force_onto_aws_runners
   <<: *dont_run_on_external_pipelines
   dependencies: []
   image: *img
@@ -123,7 +115,6 @@ bump-from-external-pipeline:
   resource_group: upstream
 
 publish-em:
-  <<: *force_onto_aws_runners
   stage: chatops
   image: *img
   extends: .chatops-shell-functions

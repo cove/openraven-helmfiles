@@ -57,10 +57,10 @@ livenessProbe: false
 readinessProbe: false
 
 resources:
-  limits:
+  requests:
     memory: 100Mi
     cpu: 200m
-  requests:
+  limits:
     memory: 100Mi
     cpu: 200m
 

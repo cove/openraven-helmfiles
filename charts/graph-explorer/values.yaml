@@ -59,10 +59,10 @@ ingress:
   #      - chart-example.local
 
 resources:
-  limits:
+  requests:
     memory: 1Gi
     cpu: "1"
-  requests:
+  limits:
     memory: 1Gi
     cpu: "1"
 

@@ -56,7 +56,7 @@ ingress:
 livenessProbe: false
 readinessProbe: false
 
-resources: {}
+resources:
   limits:
     memory: 100Mi
     cpu: 200m

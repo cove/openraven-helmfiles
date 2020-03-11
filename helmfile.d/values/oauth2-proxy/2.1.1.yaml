@@ -12,6 +12,7 @@ extraArgs:
   set-xauthrequest: "true"
   set-authorization-header: "true"
   cookie-secure: "true"
+  cookie-refresh: "1h"
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt|/favicon.ico"
   skip-jwt-bearer-tokens: "true"

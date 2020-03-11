@@ -20,4 +20,5 @@ helmfiles:
 {{ if (env "INCLUDE_PORTSCAN") }}
 - path: {{ $gitUrl }}@helmfile.d/portscan.yaml?ref={{ $gitRef }}
 {{ end }}
+- path: {{ $gitUrl }}@helmfile.d/metrics-server.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}

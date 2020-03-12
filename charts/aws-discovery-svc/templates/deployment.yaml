@@ -51,6 +51,8 @@ spec:
               value: {{ .Values.global.groupId }}
             - name: SENTRY_DSN
               value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_ENVIRONMENT
+              value: {{ .Values.global.groupId }}
             - name: SENTRY_RELEASE
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA

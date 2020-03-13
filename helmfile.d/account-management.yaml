@@ -10,7 +10,7 @@ releases:
 - name: account-management
   namespace: ui
   chart: openraven/account-management
-  version: 0.5618.0
+  version: 0.5664.0
   wait: false
   values:
   - global:

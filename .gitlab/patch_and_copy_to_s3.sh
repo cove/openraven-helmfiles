@@ -19,3 +19,4 @@ HELM_S3_PATH="s3://${HELM_S3_BUCKET}/charts"
 # we could also update HELMFILE_GIT_URL here if necessary, too
 sed -i.bak -e '/"HELMFILE_GIT_REF"/s@default "[^"]*"@default "'${CI_COMMIT_SHA}'"@' helmfile.yaml
 aws s3 cp helmfile.yaml ${HELM_S3_PATH}/
+aws s3 cp manifest.json ${HELM_S3_PATH}/

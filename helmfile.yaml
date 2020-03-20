@@ -18,6 +18,7 @@ you can pick almost any one from the list in charts/cluster-upgrade/templates/de
 so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UPGRADES_NAME" }}
 - path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/arcade-analytics.yaml?ref={{ $gitRef }}
 {{ end }}
 - path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}

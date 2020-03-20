@@ -7,6 +7,7 @@ stages:
 include:
 - project: open/gitlab-ci
   file: /chatops-shell.yml
+  ref: cwebber/export_funcs
 
 # variables:
 #   HELM_S3_BUCKET: openraven-deploy-REPLACE_ME_WITH_YOUR_OWN

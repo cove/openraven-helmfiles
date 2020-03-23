@@ -7,14 +7,12 @@ repositories:
     url: {{ $ourUrl }}
 
 releases:
-- name: explorer
+- name: arcade-analytics
   namespace: ui
-  chart: openraven/graph-explorer
-  version: 0.6080.0
-  missingFileHandler: Warn
+  chart: openraven/arcade-analytics
+  version: 0.6098.0
   wait: true
   timeout: 300
-  installed: true
   hooks:
   - events: ["presync"]
     showlogs: true
@@ -29,10 +27,6 @@ releases:
   values:
   - ./values/odbRootPassword.yaml
   - global:
-      frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
-      groupId: {{ requiredEnv "GROUP_ID" }}
-      serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
-      serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ $ingHostname }}
   - ingress:
       tls:

@@ -30,6 +30,8 @@ spec:
               path: /actuator/health
               port: 8080
             initialDelaySeconds: 120
+            failureThreshold: 12 # Translates to 120 seconds
+            periodSeconds: 10 # This is the default, setting it explicitly to make it easier reason about.
           readinessProbe:
             httpGet:
               path: /actuator/health
@@ -51,6 +53,8 @@ spec:
               value: {{ .Values.global.groupId }}
             - name: SENTRY_DSN
               value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_ENVIRONMENT
+              value: {{ .Values.global.groupId }}
             - name: SENTRY_RELEASE
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA

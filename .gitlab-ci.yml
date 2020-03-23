@@ -38,6 +38,9 @@ template-the-charts:
   - package-helm-charts
   stage: test
   image: *img
+  artifacts:
+    paths:
+      - manifest.json
   script:
   - cd charts
   - helm repo index .
@@ -56,7 +59,8 @@ template-the-charts:
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
   <<: *dont_run_on_external_pipelines
-  dependencies: []
+  dependencies:
+    - template-the-charts
   image: *img
   script:
   - &publish_helmfile .gitlab/patch_and_copy_to_s3.sh
@@ -114,6 +118,16 @@ bump-from-external-pipeline:
     - when: never
   resource_group: upstream
 
+manual-promote:
+  stage: deploy
+  image: *img
+  rules:
+    - if: '$CI_PIPELINE_SOURCE != "pipeline" && $SRC_BUCKET && $DEST_BUCKET'
+      when: always
+    - when: never
+  script:
+    - .gitlab/promote_in_s3.sh $SRC_BUCKET $DEST_BUCKET
+
 publish-em:
   stage: chatops
   image: *img
@@ -143,3 +157,13 @@ bump-chart:
   - set -- $CHAT_INPUT
   - .gitlab/bump_chart_version.sh "$@"
   - chat_start; echo "Version bumped $CI_PROJECT_PATH with $@"; chat_stop
+
+promote:
+  stage: chatops
+  image: *img
+  extends: .chatops-shell-functions
+  only: [chat]
+  script:
+    - require_chat_input
+    - set -- $CHAT_INPUT
+    - .gitlab/promote_in_s3.sh "$@"

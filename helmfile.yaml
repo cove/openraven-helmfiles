@@ -11,7 +11,15 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/orientdb.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/productui.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/graph-explorer.yaml?ref={{ $gitRef }}
+{{/*
+We are purposefully picking an environment variable that cluster-upgrade
+will have but that helmfile0 does not, so this gets installed post, err, install;
+you can pick almost any one from the list in charts/cluster-upgrade/templates/deployment.yaml
+so long as it's not in the list in helmfile0.pod.yml */}}
+{{ if env "OPENRAVEN_UPGRADES_NAME" }}
 - path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/arcade-analytics.yaml?ref={{ $gitRef }}
+{{ end }}
 - path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
 {{ if (env "INCLUDE_DMAP") }}

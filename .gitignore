@@ -1,1 +1,6 @@
 .envrc
+.idea
+k8s.yml
+manifest.json
+charts/*.tgz
+charts/index.yaml

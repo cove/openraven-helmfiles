@@ -55,4 +55,12 @@ import yaml
 all_docs = list(yaml.safe_load_all(sys.stdin))
 json.dump(all_docs, sys.stdout)
 ' < k8s.yml | jq .
+
+# This is ugly but keeps from needing to do a bunch of complicated bits in python
+grep 'helm.sh/chart' k8s.yml | sed -e 's@^.*helm\.sh/chart: @@' | sort | uniq | .gitlab/generate_manifest.py > manifest.json
+
+echo '<editor-fold desc="manifest.json">'
+jq . < manifest.json
+echo '</editor-fold>'
+
 git checkout helmfile.yaml

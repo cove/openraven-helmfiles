@@ -1,23 +1,21 @@
-# Default values for graph-explorer.
+# Default values for arcade-analytics.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   registry: docker.openraven.io
-  repository: open/explorer-repo-docker
+  repository: open/arcadeanalytics
   # Pulled from minor value in Chart.yaml version:
   tag: ~
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
-# - name: some-pull-secret
+# - name: my-pull-secret
 
 nameOverride: ""
 fullnameOverride: ""
-
-sentry_dsn: https://e15f77de7d2545dc86e9c9c9e987b45b@sentry.io/2311649
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -44,27 +42,38 @@ service:
 ingress:
   enabled: true
   annotations:
-    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-    nginx.ingress.kubernetes.io/auth-response-headers: "x-auth-request-user, x-auth-request-email, authorization, x-auth-request-access-token"
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header cookie "";
   hosts:
     - host: #Check in ingress.yml
-      paths: ["/explorer"]
+      paths: ["/analytics"]
 
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources:
-  requests:
-    memory: 1Gi
-    cpu: "1"
-  limits:
-    memory: 1Gi
-    cpu: "2"
+persistence:
+  enabled: true
+  accessModes:
+  - ReadWriteOnce
+  # EBS does not tolerate anything smaller
+  size: 1G
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 nodeSelector: {}
 

@@ -1,0 +1,53 @@
+{{- $vMap := $.Chart.Version | split "." -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
+{{- $myName := include "arcade-analytics.fullname" . }}
+{{- $contextPath := include "SERVER_CONTEXT_PATH" . -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $myName }}-indexer
+  labels:
+{{ include "arcade-analytics.labels" . | indent 4 }}
+spec:
+  completions: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "arcade-analytics.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}-job
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      restartPolicy: OnFailure
+      containers:
+        - name: indexer
+          image: "{{.Values.image.registry }}/{{ .Values.image.repository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+          - /bin/bash
+          - -exc
+          - |
+            base_url="http://{{ $myName }}{{ $contextPath }}"
+            api_url="$base_url/api"
+            for i in $(seq 1 300); do
+              curl --connect-timeout 1 -f $base_url && break
+              sleep 1
+            done
+            # give the ODB connection time to run, else /data-sources will not contain them all
+            sleep 300
+            index_user='nobody@localhost'
+            auth_header='x-auth-request-email'
+            authed_curl() {
+              curl -fsSH "${auth_header}: ${index_user}" "$@"
+            }
+            get_ds_ids() {
+              authed_curl $api_url/data-sources \
+                | grep -Eo '"id":[0-9]+,' \
+                | sed -e 's@"id":@@; s@,@@;'
+            }
+            for i in $(get_ds_ids); do
+              authed_curl $api_url/_search/data-sources/index/$i
+              echo
+            done

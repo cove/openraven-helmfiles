@@ -1,0 +1,16 @@
+repositories:
+- name: stable
+  url: https://kubernetes-charts.storage.googleapis.com
+
+releases:
+- name: metrics
+  namespace: kube-system
+  chart: stable/metrics-server
+  # https://github.com/helm/charts/blob/master/stable/metrics-server/Chart.yaml#L5
+  version: 2.10.0
+  wait: true
+  values:
+  - args:
+    # otherwise it whines about not trusting the kubelet cert
+    # this is not **the fix** but close enough
+    - --kubelet-insecure-tls=true

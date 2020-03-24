@@ -2,6 +2,8 @@ stages:
 - build
 - test
 - deploy
+- pause
+- validate
 - chatops
 
 include:
@@ -106,6 +108,47 @@ publish-helmfile-to-s3-staging:
     refs:
       - master
   resource_group: staging
+
+# Pause the pipeline to allow for cluster-upgrade to upgrade the cluster we are going to test.
+# TODO: This should go away in favor of something that watches for the version of the cluster to match what is on the release channel.
+pause-for-update:
+  <<: *dont_run_on_external_pipelines
+  stage: pause
+  script:
+    - sleep 120 # Sleeping for 120 seconds because cluster-upgrade runs every 60 seconds, and we are assuming helmfile will finish in less than 60 seconds.
+  only:
+    refs:
+      - master
+
+validate-staging:
+  <<: *dont_run_on_external_pipelines
+  stage: validate
+  trigger:
+    project: openraven/odin-tests
+    strategy: depend
+  variables:
+    RELEASE_CHANNEL: openraven-deploy-staging
+    BASE_URL: 'https://staging.c.openraven.net'
+    DEMODB: 'true'
+    BUILD_ID: $CI_PIPELINE_ID
+  only:
+    refs:
+      - master
+
+validate-staging-discovery:
+  <<: *dont_run_on_external_pipelines
+  stage: validate
+  trigger:
+    project: openraven/odin-tests
+    strategy: depend
+  variables:
+    RELEASE_CHANNEL: openraven-deploy-staging
+    BASE_URL: 'https://staging-discovery.c.openraven.net'
+    BUILD_ID: $CI_PIPELINE_ID
+  only:
+    refs:
+      - master
+
 
 bump-from-external-pipeline:
   stage: build

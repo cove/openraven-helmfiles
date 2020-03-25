@@ -20,4 +20,5 @@ for line in sys.stdin:
 
 manifest['helmfile_git_ref'] = os.environ['CI_COMMIT_SHA']
 manifest['timestamp'] = datetime.now(tz=None).isoformat()
+manifest['build_id'] = os.environ['CI_PIPELINE_ID']
 print(json.dumps(manifest))

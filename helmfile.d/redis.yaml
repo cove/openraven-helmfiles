@@ -1,0 +1,24 @@
+repositories:
+- name: bitnami
+  url: https://charts.bitnami.com/bitnami
+
+releases:
+{{ $redisChartVersion := "10.5.13"}}
+- name: redis
+  namespace: ui
+
+  chart: bitnami/redis
+  version: {{ $redisChartVersion }}
+  values:
+  - ./values/redis/{{ $redisChartVersion }}.yaml
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

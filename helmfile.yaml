@@ -3,6 +3,7 @@ helmfiles:
 {{ $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
 - path: {{ $gitUrl }}@helmfile.d/storage-class.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/ingress.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/redis.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/oauth2-proxy.yaml?ref={{ $gitRef }}
 {{ if (env "CERT_MANAGER_ZONE_ID") }}
 - path: {{ $gitUrl }}@helmfile.d/cert-manager.yaml?ref={{ $gitRef }}

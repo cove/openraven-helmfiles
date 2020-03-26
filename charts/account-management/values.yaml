@@ -40,10 +40,16 @@ service:
 ingress:
   enabled: true
   annotations:
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email,
+      x-auth-request-access-token
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header cookie "";
+      auth_request_set $auth_cookie $upstream_http_set_cookie;
+      add_header Set-Cookie $auth_cookie;
+      auth_request_set $bearer_token $upstream_http_x_auth_request_access_token;
+      proxy_set_header authorization 'Bearer $bearer_token';
   hosts:
     - host: #Check in ingress.yml
       paths:

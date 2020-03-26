@@ -8,7 +8,7 @@ extraArgs:
   pass-basic-auth: "true"
   pass-user-headers: "true"
   pass-host-header: "true"
-  pass-authorization-header: "true"
+  pass-authorization-header: "false"
   set-xauthrequest: "true"
   set-authorization-header: "true"
   cookie-secure: "true"
@@ -19,6 +19,8 @@ extraArgs:
   silence-ping-logging: "true"
   ssl-upstream-insecure-skip-verify: "true"
   ssl-insecure-skip-verify: "true"
+  session-store-type: "redis"
+  redis-connection-url: "redis://redis-master.ui.svc.cluster.local:6379/0"
 
 image:
   tag: "v5.0.0"

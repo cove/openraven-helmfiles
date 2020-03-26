@@ -1,0 +1,25 @@
+#Diffs from https://github.com/bitnami/charts/blob/8ed692f51b4277a9175379a9adfe1e22ea709aec/bitnami/redis/values-production.yaml
+cluster:
+  slaveCount: 2 # was 3 in production values
+usePassword: false
+master:
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 200m
+    limits:
+      memory: 512Mi
+      cpu: "1"
+  persistence:
+    enabled: false
+
+slave:
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 200m
+    limits:
+      memory: 512Mi
+      cpu: "1"
+  persistence:
+    enabled: false

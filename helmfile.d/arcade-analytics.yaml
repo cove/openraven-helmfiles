@@ -10,7 +10,7 @@ releases:
 - name: arcade-analytics
   namespace: ui
   chart: openraven/arcade-analytics
-  version: 0.130873962.0
+  version: 0.130873962.1
   wait: true
   timeout: 300
   hooks:

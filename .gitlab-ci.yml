@@ -124,7 +124,7 @@ validate-staging:
   <<: *dont_run_on_external_pipelines
   stage: validate
   trigger:
-    project: openraven/odin-tests
+    project: openraven/openraven/odin-tests
     strategy: depend
   variables:
     RELEASE_CHANNEL: openraven-deploy-staging
@@ -139,7 +139,7 @@ validate-staging-discovery:
   <<: *dont_run_on_external_pipelines
   stage: validate
   trigger:
-    project: openraven/odin-tests
+    project: openraven/openraven/odin-tests
     strategy: depend
   variables:
     RELEASE_CHANNEL: openraven-deploy-staging

@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  registry: docker.openraven.io
-  repository: open/account-management
+  registry: registry.gitlab.com
+  repository: openraven/open/account-management
   # Pulled from minor value in Chart.yaml version:
   tag: ~
   pullPolicy: IfNotPresent

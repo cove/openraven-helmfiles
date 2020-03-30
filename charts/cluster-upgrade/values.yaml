@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  registry: docker.openraven.io
-  repository: open/cluster-upgrade
+  registry: registry.gitlab.com
+  repository: openraven/open/cluster-upgrade
   # Pulled from minor value in Chart.yaml version:
   tag: ~
   pullPolicy: IfNotPresent

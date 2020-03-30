@@ -1,5 +1,5 @@
 helmfiles:
-{{ $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://git.openraven.io/open/helm-charts/helmfiles.git" }}
+{{ $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://gitlab.com/openraven/open/helm-charts/helmfiles.git" }}
 {{ $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
 - path: {{ $gitUrl }}@helmfile.d/storage-class.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/ingress.yaml?ref={{ $gitRef }}

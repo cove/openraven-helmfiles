@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  registry: docker.openraven.io
-  repository: open/aws-discovery
+  registry: registry.gitlab.com
+  repository: openraven/open/aws-discovery
   tag: ~
   pullPolicy: IfNotPresent
 

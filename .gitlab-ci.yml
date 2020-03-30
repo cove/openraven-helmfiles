@@ -91,7 +91,7 @@ publish-helm-charts-staging:
   <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
-    HELM_S3_BUCKET: openraven-deploy-cwebber-dev
+    HELM_S3_BUCKET: openraven-deploy-staging
   only:
     refs:
       - master
@@ -103,7 +103,7 @@ publish-helmfile-to-s3-staging:
   <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
-    HELM_S3_BUCKET: openraven-deploy-cwebber-dev
+    HELM_S3_BUCKET: openraven-deploy-staging
   only:
     refs:
       - master

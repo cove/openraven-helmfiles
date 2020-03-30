@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  registry: docker.openraven.io
-  repository: open/dmap
+  registry: registry.gitlab.com
+  repository: openraven/open/dmap
   #Pulled from minor value in version
   tag: ~
   pullPolicy: IfNotPresent

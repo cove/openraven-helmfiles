@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  registry: docker.openraven.io
-  repository: open/portscan
+  registry: registry.gitlab.com
+  repository: openraven/open/portscan
   tag: ~
   pullPolicy: IfNotPresent
 

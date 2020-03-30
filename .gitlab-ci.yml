@@ -7,7 +7,7 @@ stages:
 - chatops
 
 include:
-- project: open/gitlab-ci
+- project: openraven/open/gitlab-ci
   file: /chatops-shell.yml
 
 # variables:
@@ -25,7 +25,7 @@ include:
 package-helm-charts:
   <<: *dont_run_on_external_pipelines
   stage: build
-  image: &img docker.openraven.io/openraven/ci/helmfile-awscli:2588
+  image: &img registry.gitlab.com/openraven/openraven/ci/helmfile-awscli:helm3-130859405
   artifacts:
     name: helm artifacts
     expire_in: 30 days
@@ -91,7 +91,7 @@ publish-helm-charts-staging:
   <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
-    HELM_S3_BUCKET: openraven-deploy-staging
+    HELM_S3_BUCKET: openraven-deploy-cwebber-dev
   only:
     refs:
       - master
@@ -103,7 +103,7 @@ publish-helmfile-to-s3-staging:
   <<: *dont_run_on_external_pipelines
   stage: deploy
   variables:
-    HELM_S3_BUCKET: openraven-deploy-staging
+    HELM_S3_BUCKET: openraven-deploy-cwebber-dev
   only:
     refs:
       - master

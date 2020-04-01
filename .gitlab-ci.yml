@@ -135,19 +135,20 @@ validate-staging:
     refs:
       - master
 
-validate-staging-discovery:
-  <<: *dont_run_on_external_pipelines
-  stage: validate
-  trigger:
-    project: openraven/openraven/odin-tests
-    strategy: depend
-  variables:
-    RELEASE_CHANNEL: openraven-deploy-staging
-    BASE_URL: 'https://staging-discovery.c.openraven.net'
-    BUILD_ID: $CI_PIPELINE_ID
-  only:
-    refs:
-      - master
+# Disabling until we have this env back up
+#validate-staging-discovery:
+#  <<: *dont_run_on_external_pipelines
+#  stage: validate
+#  trigger:
+#    project: openraven/openraven/odin-tests
+#    strategy: depend
+#  variables:
+#    RELEASE_CHANNEL: openraven-deploy-staging
+#    BASE_URL: 'https://staging-discovery.c.openraven.net'
+#    BUILD_ID: $CI_PIPELINE_ID
+#  only:
+#    refs:
+#      - master
 
 
 bump-from-external-pipeline:

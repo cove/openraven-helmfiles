@@ -1,24 +1,19 @@
-{{- if .Values.ingress.enabled -}}
-{{- $fullName := include "portscan.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if .Values.ingressauth.enabled -}}
+{{- $fullName := include "dmap.fullname" . -}}
 apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "portscan.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+{{ include "dmap.labels" . | indent 4 }}
+  {{- with .Values.ingressauth.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-{{- if .Values.ingress.tls }}
+{{- if .Values.ingressauth.tls }}
   tls:
-  {{- range .Values.ingress.tls }}
+  {{- range .Values.ingressauth.tls }}
     - hosts:
       {{- range .hosts }}
         - {{ . | quote }}
@@ -27,7 +22,7 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .Values.ingress.hosts }}
+  {{- range .Values.ingressauth.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -35,7 +30,7 @@ spec:
           - path: {{ . }}
             backend:
               serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
+              servicePort: http
         {{- end }}
   {{- end }}
 {{- end }}

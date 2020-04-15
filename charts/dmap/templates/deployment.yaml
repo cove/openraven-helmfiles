@@ -42,6 +42,11 @@ spec:
               value: prod
             - name: MANAGEMENT_SERVER_PORT
               value: '8080'
+            - name: GREMLIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: root-password              
+                  name: {{ include "dmap.fullname" . }}-secret           
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

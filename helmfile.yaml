@@ -21,13 +21,8 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 - path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/arcade-analytics.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/metrics-server.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/dmap.yaml?ref={{ $gitRef }}
 {{ end }}
 - path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
-{{ if (env "INCLUDE_DMAP") }}
-- path: {{ $gitUrl }}@helmfile.d/dmap.yaml?ref={{ $gitRef }}
-{{ end }}
-{{ if (env "INCLUDE_PORTSCAN") }}
-- path: {{ $gitUrl }}@helmfile.d/portscan.yaml?ref={{ $gitRef }}
-{{ end }}
 - path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}

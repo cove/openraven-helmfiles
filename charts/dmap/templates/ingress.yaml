@@ -22,8 +22,9 @@ spec:
   {{- end }}
 {{- end }}
   rules:
+  {{- $openravenIngressHostname := .Values.global.openravenIngressHostname -}}
   {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: {{ $openravenIngressHostname }}
       http:
         paths:
         {{- range .paths }}

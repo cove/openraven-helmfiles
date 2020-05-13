@@ -65,6 +65,8 @@ spec:
                 secretKeyRef:
                   key: root-password
                   name: '{{ include "graph-explorer.fullname" . }}-secret'
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.java.vmArgs }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

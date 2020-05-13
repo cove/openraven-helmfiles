@@ -61,11 +61,10 @@ ingress:
 resources:
   requests:
     memory: 1Gi
-    cpu: "1"
   limits:
     memory: 1Gi
-    cpu: "2"
-
+java:
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
 nodeSelector: {}
 
 tolerations: []

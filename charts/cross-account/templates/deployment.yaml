@@ -58,6 +58,8 @@ spec:
               value: "128KB"
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.java.vmArgs }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

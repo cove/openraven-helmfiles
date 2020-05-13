@@ -59,6 +59,8 @@ spec:
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA
               value: "groupId:{{ .Values.global.groupId }}"
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.java.vmArgs }}
 {{ if .Values.extraEnv }}
             {{- toYaml .Values.extraEnv | indent 12 }}
 {{ end }}

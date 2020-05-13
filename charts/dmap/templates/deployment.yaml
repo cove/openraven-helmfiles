@@ -46,7 +46,9 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: root-password              
-                  name: {{ include "dmap.fullname" . }}-secret           
+                  name: {{ include "dmap.fullname" . }}-secret
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.java.vmArgs }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

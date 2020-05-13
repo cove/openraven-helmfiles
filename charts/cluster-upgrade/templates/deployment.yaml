@@ -105,6 +105,8 @@ spec:
               # The name of the cluster selected during provisioning
             - name: CLUSTER_NAME
               value: {{ .Values.global.clusterName | quote}}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.java.vmArgs }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

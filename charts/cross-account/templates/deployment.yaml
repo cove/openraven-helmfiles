@@ -48,6 +48,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            # this env-var is a formal standard:
+            # https://docs.oracle.com/en/java/javase/11/troubleshoot/environment-variables-and-system-properties.html#GUID-A91E7E21-2E91-48C4-89A4-836A7C0EE93B
+            - name: JAVA_TOOL_OPTIONS
+              value: "{{ .Values.java.java_tool_options }}"
             - name: SPRING_PROFILES_ACTIVE
               value: default, prod
             - name: MANAGEMENT_SERVER_PORT

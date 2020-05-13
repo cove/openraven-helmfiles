@@ -55,12 +55,19 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+java:
+  # the most concise summary: https://www.eclipse.org/openj9/docs/xxusecontainersupport/
+  # there does not appear to be an equivalent page for J11, and certainly not for Zulu's docs
+  # https://docs.oracle.com/en/java/javase/13/docs/specs/man/java.html
+  java_tool_options: >-
+    -XX:+UseContainerSupport
+    -XX:MaxRAMPercentage=100
 resources:
   requests:
-    memory: 512Mi
+    memory: 1G
     cpu: 500m
   limits:
-    memory: 512Mi
+    memory: 1G
     cpu: "1"
 
 nodeSelector: {}

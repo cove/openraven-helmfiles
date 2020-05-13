@@ -10,7 +10,7 @@ releases:
 - name: ui
   namespace: ui
   chart: openraven/productui
-  version: 0.145727416.0
+  version: 0.145746551.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

@@ -3,6 +3,8 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+{{ $serviceClientId  := requiredEnv "SERVICE_CLIENT_ID" }}
+{{ $serviceClientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
 - name: openraven
   url: {{ $ourUrl }}
 
@@ -16,6 +18,8 @@ releases:
   - global:
       groupId: {{ env "GROUP_ID" }}
       openravenIngressHostname: {{ $ingHostname }}
+      serviceClientId: {{ $serviceClientId }}
+      serviceClientSecret: {{ $serviceClientSecret }}
 
   - ingress:
       tls:

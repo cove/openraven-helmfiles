@@ -19,9 +19,9 @@ releases:
 
   chart: stable/oauth2-proxy
   # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
-  version: 2.1.1
+  version: 3.0.0
   values:
-  - ./values/oauth2-proxy/2.1.1.yaml
+  - ./values/oauth2-proxy/3.0.0.yaml
   - global:
       serviceClientId: {{ $clientId }}
       serviceClientSecret: {{ $clientSecret }}

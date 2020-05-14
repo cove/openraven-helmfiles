@@ -1,5 +1,5 @@
 {{ $vMap := $.Chart.Version | split "." }}
-{{- $imageTag := .Values.image.tag | default $vMap._1 -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -58,6 +58,10 @@ spec:
               value: "128KB"
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
+            - name: SERVICE_CLIENT_ID
+              value: {{ .Values.global.serviceClientId }}
+            - name: SERVICE_CLIENT_SECRET
+              value: {{ .Values.global.serviceClientSecret }}
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
       {{- with .Values.nodeSelector }}

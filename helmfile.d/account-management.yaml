@@ -19,7 +19,8 @@ releases:
       adminClientId: {{ env "ADMIN_CLIENT_ID" }}
       adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
-
+  - releaseChannel: {{ $s3Bucket }}
+  - releaseVersion: 1.1.0
   - ingress:
       tls:
       - secretName: www-tls

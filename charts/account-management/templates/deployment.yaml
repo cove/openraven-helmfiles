@@ -76,6 +76,10 @@ spec:
               value: {{ .Values.global.groupId }}
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
+            - name: OPENRAVEN_APP_V1_CLUSTER_RELEASE-CHANNEL
+              value: {{ .Values.releaseChannel }}
+            - name: OPENRAVEN_APP_V1_CLUSTER_RELEASE-VERSION
+              value: {{.Values.releaseVersion}}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

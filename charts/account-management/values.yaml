@@ -66,6 +66,8 @@ resources:
     memory: 512Mi
   limits:
     memory: 512Mi  # This could probably be lower, but giving a little room on the upside.
+releaseChannel: ~
+releaseVersion: ~
 
 java:
   vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100

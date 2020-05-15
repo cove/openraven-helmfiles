@@ -13,6 +13,7 @@ releases:
   version: 0.146194445.0
   wait: false
   values:
+  - ./values/releaseVersion.yaml
   - global:
       groupId: {{ env "GROUP_ID" }}
       openravenIngressHostname: {{ $ingHostname }}
@@ -20,7 +21,6 @@ releases:
       adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
   - releaseChannel: {{ $s3Bucket }}
-  - releaseVersion: 1.1.0
   - ingress:
       tls:
       - secretName: www-tls

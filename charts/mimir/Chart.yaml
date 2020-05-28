@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: "1.0"
+name: mimir
+description: Open Raven discovery and ingestion services
+type: application
+version: 1.150357113.0

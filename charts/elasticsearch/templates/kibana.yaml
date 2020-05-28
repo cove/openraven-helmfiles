@@ -1,0 +1,38 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: {{ .Values.kibana_service | quote }}
+spec:
+  version: 7.7.0
+  count: 1
+  elasticsearchRef:
+    name: {{ .Values.elasticsearch_service | quote }}
+  config:
+    xpack.security.enabled: false
+    server.basePath: {{ .Values.kibana_route | quote }}
+    server.rewriteBasePath: true
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  podTemplate:
+    metadata:
+      labels:
+        {{- include "elasticsearch.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ .Values.kibana_service | quote }}
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: {{ .Values.kibana_route | quote }}
+            port: 5601
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5

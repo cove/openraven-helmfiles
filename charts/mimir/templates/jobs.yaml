@@ -20,6 +20,7 @@ spec:
               image: {{ .Values.curl_image }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               args:
+                - "-v"
                 - "-X"
                 - POST
                 - {{ include "mimir.baseUrl" . }}/config_for_account
@@ -48,6 +49,7 @@ spec:
               image: {{ .Values.curl_image }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               args:
+                - "-v"
                 - "-X"
                 - POST
                 - {{ include "mimir.baseUrl" . }}/ingest_from_snapshot
@@ -76,6 +78,7 @@ spec:
               image: {{ .Values.curl_image }}
               imagePullPolicy: {{ .Values.image.pullPolicy }}
               args:
+                - "-v"
                 - "-X"
                 - POST
                 - {{ include "mimir.baseUrl" . }}/organization_info

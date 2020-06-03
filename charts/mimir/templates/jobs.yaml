@@ -84,3 +84,32 @@ spec:
                 - {{ include "mimir.baseUrl" . }}/organization_info
               resources:
                 {{- toYaml .Values.jobresources | nindent 16 }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "mimir.fullname" . }}-size-job
+  labels:
+{{ include "mimir.labels" . | indent 4 }}
+spec:
+  schedule: {{ .Values.schedules.sizejob | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "mimir.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name }}-size-job
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: size-job
+              image: {{ .Values.curl_image }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args:
+                - "-v"
+                - "-X"
+                - POST
+                - {{ include "mimir.baseUrl" . }}/refresh_sizes
+              resources:
+                {{- toYaml .Values.jobresources | nindent 16 }}

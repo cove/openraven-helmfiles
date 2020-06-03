@@ -58,8 +58,9 @@ curl_image: "curlimages/curl:7.70.0"
 
 schedules:
   organizationjob: "5 * * * *"
-  snapshotjob: "35 * * * *"
-  configjob: "15 * * * *"
+  snapshotjob: "35 */2 * * *"
+  configjob: "15 */3 * * *"
+  sizejob: "45 */2 * * *"
 
 nodeSelector: {}
 

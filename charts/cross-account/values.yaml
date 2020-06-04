@@ -15,6 +15,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+sentry_dsn: https://49533685193541daacc31a0c86e6bb11@o322024.ingest.sentry.io/5264893
 global:
   groupId: ~
   serviceClientId: ~
@@ -68,7 +69,7 @@ resources:
   limits:
     memory: 1G
 java:
-  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=90
 
 nodeSelector: {}
 

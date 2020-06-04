@@ -58,6 +58,12 @@ spec:
               value: "128KB"
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
+            - name: SENTRY_DSN
+              value: "{{ .Values.sentry_dsn }}"
+            - name: SENTRY_EXTRA
+              value: "groupId:{{ .Values.global.groupId }}"
+            - name: SENTRY_RELEASE
+              value: "{{ .Chart.Version }}"
             - name: SERVICE_CLIENT_ID
               value: {{ .Values.global.serviceClientId }}
             - name: SERVICE_CLIENT_SECRET

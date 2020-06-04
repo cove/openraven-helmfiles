@@ -1,0 +1,25 @@
+repositories:
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+{{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+- name: openraven
+  url: {{ $ourUrl }}
+
+releases:
+- name: dmap-scheduler
+  namespace: dmap
+  chart: openraven/dmap-scheduler
+  version: 0.152702009.0
+  wait: false
+
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

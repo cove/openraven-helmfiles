@@ -70,7 +70,9 @@ affinity: {}
 
 mimir:
   config:
-    JAVA_TOOL_OPTIONS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=100"
+    JAVA_TOOL_OPTIONS: >-
+       -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+       -Djava.net.preferIPv4Addresses=true
     SERVER_MAX-HTTP-HEADER-SIZE: "128KB"
     MANAGEMENT_SERVER_PORT: 8080
     SERVER_PORT: 80

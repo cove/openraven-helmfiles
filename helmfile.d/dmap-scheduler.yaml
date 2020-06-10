@@ -9,7 +9,7 @@ releases:
 - name: dmap-scheduler
   namespace: dmap
   chart: openraven/dmap-scheduler
-  version: 0.152969876.0
+  version: 0.154617493.0
   wait: false
 
   hooks:

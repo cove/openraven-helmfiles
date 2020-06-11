@@ -33,6 +33,8 @@ releases:
       serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ $ingHostname }}
+  - elasticsearch:
+      bucketname: {{ $s3Bucket }}
   - ingress:
       tls:
       # be careful, this needs to be the same name from productui.yaml

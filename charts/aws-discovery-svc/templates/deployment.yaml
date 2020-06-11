@@ -42,6 +42,8 @@ spec:
           env:
             - name: MANAGEMENT_SERVER_PORT
               value: "8080"
+            - name: MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED
+              value: "false"
             - name: SERVER_PORT
               value: "80"
             - name: GREMLIN_PASSWORD

@@ -12,6 +12,7 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/elasticsearch.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/productui.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/elastic-search-node-client.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/introspection.yaml?ref={{ $gitRef }}
 {{/*
 We are purposefully picking an environment variable that cluster-upgrade
 will have but that helmfile0 does not, so this gets installed post, err, install;

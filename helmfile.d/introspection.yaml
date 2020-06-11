@@ -1,0 +1,36 @@
+repositories:
+  {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+  {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+  {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+  {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+  - name: openraven
+    url: {{ $ourUrl }}
+
+releases:
+- name: introspect
+  namespace: ui
+  chart: openraven/introspection
+  version: 0.1.0
+  missingFileHandler: Warn
+  wait: true
+  timeout: 300
+  installed: true
+  hooks:
+  - events: ["presync"]
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+           kubectl create      namespace $my_ns
+      fi
+  values:
+  - global:
+      openravenIngressHostname: {{ $ingHostname }}
+  - ingress:
+      tls:
+      - secretName: www-tls
+        hosts:
+        - {{ $ingHostname }}

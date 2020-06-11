@@ -25,6 +25,28 @@ spec:
       serviceAccountName: {{ template "elastic-search-node-client.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: config-template
+        image: {{ .Values.elasticsearch.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/configtemplate.json"
+        - "--output={{ .Values.elasticsearch.url }}/configservice"
+        - "--type=template"
+      - name: assetgroup-template
+        image: {{ .Values.elasticsearch.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/assetgrouptemplate.json"
+        - "--output={{ .Values.elasticsearch.url }}/assetgroup"
+        - "--type=template"
+      - name: assetgroup-data
+        image: {{ .Values.elasticsearch.image }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args:
+        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/assetgroups.json"
+        - "--output={{ .Values.elasticsearch.url }}/assetgroup"
+        - "--type=data"
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

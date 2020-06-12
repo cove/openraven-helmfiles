@@ -1,35 +1,6 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ include "mimir.fullname" . }}-configservice-job
-  labels:
-{{ include "mimir.labels" . | indent 4 }}
-spec:
-  schedule: {{ .Values.schedules.configjob | quote }}
-  jobTemplate:
-    spec:
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: {{ include "mimir.name" . }}
-            app.kubernetes.io/instance: {{ .Release.Name }}-configservice-job
-        spec:
-          restartPolicy: OnFailure
-          containers:
-            - name: configservice-job
-              image: {{ .Values.curl_image }}
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
-              args:
-                - "-v"
-                - "-X"
-                - POST
-                - {{ include "mimir.baseUrl" . }}/config_for_account
-              resources:
-                {{- toYaml .Values.jobresources | nindent 16 }}
----
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
   name: {{ include "mimir.fullname" . }}-snapshot-job
   labels:
 {{ include "mimir.labels" . | indent 4 }}
@@ -44,6 +15,23 @@ spec:
             app.kubernetes.io/instance: {{ .Release.Name }}-snapshot-job
         spec:
           restartPolicy: OnFailure
+          initContainers:
+            - name: organization-job
+              image: {{ .Values.curl_image }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args:
+                - "-v"
+                - "-X"
+                - POST
+                - {{ include "mimir.baseUrl" . }}/organization_info
+            - name: configservice-job
+              image: {{ .Values.curl_image }}
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args:
+                - "-v"
+                - "-X"
+                - POST
+                - {{ include "mimir.baseUrl" . }}/config_for_account
           containers:
             - name: snapshot-job
               image: {{ .Values.curl_image }}
@@ -53,63 +41,5 @@ spec:
                 - "-X"
                 - POST
                 - {{ include "mimir.baseUrl" . }}/ingest_from_snapshot
-              resources:
-                {{- toYaml .Values.jobresources | nindent 16 }}
----
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: {{ include "mimir.fullname" . }}-organization-job
-  labels:
-{{ include "mimir.labels" . | indent 4 }}
-spec:
-  schedule: {{ .Values.schedules.organizationjob | quote }}
-  jobTemplate:
-    spec:
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: {{ include "mimir.name" . }}
-            app.kubernetes.io/instance: {{ .Release.Name }}-organization-job
-        spec:
-          restartPolicy: OnFailure
-          containers:
-            - name: organization-job
-              image: {{ .Values.curl_image }}
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
-              args:
-                - "-v"
-                - "-X"
-                - POST
-                - {{ include "mimir.baseUrl" . }}/organization_info
-              resources:
-                {{- toYaml .Values.jobresources | nindent 16 }}
----
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: {{ include "mimir.fullname" . }}-size-job
-  labels:
-{{ include "mimir.labels" . | indent 4 }}
-spec:
-  schedule: {{ .Values.schedules.sizejob | quote }}
-  jobTemplate:
-    spec:
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: {{ include "mimir.name" . }}
-            app.kubernetes.io/instance: {{ .Release.Name }}-size-job
-        spec:
-          restartPolicy: OnFailure
-          containers:
-            - name: size-job
-              image: {{ .Values.curl_image }}
-              imagePullPolicy: {{ .Values.image.pullPolicy }}
-              args:
-                - "-v"
-                - "-X"
-                - POST
-                - {{ include "mimir.baseUrl" . }}/refresh_sizes
               resources:
                 {{- toYaml .Values.jobresources | nindent 16 }}

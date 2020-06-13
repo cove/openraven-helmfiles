@@ -4,4 +4,4 @@ description: A Helm chart to install dmap service
 name: dmap
 # Minor version is our image tag, no need to set in values
 # Please use patch for multiple revs of a specific build
-version: 0.155065264.0
+version: 0.155815201.0

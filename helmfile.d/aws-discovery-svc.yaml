@@ -98,15 +98,6 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, RSH
 
-  - name: aws-docdb-discovery-svc
-    <<: *default
-    values:
-    - ./values/odbRootPassword.yaml
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, DOC
-
   - name: aws-fsx-discovery-svc
     <<: *default
     values:

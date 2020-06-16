@@ -10,7 +10,7 @@ releases:
 - name: mimir
   namespace: ui
   chart: openraven/mimir
-  version: 0.156928277.0
+  version: 0.156951824.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

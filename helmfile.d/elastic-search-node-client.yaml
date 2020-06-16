@@ -10,7 +10,7 @@ releases:
 - name: elastic-search-node-client
   namespace: ui
   chart: openraven/elastic-search-node-client
-  version: 0.156570631.0
+  version: 0.156928095.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

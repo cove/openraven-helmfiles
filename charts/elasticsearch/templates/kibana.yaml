@@ -2,6 +2,8 @@ apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
   name: {{ .Values.kibana_service | quote }}
+  labels:
+{{ include "elasticsearch.labels" . | indent 4 }}
 spec:
   version: 7.7.0
   count: 1

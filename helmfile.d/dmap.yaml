@@ -10,7 +10,7 @@ releases:
 - name: dmap
   namespace: dmap
   chart: openraven/dmap
-  version: 0.158980878.0
+  version: 0.158980878.1
   installed: true
   hooks:
   - events: ["presync"]
@@ -26,7 +26,6 @@ releases:
   values:
   - global:
       openravenIngressHostname: {{ $ingHostname }}
-  - ./values/odbRootPassword.yaml
   - ingress:
       tls:
       - secretName: www-tls

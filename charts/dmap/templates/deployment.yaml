@@ -42,11 +42,6 @@ spec:
               value: prod
             - name: MANAGEMENT_SERVER_PORT
               value: '8080'
-            - name: GREMLIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: root-password              
-                  name: {{ include "dmap.fullname" . }}-secret
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
           resources:

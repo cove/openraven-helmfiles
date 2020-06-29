@@ -24,7 +24,7 @@ extraArgs:
   scope: "openid profile email offline_access"
 
 image:
-  tag: "v5.1.1"
+  tag: "v6.0.0"
   pullPolicy: "IfNotPresent"
   repository: "quay.io/oauth2-proxy/oauth2-proxy"
 

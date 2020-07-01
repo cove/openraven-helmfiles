@@ -1,0 +1,8 @@
+metrics:
+  kafka:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "{{ .Values.metrics.kafka.port }}"
+        prometheus.io/path: "/metrics"

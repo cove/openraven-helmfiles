@@ -1,5 +1,5 @@
 {{ $vMap := $.Chart.Version | split "." }}
-{{- $imageTag := .Values.image.tag | default $vMap._1 -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -71,7 +71,7 @@ spec:
             - name: SENTRY_EXTRA
               value: "groupId:{{ .Values.global.groupId }}"
             - name: SEGMENT_ANALYTICS_WRITEKEY
-              value: mLZedQqPeRGL19unziVuoVQXDXjMl94F
+              value: {{ .Values.global.segmentWriteKey | quote }}
             - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
               value: {{ .Values.global.groupId }}
             - name: JAVA_TOOL_OPTIONS

@@ -16,6 +16,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 global:
+  adminClientId: ~
+  adminClientSecret: ~
   asgardUrl: https://api.openraven.com
   certManagerAwsKey: ~
   certManagerAwsRegion: ~
@@ -23,6 +25,7 @@ global:
   certManagerDomain: ~
   certManagerEmail: ~
   certManagerZoneId: ~
+  clusterName: ~
   cookieSecret: ~
   frontEndClientId: ~
   groupId: ~

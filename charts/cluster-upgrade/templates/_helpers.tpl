@@ -54,3 +54,12 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Compute the full image: name
+*/}}
+{{- define "cluster-upgrade.image" -}}
+{{- $vMap := $.Chart.Version | split "." -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
+{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ $imageTag }}
+{{- end -}}

@@ -1,5 +1,3 @@
-{{- $vMap := $.Chart.Version | split "." -}}
-{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -29,7 +27,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ $imageTag }}"
+          image: "{{ template "cluster-upgrade.image" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

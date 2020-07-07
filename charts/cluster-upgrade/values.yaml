@@ -16,12 +16,16 @@ nameOverride: ""
 fullnameOverride: ""
 
 global:
+  adminClientId: ~
+  adminClientSecret: ~
+  asgardUrl: https://api.openraven.com
   certManagerAwsKey: ~
   certManagerAwsRegion: ~
   certManagerAwsSecret: ~
   certManagerDomain: ~
   certManagerEmail: ~
   certManagerZoneId: ~
+  clusterName: ~
   cookieSecret: ~
   frontEndClientId: ~
   groupId: ~
@@ -40,6 +44,10 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: true
   name: "cluster-upgrade-sa"
+
+schedules:
+  # Sunday midnight (UTC)
+  tlsRefresh: 0 0 * * 0
 
 podSecurityContext: {}
   # fsGroup: 2000

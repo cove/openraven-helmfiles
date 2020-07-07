@@ -15,6 +15,14 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+global:
+  adminClientId: ~
+  adminClientSecret: ~
+  clusterName: ~
+  groupId: ~
+  openravenIngressHostname: ~
+  segmentWriteKey: mLZedQqPeRGL19unziVuoVQXDXjMl94F
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: false

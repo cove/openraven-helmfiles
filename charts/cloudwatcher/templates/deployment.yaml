@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "shadow-account-watcher.fullname" . }}
+  name: {{ include "cloudwatcher.fullname" . }}
   labels:
-    {{- include "shadow-account-watcher.labels" . | nindent 4 }}
+    {{- include "cloudwatcher.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "shadow-account-watcher.selectorLabels" . | nindent 6 }}
+      {{- include "cloudwatcher.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "shadow-account-watcher.selectorLabels" . | nindent 8 }}
+        {{- include "cloudwatcher.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "shadow-account-watcher.serviceAccountName" . }}
+      serviceAccountName: {{ include "cloudwatcher.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{.Values.image.registry }}/{{ .Values.image.repository }}:{{ $imageTag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "shadow-account-watcher.name" -}}
+{{- define "cloudwatcher.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "shadow-account-watcher.fullname" -}}
+{{- define "cloudwatcher.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,16 +27,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "shadow-account-watcher.chart" -}}
+{{- define "cloudwatcher.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "shadow-account-watcher.labels" -}}
-helm.sh/chart: {{ include "shadow-account-watcher.chart" . }}
-{{ include "shadow-account-watcher.selectorLabels" . }}
+{{- define "cloudwatcher.labels" -}}
+helm.sh/chart: {{ include "cloudwatcher.chart" . }}
+{{ include "cloudwatcher.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -46,17 +46,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "shadow-account-watcher.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "shadow-account-watcher.name" . }}
+{{- define "cloudwatcher.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "cloudwatcher.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "shadow-account-watcher.serviceAccountName" -}}
+{{- define "cloudwatcher.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "shadow-account-watcher.fullname" .) .Values.serviceAccount.name }}
+    {{ default (include "cloudwatcher.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}

@@ -28,3 +28,4 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 - path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/cloudwatcher.yaml?ref={{ $gitRef }}

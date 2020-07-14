@@ -1,0 +1,47 @@
+# Default values for shadow-account-watcher.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: registry.gitlab.com
+  repository: openraven/openraven/cloudwatcher
+  # Pulled from minor value in Chart.yaml version:
+  tag: ~
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: "saw"
+fullnameOverride: "shadow-account-watcher"
+
+sentry_dsn: https://49533685193541daacc31a0c86e6bb11@o322024.ingest.sentry.io/5264893
+
+serviceAccount:
+  create: false
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+
+resources:
+  requests:
+    memory: 1G
+  limits:
+    memory: 1G
+java:
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=90
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -55,8 +55,8 @@ spec:
           - -exc
           - |
             aws s3 cp s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/dashboards.ndjson .
-            curl -XPOST -H "kbn-xsrf: true" --form file=@dashboards.ndjson -fsSL {{ .Values.kibana_url }}/api/saved_objects/_import
-            curl -XPUT -H "Content-Type: application/json" {{ .Values.elasticsearch.url }}/_all/_settings -d '{"index.max_docvalue_fields_search": 250}'
+            curl -XPOST -H "kbn-xsrf: true" --form file=@dashboards.ndjson -fsSL "{{ .Values.kibana_url }}/api/saved_objects/_import?overwrite=true"
+            curl -fsSL -XPUT -H "Content-Type: application/json" {{ .Values.elasticsearch.url }}/_all/_settings -d '{"index.max_docvalue_fields_search": 250}'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

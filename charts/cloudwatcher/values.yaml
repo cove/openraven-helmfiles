@@ -15,7 +15,7 @@ imagePullSecrets: []
 nameOverride: "saw"
 fullnameOverride: "shadow-account-watcher"
 
-sentry_dsn: https://49533685193541daacc31a0c86e6bb11@o322024.ingest.sentry.io/5264893
+sentry_dsn: https://de53a7acdf9d459184af52cd52af4521@o322024.ingest.sentry.io/2084588
 
 serviceAccount:
   create: false

@@ -2,7 +2,6 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 - name: openraven
   url: {{ $ourUrl }}
 
@@ -10,22 +9,13 @@ releases:
 - name: cloudwatcher
   namespace: ui
   chart: openraven/cloudwatcher
-  version: 0.152193421.0
+  version: 0.166573457.0
   wait: false
   values:
   - ./values/releaseVersion.yaml
   - global:
       groupId: {{ env "GROUP_ID" }}
-      openravenIngressHostname: {{ $ingHostname }}
-      adminClientId: {{ env "ADMIN_CLIENT_ID" }}
-      adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
-      clusterName: {{ env "CLUSTER_NAME" | quote }}
   - releaseChannel: {{ $s3Bucket }}
-  - ingress:
-      tls:
-      - secretName: www-tls
-        hosts:
-        - {{ $ingHostname }}
 
   hooks:
   - events: ['presync']

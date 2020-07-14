@@ -1,3 +1,5 @@
+{{ $vMap := $.Chart.Version | split "." }}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

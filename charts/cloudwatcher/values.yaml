@@ -12,8 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
-nameOverride: "saw"
-fullnameOverride: "shadow-account-watcher"
+nameOverride: ""
+fullnameOverride: ""
 
 sentry_dsn: https://de53a7acdf9d459184af52cd52af4521@o322024.ingest.sentry.io/2084588
 

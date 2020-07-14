@@ -33,12 +33,14 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:

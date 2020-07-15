@@ -46,7 +46,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
   hosts:
     - host: #Check in ingress.yml
-      paths: ["/graphql"]
+      paths: ["/graphql-playground"]
 
   tls: []
   #  - secretName: chart-example-tls

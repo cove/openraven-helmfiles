@@ -9,7 +9,7 @@ releases:
 - name: cloudwatcher
   namespace: ui
   chart: openraven/cloudwatcher
-  version: 0.166632168.0
+  version: 0.166651593.0
   wait: false
   values:
   - ./values/releaseVersion.yaml

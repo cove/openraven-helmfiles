@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "cloudwatcher.fullname" . }}-test-connection"
+  labels:
+{{ include "cloudwatcher.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['{{ include "cloudwatcher.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

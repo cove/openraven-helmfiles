@@ -19,6 +19,7 @@ you can pick almost any one from the list in charts/cluster-upgrade/templates/de
 so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UPGRADES_NAME" }}
 - path: {{ $gitUrl }}@helmfile.d/elastic-search-node-client.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/graphql-api-server.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/mimir.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/metrics-server.yaml?ref={{ $gitRef }}

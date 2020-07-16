@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "0.0.0"
 description: A Helm chart to install the cloudwatcher service
 name: cloudwatcher
-version: 0.166654796.0
+version: 0.167540919.0

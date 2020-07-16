@@ -10,7 +10,7 @@ releases:
 - name: graphql-api-server
   namespace: ui
   chart: openraven/graphql-api-server
-  version: 0.167478579.0
+  version: 0.167500310.0
   missingFileHandler: Warn
   wait: true
   timeout: 300

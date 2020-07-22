@@ -10,3 +10,12 @@ releases:
   namespace: kube-system
   chart: openraven/etcd-prune
   version: 0.1.0
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -xc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      kubectl -n $my_ns delete cronjob etcd-prune || true

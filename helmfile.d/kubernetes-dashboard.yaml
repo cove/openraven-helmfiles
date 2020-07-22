@@ -1,15 +1,13 @@
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 repositories:
 - name: kubernetes-dashboard
   url: https://kubernetes.github.io/dashboard/
 
 releases:
-{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-
 - name: kubernetes-dashboard
   namespace: kube-system
-
   chart: kubernetes-dashboard/kubernetes-dashboard
-  # https://github.com/kubernetes/dashboard/tree/master/aio/deploy/helm-chart/kubernetes-dashboard
+  # https://github.com/kubernetes/dashboard/blob/master/aio/deploy/helm-chart/kubernetes-dashboard/Chart.yaml#L17
   version: 2.2.0
   values:
   - fullnameOverride: 'kubernetes-dashboard'
@@ -18,12 +16,12 @@ releases:
       annotations:
         nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
         nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-        nginx.ingress.kubernetes.io/rewrite-target: /$2
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
         nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         nginx.ingress.kubernetes.io/auth-response-headers: "authorization"
       hosts:
         - {{ $ingHostname }}
       paths:
-        - "/admin(/|$)(.*)"
+        - "/admin/(.*)"
   - metricsScraper:
       enabled: true

@@ -10,7 +10,7 @@ releases:
 - name: elasticsearch
   namespace: elasticsearch
   chart: openraven/elasticsearch
-  version: 1.1590644377.1
+  version: 1.1590644377.6
   atomic: true
   wait: true
   force: true

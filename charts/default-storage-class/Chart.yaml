@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: 0.0.0
 description: Creates the default StorageClass in the cluster
 name: default-storage-class
-version: 0.0.2
+version: 0.0.3

@@ -1,6 +1,12 @@
 apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
+  annotations:
+    # We are setting this for two reasons...
+    # 1. We are hitting the bug where it gets set to 0.0.0-UNKNOWN
+    # 2. It allows us to upgrade controller versions for this resource by cheating
+    # https://github.com/elastic/cloud-on-k8s/issues/3023
+    common.k8s.elastic.co/controller-version: {{ .Values.controller_version }}
   name: {{ .Values.kibana_service | quote }}
   labels:
 {{ include "elasticsearch.labels" . | indent 4 }}

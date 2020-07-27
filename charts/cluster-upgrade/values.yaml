@@ -47,7 +47,7 @@ serviceAccount:
   name: "cluster-upgrade-sa"
 
 schedules:
-  tlsRefresh: 0 0 * * 0
+  tlsRefresh: 0 0 * * *
 
 podSecurityContext: {}
   # fsGroup: 2000

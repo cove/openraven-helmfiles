@@ -11,7 +11,7 @@ releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
   chart: openraven/cluster-upgrade
-  version: 0.170161198.0
+  version: 0.171293542.0
   wait: false
   values:
   - global:

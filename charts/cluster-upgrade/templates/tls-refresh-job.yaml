@@ -21,24 +21,18 @@ spec:
             command:
             - bash
             - -exc
+            # language=sh
             - |
               out_fn=cluster-tls.json
+              crt_fn=www-tls.crt
+              key_fn=www-tls.key
               curl -fsSLo $out_fn $ASGARD_URL/api/account/activate/tls/$GROUP_ID
-              python3 -c 'import codecs, json, sys
-              with open(sys.argv[1]) as fh:
-                  data = json.load(fh)
-              crt_b64b = data["tlsCertificateB64"].encode("ascii")
-              key_b64b = data["tlsPrivateKeyB64"].encode("ascii")
-              tls_crt = codecs.decode(crt_b64b, "base64").decode("ascii")
-              tls_key = codecs.decode(key_b64b, "base64").decode("ascii")
-              with open("www-tls.crt", "w") as gh:
-                  gh.write(tls_crt)
-              with open("www-tls.key", "w") as gh:
-                  gh.write(tls_key)
-              ' $out_fn
+              # jq 1.5 does not have "|@base64d"
+              jq -r .tlsCertificateB64 < $out_fn | base64 --decode > $crt_fn
+              jq -r .tlsPrivateKeyB64  < $out_fn | base64 --decode > $key_fn
               # we need the dry-run in order to use "replace" below
               kubectl -n $TLS_NAMESPACE create secret tls www-tls \
-                  --cert=www-tls.crt --key=www-tls.key \
+                  --cert=${crt_fn} --key=${key_fn} \
                   --dry-run -o json > www-tls.secret.json
               exec kubectl -n $TLS_NAMESPACE replace -f www-tls.secret.json
             env:

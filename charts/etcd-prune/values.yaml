@@ -1,0 +1,47 @@
+# we want to ensure this doesn't get scheduled on a Node that may, itself, vanish
+replicaCount: 2
+image:
+  registry: docker.io
+  repository: library/python
+  tag: '3.8'
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+# fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+# runAsUser: 1000
+
+serviceAccount:
+  create: false
+
+resources:
+  requests:
+    # as derived from the metrics-server
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+
+tolerations:
+- effect: NoSchedule
+  operator: Exists
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    # prevent them from being co-scheduled
+    - topologyKey: kubernetes.io/hostname
+

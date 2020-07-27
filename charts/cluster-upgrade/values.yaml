@@ -15,6 +15,7 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+sentry_dsn: https://54e5f8625c5e4fdba66c69eb47bf9e1a@o322024.ingest.sentry.io/5367691
 global:
   adminClientId: ~
   adminClientSecret: ~
@@ -46,7 +47,6 @@ serviceAccount:
   name: "cluster-upgrade-sa"
 
 schedules:
-  # Sunday midnight (UTC)
   tlsRefresh: 0 0 * * 0
 
 podSecurityContext: {}

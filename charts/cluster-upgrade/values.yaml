@@ -30,6 +30,7 @@ global:
   cookieSecret: ~
   frontEndClientId: ~
   groupId: ~
+  segmentWriteKey: mLZedQqPeRGL19unziVuoVQXDXjMl94F
   serviceClientId: ~
   serviceClientSecret: ~
   openravenIngressHostname: ~

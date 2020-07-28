@@ -85,6 +85,8 @@ spec:
               # Carries the current GROUP_ID forward during upgrades when the pod is recreated
             - name: GROUP_ID
               value: {{ .Values.global.groupId }}
+            - name: SEGMENT_ANALYTICS_WRITEKEY
+              value: {{ .Values.global.segmentWriteKey | quote }}
               # Carries the current SERVICE_CLIENT_ID forward during upgrades when the pod is recreated
             - name: SERVICE_CLIENT_ID
               value: {{ .Values.global.serviceClientId }}

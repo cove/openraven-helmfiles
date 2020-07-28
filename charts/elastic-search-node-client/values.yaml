@@ -11,6 +11,9 @@ image:
   tag: ~
   pullPolicy: IfNotPresent
 
+imagePullSecrets: []
+# - name: some-pull-secret
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -33,6 +36,9 @@ securityContext: {}
   # runAsUser: 1000
 
 elastic_url: "http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200"
+elastic_username: ~
+elastic_password: ~
+
 kibana_url: "http://kibana-kb-http.elasticsearch.svc.cluster.local:5601/kibana"
 
 service:
@@ -70,7 +76,7 @@ tolerations: []
 
 affinity: {}
 
-elasticsearch:
+elasticsearch_load:
   image: "elasticdump/elasticsearch-dump:v6.28.4"
   url: "http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200"
   bucketname: ~

@@ -10,7 +10,7 @@ releases:
 - name: elastic-search-node-client
   namespace: ui
   chart: openraven/elastic-search-node-client
-  version: 0.171307799.0
+  version: 0.171307799.1
   missingFileHandler: Warn
   wait: true
   timeout: 300
@@ -33,7 +33,7 @@ releases:
       serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ $ingHostname }}
-  - elasticsearch:
+  - elasticsearch_load:
       bucketname: {{ $s3Bucket }}
   - ingress:
       tls:

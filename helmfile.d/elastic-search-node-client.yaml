@@ -12,9 +12,8 @@ releases:
   chart: openraven/elastic-search-node-client
   version: 0.171307799.1
   missingFileHandler: Warn
-  wait: true
-  timeout: 300
   installed: true
+  force: true
   hooks:
   - events: ["presync"]
     showlogs: true

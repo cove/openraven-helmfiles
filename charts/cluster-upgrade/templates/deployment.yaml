@@ -104,7 +104,13 @@ spec:
               value: {{ .Values.global.adminClientSecret }}
               # The name of the cluster selected during provisioning
             - name: CLUSTER_NAME
-              value: {{ .Values.global.clusterName | quote}}
+              value: {{ .Values.global.clusterName | quote }}
+            - name: SENTRY_DSN
+              value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_EXTRA
+              value: "groupId:{{ .Values.global.groupId }}"
+            - name: SENTRY_RELEASE
+              value: "{{ .Chart.Version }}"
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
       {{- with .Values.nodeSelector }}

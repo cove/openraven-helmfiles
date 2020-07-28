@@ -47,6 +47,16 @@ spec:
         - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/assetgroups.json"
         - "--output={{ .Values.elasticsearch.url }}/assetgroup"
         - "--type=data"
+      - name: kibana-dashboards
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: registry.gitlab.com/openraven/open/build-image:131116232
+        command:
+          - /bin/bash
+          - -exc
+          - |
+            aws s3 cp s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/dashboards.ndjson .
+            curl -XPOST -H "kbn-xsrf: true" --form file=@dashboards.ndjson -fsSL "{{ .Values.kibana_url }}/api/saved_objects/_import?overwrite=true"
+            curl -fsSL -XPUT -H "Content-Type: application/json" {{ .Values.elasticsearch.url }}/_all/_settings -d '{"index.max_docvalue_fields_search": 250}'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

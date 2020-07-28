@@ -1,0 +1,43 @@
+repositories:
+  {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+  {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+  {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+  {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+  - name: openraven
+    url: {{ $ourUrl }}
+
+releases:
+- name: graphql-api-server
+  namespace: ui
+  chart: openraven/graphql-api-server
+  version: 0.171257652.0
+  missingFileHandler: Warn
+  wait: true
+  timeout: 300
+  installed: true
+  hooks:
+  - events: ["presync"]
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+           kubectl create      namespace $my_ns
+      fi
+  values:
+  - global:
+      frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}
+      groupId: {{ requiredEnv "GROUP_ID" }}
+      serviceClientId: {{ requiredEnv "SERVICE_CLIENT_ID" }}
+      serviceClientSecret: {{ requiredEnv "SERVICE_CLIENT_SECRET" }}
+      openravenIngressHostname: {{ $ingHostname }}
+  - elasticsearch:
+      bucketname: {{ $s3Bucket }}
+  - ingress:
+      tls:
+      # be careful, this needs to be the same name from productui.yaml
+      - secretName: www-tls
+        hosts:
+        - {{ $ingHostname }}

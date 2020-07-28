@@ -63,6 +63,8 @@ ingress:
       paths:
         - "/api/orgs"
         - "/api/server"
+        - "/api/scan"
+        - "/api/cloudwatcher"
 
   tls: []
   #  - secretName: chart-example-tls

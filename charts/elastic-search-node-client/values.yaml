@@ -33,6 +33,7 @@ securityContext: {}
   # runAsUser: 1000
 
 elastic_url: "http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200"
+kibana_url: "http://kibana-kb-http.elasticsearch.svc.cluster.local:5601/kibana"
 
 service:
   type: ClusterIP

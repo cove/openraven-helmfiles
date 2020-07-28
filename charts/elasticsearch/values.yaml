@@ -16,3 +16,4 @@ kibana_route: /kibana
 kibana_service: kibana
 elasticsearch_route: /elasticsearch
 elasticsearch_service: elasticsearch
+controller_version: 1.1.1

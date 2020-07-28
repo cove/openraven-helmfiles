@@ -13,11 +13,23 @@ releases:
   version: 0.171307799.1
   missingFileHandler: Warn
   installed: true
-  force: true
-  verify: false
-  recreatePods: true
-  cleanupOnFail: true
   hooks:
+    # This is a terrible option but is really the only viable solution outside of having cluster upgrade do
+    # the dirty work.
+    # https://github.com/roboll/helmfile/issues/471
+  - events: ["prepare"]
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      my_name="{{`{{ .Release.Name }}`}}"
+      if ! helm status -n $my_ns $my_name | grep -q deployed; then
+           echo "Remove $my_name because it is not deployed"
+           # swallow the error intentionally to install no matter what.
+           helm uninstall -n $my_ns $my_name || true
+      fi
   - events: ["presync"]
     showlogs: true
     command: bash

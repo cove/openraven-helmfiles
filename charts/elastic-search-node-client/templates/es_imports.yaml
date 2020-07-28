@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "elastic-search-node-client.fullname" . }}-imports
+  labels:
+{{ include "elastic-search-node-client.labels" . | indent 4 }}
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "elastic-search-node-client.name" . }}-imports
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ template "elastic-search-node-client.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      restartPolicy: OnFailure
+      {{ $kibanaUrl := .Values.kibana_url }}
+      {{ with .Values.elasticsearch_load }}
+      containers:
+      - name: assetgroup-template
+        image: {{ .image }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        args:
+        - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgrouptemplate.json"
+        - "--output={{ .url }}/assetgroup"
+        - "--type=template"
+      - name: assetgroup-data
+        image: {{ .image }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        args:
+        - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgroups.json"
+        - "--output={{ .url }}/assetgroup"
+        - "--type=data"
+      - name: config-template
+        image: {{ .image }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        args:
+          - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/configtemplate.json"
+          - "--output={{ .url }}/configservice"
+          - "--type=template"
+      - name: kibana-dashboards
+        imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        image: docker.io/library/python:3.8
+        command:
+          - /bin/bash
+          - -exc
+          # language=sh
+          - |
+            out_fn=dashboards.ndjson
+            curl -fsSLo ${out_fn} https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/dashboards.ndjson
+            curl -fsSL -H "kbn-xsrf: true" \
+                --form "file=@${out_fn}" \
+                "{{ $kibanaUrl }}/api/saved_objects/_import?overwrite=true"
+            curl -fsSL -XPUT -H "Content-Type: application/json" \
+                -d '{"index.max_docvalue_fields_search": 250}' \
+                {{ .url }}/_all/_settings
+      {{ end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

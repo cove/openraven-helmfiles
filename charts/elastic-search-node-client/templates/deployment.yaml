@@ -1,5 +1,5 @@
 {{- $vMap := $.Chart.Version | split "." -}}
-{{- $imageTag := .Values.image.tag | default $vMap._1 -}}
+{{- $imageTag := .Values.image.tag | default (index $vMap "_1") -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,38 +25,6 @@ spec:
       serviceAccountName: {{ template "elastic-search-node-client.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-      - name: config-template
-        image: {{ .Values.elasticsearch.image }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        args:
-        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/configtemplate.json"
-        - "--output={{ .Values.elasticsearch.url }}/configservice"
-        - "--type=template"
-      - name: assetgroup-template
-        image: {{ .Values.elasticsearch.image }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        args:
-        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/assetgrouptemplate.json"
-        - "--output={{ .Values.elasticsearch.url }}/assetgroup"
-        - "--type=template"
-      - name: assetgroup-data
-        image: {{ .Values.elasticsearch.image }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        args:
-        - "--input=s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/assetgroups.json"
-        - "--output={{ .Values.elasticsearch.url }}/assetgroup"
-        - "--type=data"
-      - name: kibana-dashboards
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        image: registry.gitlab.com/openraven/open/build-image:131116232
-        command:
-          - /bin/bash
-          - -exc
-          - |
-            aws s3 cp s3://{{ .Values.elasticsearch.bucketname }}/{{ .Values.elasticsearch.keyprefix }}/dashboards.ndjson .
-            curl -XPOST -H "kbn-xsrf: true" --form file=@dashboards.ndjson -fsSL "{{ .Values.kibana_url }}/api/saved_objects/_import?overwrite=true"
-            curl -fsSL -XPUT -H "Content-Type: application/json" {{ .Values.elasticsearch.url }}/_all/_settings -d '{"index.max_docvalue_fields_search": 250}'
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -66,11 +34,11 @@ spec:
           env:
             - name: ELASTIC_URL
               value: {{ .Values.elastic_url}}
-            {{- with .Values.elastic_username }}
+            {{- if .Values.elastic_username }}
             - name: USERNAME
               value: {{ .Values.elastic_username }}
             - name: PASSWORD
-              value: {{ .Values.elastic_password }}
+              value: {{ .Values.elastic_password | toJson }}
             {{- end }}
           ports:
             - name: http

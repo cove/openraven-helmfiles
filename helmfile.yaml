@@ -12,13 +12,13 @@ helmfiles:
 - path: {{ $gitUrl }}@helmfile.d/elasticsearch.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/productui.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/introspection.yaml?ref={{ $gitRef }}
+- path: {{ $gitUrl }}@helmfile.d/elastic-search-node-client.yaml?ref={{ $gitRef }}
 {{/*
 We are purposefully picking an environment variable that cluster-upgrade
 will have but that helmfile0 does not, so this gets installed post, err, install;
 you can pick almost any one from the list in charts/cluster-upgrade/templates/deployment.yaml
 so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UPGRADES_NAME" }}
-- path: {{ $gitUrl }}@helmfile.d/elastic-search-node-client.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/graphql-api-server.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/mimir.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}

@@ -23,28 +23,27 @@ spec:
       {{ $kibanaUrl := .Values.kibana_url }}
       {{ with .Values.elasticsearch_load }}
       containers:
-      - name: assetgroup-template
+      - name: elasticdump-imports
         image: {{ .image }}
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
-        args:
-        - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgrouptemplate.json"
-        - "--output={{ .url }}/assetgroup"
-        - "--type=template"
-      - name: assetgroup-data
-        image: {{ .image }}
-        imagePullPolicy: {{ $.Values.image.pullPolicy }}
-        args:
-        - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgroups.json"
-        - "--output={{ .url }}/assetgroup"
-        - "--type=data"
-      - name: config-template
-        image: {{ .image }}
-        imagePullPolicy: {{ $.Values.image.pullPolicy }}
-        args:
-          - "--input=s3://{{ .bucketname }}/{{ .keyprefix }}/configtemplate.json"
-          - "--output={{ .url }}/configservice"
-          - "--type=template"
-      - name: kibana-dashboards
+        command:
+          - /bin/sh
+          - -exc
+          # language=sh
+          - |
+            elasticdump \
+              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgrouptemplate.json \
+              --output={{ .url }}/assetgroup \
+              --type=template
+            elasticdump \
+              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgroups.json \
+              --output={{ .url }}/assetgroup \
+              --type=data
+            elasticdump \
+              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/configtemplate.json \
+              --output={{ .url }}/configservice \
+              --type=template
+      - name: kibana-and-es-updates
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
         image: docker.io/library/python:3.8
         command:
@@ -52,6 +51,13 @@ spec:
           - -exc
           # language=sh
           - |
+            curl -fsSL -d '{
+               "actions" : [
+                  { "add" : { "index" : "aws*", "alias" : "or_assets" } },
+                  { "add" : { "index" : "aws*", "alias" : "or_assets_last_updated" } },
+                  { "add" : { "index" : "aws*", "alias" : "or_assets_first_added" } }
+                ]
+              }' -XPOST -H "Content-Type: application/json" {{ .url }}/_aliases
             out_fn=dashboards.ndjson
             curl -fsSLo ${out_fn} https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/dashboards.ndjson
             curl -fsSL -H "kbn-xsrf: true" \
@@ -60,6 +66,16 @@ spec:
             curl -fsSL -XPUT -H "Content-Type: application/json" \
                 -d '{"index.max_docvalue_fields_search": 250}' \
                 {{ .url }}/_all/_settings
+            # Explicitly not throwing a -f to curl. The indexes wont always be there.
+            curl -sSL -XPUT -H "Content-Type: application/json" \
+                -d '{"index.number_of_replicas": 2}' \
+                {{ .url }}/aws*/_settings
+            curl -sSL -XPUT -H "Content-Type: application/json" \
+                -d '{"index.number_of_replicas": 2}' \
+            {{ .url }}/assetgroup/_settings
+            curl -sSL -XPUT -H "Content-Type: application/json" \
+                -d '{"index.number_of_replicas": 2}' \
+            {{ .url }}/orvn*/_settings
       {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

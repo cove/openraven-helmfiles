@@ -17,7 +17,7 @@ spec:
     # rev the name of the nodeset.
     # https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations
   - name: default-002
-    count: 1
+    count: 3
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data

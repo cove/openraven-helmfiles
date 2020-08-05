@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: the Open Raven product ui
 name: productui
-version: 0.174684575.0
+version: 0.174747343.0

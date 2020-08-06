@@ -55,7 +55,7 @@ spec:
             - name: SENTRY_RELEASE
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA
-              value: "groupId:{{ .Values.global.groupId }}"
+              value: "groupId:{{ .Values.global.groupId }},service:{{ .Release.Name }}}"
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
 {{ if .Values.extraEnv }}

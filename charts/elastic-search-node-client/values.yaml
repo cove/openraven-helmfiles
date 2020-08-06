@@ -41,6 +41,11 @@ elastic_password: ~
 
 kibana_url: "http://kibana-kb-http.elasticsearch.svc.cluster.local:5601/kibana"
 
+global:
+  groupId: ~
+
+sentry_dsn: https://7188f75192984a8bbc36a212ab341b2c@o322024.ingest.sentry.io/5270430
+
 service:
   type: ClusterIP
   port: 80

@@ -40,6 +40,14 @@ spec:
             - name: PASSWORD
               value: {{ .Values.elastic_password | toJson }}
             {{- end }}
+            - name: SENTRY_DSN
+              value: {{ .Values.sentry_dsn | quote }}
+            - name: SENTRY_ENVIRONMENT
+              value: {{ .Values.global.groupId }}
+            - name: SENTRY_RELEASE
+              value: "{{ .Chart.Version }}"
+            - name: SENTRY_EXTRA
+              value: "groupId:{{ .Values.global.groupId }}"
           ports:
             - name: http
               containerPort: 3000

@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+sentry_dsn: "https://fc5ad9c6cb24415198653b291c7f7e10@o322024.ingest.sentry.io/5379176"
+
 image:
   registry: registry.gitlab.com
   repository: openraven/open/account-management
@@ -80,7 +82,7 @@ releaseChannel: ~
 releaseVersion: ~
 
 java:
-  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 
 nodeSelector: {}
 

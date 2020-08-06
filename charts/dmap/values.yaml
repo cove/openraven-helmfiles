@@ -11,6 +11,11 @@ image:
   tag: ~
   pullPolicy: IfNotPresent
 
+global:
+  groupId: ~
+
+sentry_dsn: https://d557df44b5df4057bac234d40efbadde@o322024.ingest.sentry.io/5379389
+
 #imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

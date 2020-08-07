@@ -12,6 +12,10 @@ releases:
   version: 0.172568586.1
   wait: false
 
+  values:
+  - global:
+      groupId: {{ requiredEnv "GROUP_ID" }}
+
   hooks:
   - events: ['presync']
     showlogs: true

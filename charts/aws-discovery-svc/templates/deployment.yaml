@@ -19,7 +19,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           {{ $vMap := $.Chart.Version | split "." }}
-          image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ .Values.image.tag | default $vMap._1 }}"
+          image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ .Values.image.tag | default (index $vMap "_1") }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -55,7 +55,7 @@ spec:
             - name: SENTRY_RELEASE
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA
-              value: "groupId:{{ .Values.global.groupId }},service:{{ .Release.Name }}}"
+              value: "groupId:{{ .Values.global.groupId }},service:{{ .Release.Name }}"
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
 {{ if .Values.extraEnv }}

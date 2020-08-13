@@ -47,7 +47,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: prod,default
+              value: prod,default,dmap
             - name: SERVER_PORT
               value: "80"
             - name: MANAGEMENT_SERVER_PORT

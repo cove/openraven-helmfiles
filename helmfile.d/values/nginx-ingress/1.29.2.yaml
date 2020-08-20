@@ -20,7 +20,19 @@ controller:
     x-default-ssl-ciphers: ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
     ssl-ciphers: "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA"
     x-proxy-real-ip-cidr: 10.128.0.0/16
-    x-http-snippet: ""
+    http-snippet: |
+      server {
+        listen 18080;
+
+        location /nginx_status {
+          allow all;
+          stub_status on;
+        }
+
+        location / {
+          return 404;
+        }
+      }
     x-main-snippet: ""
     x-server-snippet: |
       location /show-me-what-you-got {
@@ -60,6 +72,13 @@ controller:
   metrics:
     enabled: true
 
+  podAnnotations:
+    ad.datadoghq.com/nginx-ingress-controller.check_names: |
+      ["nginx","nginx_ingress_controller"]
+    ad.datadoghq.com/nginx-ingress-controller.init_configs: |
+      [{}, {}]
+    ad.datadoghq.com/nginx-ingress-controller.instances: |
+      [{"nginx_status_url": "http://%%host%%:18080/nginx_status"},{"prometheus_url": "http://%%host%%:10254/metrics"}]
 defaultBackend:
   serviceAccount:
     # don't do this, as of 1.26.2 it still tries to use "default-backend" and pukes
@@ -68,3 +87,4 @@ defaultBackend:
   resources:
     limits:
       memory: 256Mi
+

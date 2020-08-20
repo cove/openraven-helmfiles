@@ -20,12 +20,6 @@ global:
   adminClientId: ~
   adminClientSecret: ~
   asgardUrl: https://api.openraven.com
-  certManagerAwsKey: ~
-  certManagerAwsRegion: ~
-  certManagerAwsSecret: ~
-  certManagerDomain: ~
-  certManagerEmail: ~
-  certManagerZoneId: ~
   clusterName: ~
   cookieSecret: ~
   frontEndClientId: ~
@@ -34,6 +28,7 @@ global:
   serviceClientId: ~
   serviceClientSecret: ~
   openravenIngressHostname: ~
+  installEmail: ~
 
 helmS3Bucket: ~
 # openraven-deploy

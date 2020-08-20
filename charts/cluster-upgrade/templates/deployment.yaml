@@ -15,6 +15,19 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "cluster-upgrade.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
+          [{}]
+        ad.datadoghq.com/{{ .Chart.Name }}.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9404/metrics",
+              "namespace": "{{ .Chart.Name }}",
+              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+            }
+          ]
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -65,18 +78,6 @@ spec:
             - name: OPENRAVEN_UPGRADES_REGION
               value: {{ .Values.helmS3Region }}
             {{ end }}
-            - name: CERT_MANAGER_AWS_KEY
-              value: '{{ .Values.global.certManagerAwsKey}}'
-            - name: CERT_MANAGER_AWS_REGION
-              value: '{{ .Values.global.certManagerAwsRegion}}'
-            - name: CERT_MANAGER_AWS_SECRET
-              value: '{{ .Values.global.certManagerAwsSecret}}'
-            - name: CERT_MANAGER_DOMAIN
-              value: '{{ .Values.global.certManagerDomain}}'
-            - name: CERT_MANAGER_EMAIL
-              value: '{{ .Values.global.certManagerEmail}}'
-            - name: CERT_MANAGER_ZONE_ID
-              value: '{{ .Values.global.certManagerZoneId}}'
             - name: COOKIE_SECRET
               value: '{{ .Values.global.cookieSecret}}'
             # Carries the current FRONTEND_CLIENT_ID forward during upgrades when the pod is recreated
@@ -113,6 +114,9 @@ spec:
               value: "{{ .Chart.Version }}"
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
+            - name: INSTALL_EMAIL
+              value: {{ .Values.global.installEmail | quote }}
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

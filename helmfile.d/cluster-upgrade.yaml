@@ -15,12 +15,6 @@ releases:
   wait: false
   values:
   - global:
-      certManagerAwsKey: {{ env "CERT_MANAGER_AWS_KEY" | toJson }}
-      certManagerAwsRegion: {{ env "CERT_MANAGER_AWS_REGION" | toJson }}
-      certManagerAwsSecret: {{ env "CERT_MANAGER_AWS_SECRET" | toJson }}
-      certManagerDomain: {{ env "CERT_MANAGER_DOMAIN" | toJson }}
-      certManagerEmail: {{ env "CERT_MANAGER_EMAIL" | toJson }}
-      certManagerZoneId: {{ env "CERT_MANAGER_ZONE_ID" | toJson }}
       cookieSecret: {{ env "COOKIE_SECRET" | toJson }}
       frontEndClientId: {{ env "FRONTEND_CLIENT_ID" }}
       groupId: {{ env "GROUP_ID" }}
@@ -30,6 +24,7 @@ releases:
       adminClientId: {{ env "ADMIN_CLIENT_ID" }}
       adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
+      installEmail: {{ env "INSTALL_EMAIL" | quote }}
 
     helmS3Bucket: {{ $s3Bucket }}
     helmS3Key: {{ $s3Key }}

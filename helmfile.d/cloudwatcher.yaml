@@ -11,11 +11,10 @@ releases:
   chart: openraven/cloudwatcher
   version: 0.177202707.0
   wait: false
+
   values:
-  - ./values/releaseVersion.yaml
   - global:
       groupId: {{ env "GROUP_ID" }}
-  - releaseChannel: {{ $s3Bucket }}
 
   hooks:
   - events: ['presync']

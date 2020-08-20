@@ -1,0 +1,57 @@
+repositories:
+{{/* these "env" values come from the helmfile0.pod.yml */}}
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
+{{ $ourUrl       := (printf "https://%s.%s/monitoring" $s3Bucket $s3BucketHost) -}}
+- name: openraven-monitoring
+  url: {{ $ourUrl }}
+
+  {{ $clusterType := "dev" -}}
+  {{ if (env "INSTALL_EMAIL") -}}
+    {{ if (contains "openraven.com" (env "INSTALL_EMAIL")) -}}
+      {{ if (contains "operations" (env "INSTALL_EMAIL")) -}}
+        {{ $clusterType = "internal" -}}
+      {{ end -}}
+  {{ else -}}
+    {{ $clusterType = "customer" -}}
+  {{ end -}}
+{{ else -}}
+  {{ if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy-staging" -}}
+    {{ $clusterType = "internal" -}}
+  {{ end -}}
+  {{if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy-beta" -}}
+    {{ $clusterType = "internal" -}}
+  {{ end -}}
+  {{ if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy" -}}
+    {{ $clusterType = "customer" -}}
+  {{ end -}}
+{{ end -}}
+{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "\\W+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
+releases:
+- name: datadog
+  namespace: datadog
+  chart: openraven-monitoring/openraven-datadog
+  version: 0.0.3
+  wait: false
+  recreatePods: true
+  installed: {{ not (eq $clusterType "dev") }}
+  values:
+  - datadog:
+      datadog: # The second datadog is a result of it being a sub-chart
+        clusterName: {{ $clusterName }}
+        tags:
+          - "cluster_type:{{ $clusterType }}"
+          - "group_id:{{ env "GROUP_ID" }}"
+      clusterAgent:
+        token: {{ env "GROUP_ID" }}
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

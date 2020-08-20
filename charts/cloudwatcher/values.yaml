@@ -4,6 +4,9 @@
 
 replicaCount: 1
 
+global:
+  groupId: ~
+
 image:
   registry: registry.gitlab.com
   repository: openraven/open/cloudwatcher-repo-docker

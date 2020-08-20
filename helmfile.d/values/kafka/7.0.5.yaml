@@ -6,3 +6,15 @@ metrics:
         prometheus.io/scrape: "true"
         prometheus.io/port: "{{ .Values.metrics.kafka.port }}"
         prometheus.io/path: "/metrics"
+        ad.datadoghq.com/kafka-exporter.check_names: |
+            ["openmetrics"]
+        ad.datadoghq.com/kafka-exporter.init_configs: |
+            [{}]
+        ad.datadoghq.com/kafka-exporter.instances: |
+            [
+              {
+                "prometheus_url": "http://%%host%%:9308/metrics",
+                "namespace": "kafka",
+                "metrics": ["*"]
+              }
+            ]

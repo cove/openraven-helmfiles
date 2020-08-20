@@ -11,10 +11,8 @@ templates:
     chart: "openraven/aws-discovery-svc"
     version: 0.180317659.0
     missingFileHandler: Warn
-    wait: true
-    timeout: 300
+    timeout: 600
     installed: true
-    atomic: true
     values:
     - global: &global
         frontEndClientId: {{ requiredEnv "FRONTEND_CLIENT_ID" }}

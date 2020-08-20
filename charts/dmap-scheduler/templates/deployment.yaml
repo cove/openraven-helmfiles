@@ -17,6 +17,19 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "dmap-scheduler.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+      annotations:
+        ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
+          [{}]
+        ad.datadoghq.com/{{ .Chart.Name }}.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9404/metrics",
+              "namespace": "{{ .Chart.Name }}",
+              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+            }
+          ]
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

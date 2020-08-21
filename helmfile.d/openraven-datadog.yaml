@@ -43,7 +43,7 @@ releases:
           - "cluster_type:{{ $clusterType }}"
           - "group_id:{{ env "GROUP_ID" }}"
       clusterAgent:
-        token: {{ env "GROUP_ID" }}
+        token: {{ sha256sum (env "GROUP_ID") }} # must be at least 32 chars
   hooks:
   - events: ['presync']
     showlogs: true

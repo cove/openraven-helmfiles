@@ -34,7 +34,7 @@ resources:
   limits:
     memory: 1Gi
 java:
-  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 
 nodeSelector: {}
 

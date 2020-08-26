@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: "0.0.0"
+description: A Helm chart to install s3 scan service
+name: s3-scan-service
+# Minor version is our image tag, no need to set in values
+# Please use patch for multiple revs of a specific build
+version: 0.178850156.0

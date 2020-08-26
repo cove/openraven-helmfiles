@@ -1,0 +1,43 @@
+ # Default values for s3-scan-service
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: registry.gitlab.com
+  repository: openraven/open/s3-scan-service-repo-docker
+  #Pulled from minor value in version
+  tag: ~
+  pullPolicy: IfNotPresent
+
+global:
+  groupId: ~
+
+sentry_dsn: https://eea6b3c7bbcb4b9cbbdfccef714d42cd@o322024.ingest.sentry.io/5406671
+
+#imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+
+resources:
+  requests:
+    memory: 1Gi
+  limits:
+    memory: 1Gi
+java:
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

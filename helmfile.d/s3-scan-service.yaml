@@ -32,8 +32,3 @@ releases:
       - secretName: www-tls
         hosts:
         - {{ $ingHostname }}
-  - ingressauth:
-      tls:
-      - secretName: www-tls
-        hosts:
-        - {{ $ingHostname }}

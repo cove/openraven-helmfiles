@@ -10,7 +10,7 @@ releases:
 - name: dmap
   namespace: dmap
   chart: openraven/dmap
-  version: 0.182831784.0
+  version: 0.182831784.1
   installed: true
   hooks:
   - events: ["presync"]

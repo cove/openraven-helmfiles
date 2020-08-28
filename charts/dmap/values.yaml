@@ -27,11 +27,10 @@ service:
 ingress:
   enabled: true
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: #Check in ingress.yml
-      paths: ["/api/dmap/scanner"]
+      paths:
+      - /api/dmap/scanner
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -47,7 +46,8 @@ ingressauth:
       proxy_set_header cookie "";
   hosts:
     - host: #Check in ingress.yml
-      paths: ["/api/dmap/user"]
+      paths:
+      - /api/dmap
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -59,7 +59,7 @@ resources:
   limits:
     memory: 1Gi
 java:
-  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 
 nodeSelector: {}
 

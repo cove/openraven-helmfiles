@@ -10,7 +10,7 @@ releases:
 - name: elastic-search-node-client
   namespace: ui
   chart: openraven/elastic-search-node-client
-  version: 0.171888549.2
+  version: 0.184428693.0
   missingFileHandler: Warn
   installed: true
   hooks:

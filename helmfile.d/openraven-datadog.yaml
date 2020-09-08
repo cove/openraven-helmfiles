@@ -8,7 +8,7 @@ repositories:
 
   {{ $clusterType := "dev" -}}
   {{ if (env "INSTALL_EMAIL") -}}
-    {{ if (contains "openraven.com" (env "INSTALL_EMAIL")) -}}
+    {{ if ((contains "openraven.com" (env "INSTALL_EMAIL")) or (contains "phenixqa.com" (env "INSTALL_EMAIL"))) -}}
       {{ if (contains "operations" (env "INSTALL_EMAIL")) -}}
         {{ $clusterType = "internal" -}}
       {{ end -}}

@@ -1,33 +1,35 @@
 {{ $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://gitlab.com/openraven/open/helm-charts/helmfiles.git" }}
 {{ $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
+{{ $baseDir := printf "%s@helmfile.d" $gitUrl }}
 helmfiles:
-- path: {{ $gitUrl }}@helmfile.d/etcd-prune.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/openraven-admin.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/storage-class.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/ingress.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/redis.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/oauth2-proxy.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/kubernetes-dashboard.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/kafka.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/elasticsearch.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/productui.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/introspection.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/elastic-search-node-client.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/storage-class.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/ingress.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/redis.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/oauth2-proxy.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/kubernetes-dashboard.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/kafka.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/elasticsearch.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/productui.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/introspection.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/elastic-search-node-client.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/cross-account.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/account-management.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/cluster-upgrade.yaml?ref={{ $gitRef }}
+
 {{/*
 We are purposefully picking an environment variable that cluster-upgrade
 will have but that helmfile0 does not, so this gets installed post, err, install;
 you can pick almost any one from the list in charts/cluster-upgrade/templates/deployment.yaml
 so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UPGRADES_NAME" }}
-- path: {{ $gitUrl }}@helmfile.d/graphql-api-server.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/mimir.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/aws-discovery-svc.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/metrics-server.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/dmap.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/dmap-scheduler.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/cloudwatcher.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/openraven-datadog.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/graphql-api-server.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/mimir.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/aws-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/metrics-server.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/dmap.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/dmap-scheduler.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/cloudwatcher.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
 {{ end }}
-- path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
-- path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}

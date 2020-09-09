@@ -4,7 +4,8 @@
 helmfiles:
 - path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/storage-class.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/aws-ebs-csi-driver.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/default-storage-class.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/ingress.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/redis.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/oauth2-proxy.yaml?ref={{ $gitRef }}

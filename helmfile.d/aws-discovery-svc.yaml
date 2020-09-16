@@ -41,7 +41,7 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
 
-  - name: aws-account-IAM-discovery-svc
+  - name: aws-account-iam-discovery-svc
     <<: *default
     values:
     - global: *global

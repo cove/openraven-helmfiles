@@ -41,6 +41,14 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
 
+  - name: aws-account-iam-discovery-svc
+    <<: *default
+    values:
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, Accounts
+
   - name: aws-s3-discovery-svc
     <<: *default
     values:
@@ -112,3 +120,19 @@ releases:
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, ESS
+
+  - name: aws-elb-discovery-svc
+    <<: *default
+    values:
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, ELB
+
+  - name: aws-elbv2-discovery-svc
+    <<: *default
+    values:
+    - global: *global
+    - extraEnv:
+        - name: SPRING_PROFILES_ACTIVE
+          value: default, producer, prod, ELBV2

@@ -4,8 +4,15 @@
 helmfiles:
 - path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
+{{/* use the previous one for old clusters */}}
+{{ $volProv := "kubernetes.io/aws-ebs" }}
+{{ if (env "CLUSTER_TAGS_JSON") }}
 - path: {{ $baseDir }}/aws-ebs-csi-driver.yaml?ref={{ $gitRef }}
+{{ $volProv = "ebs.csi.aws.com" }}
+{{ end }}
 - path: {{ $baseDir }}/default-storage-class.yaml?ref={{ $gitRef }}
+  values:
+  - provisioner: {{ $volProv }}
 - path: {{ $baseDir }}/ingress.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/redis.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/oauth2-proxy.yaml?ref={{ $gitRef }}

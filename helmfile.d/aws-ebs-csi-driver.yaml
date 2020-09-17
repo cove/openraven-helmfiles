@@ -1,17 +1,22 @@
 {{ $version := "v0.6.0" }}
+{{ $tagJson := env "CLUSTER_TAGS_JSON" }}
 releases:
 - name: aws-ebs-csi-driver
   namespace: kube-system
   chart: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/releases/download/{{ $version }}/helm-chart.tgz
-  # version: "{{ $version }}"
   wait: true
   values:
   - enableVolumeScheduling: "true"
     enableVolumeResizing: "true"
     enableVolumeSnapshot: "true"
     # https://github.com/kubernetes-sigs/aws-ebs-csi-driver/blob/v0.6.0/aws-ebs-csi-driver/values.yaml#L65-L70
+    {{ if $tagJson }}
+    {{/*
+       we're cheating here to take advantage of the fact that YAML is a superset of JSON
+       since helmfile has no "fromJson" like a sane system :-( */}}
     extraVolumeTags:
-      openraven.io/project: openraven
+{{ $tagJson | fromYaml | toYaml | indent 6 }}
+    {{ end }}
     resources:
       limits:
         memory: 256M

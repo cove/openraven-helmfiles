@@ -10,3 +10,6 @@ releases:
   chart: openraven/default-storage-class
   version: 0.0.3
   wait: true
+  values:
+  # regrettably, this has to be present in order for the values: in helmfile.yaml to supersede it
+  - {{ .Values | toYaml }}

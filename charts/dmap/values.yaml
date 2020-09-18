@@ -12,6 +12,8 @@ image:
   pullPolicy: IfNotPresent
 
 global:
+  adminClientId: ~
+  adminClientSecret: ~
   groupId: ~
 
 sentry_dsn: https://d557df44b5df4057bac234d40efbadde@o322024.ingest.sentry.io/5379389

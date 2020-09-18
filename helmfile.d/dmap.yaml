@@ -27,6 +27,8 @@ releases:
   - global:
       openravenIngressHostname: {{ $ingHostname }}
       groupId: {{ requiredEnv "GROUP_ID" }}
+      adminClientId: {{ requiredEnv "ADMIN_CLIENT_ID" }}
+      adminClientSecret: {{ requiredEnv "ADMIN_CLIENT_SECRET" }}
   - ingress:
       tls:
       - secretName: www-tls

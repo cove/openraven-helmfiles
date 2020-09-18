@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "dmap.fullname" . }}
+  name: {{ include "s3-scan-service.fullname" . }}
   labels:
-{{ include "dmap.labels" . | indent 4 }}
+{{ include "s3-scan-service.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "dmap.name" . }}
+      app.kubernetes.io/name: {{ include "s3-scan-service.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "dmap.name" . }}
+        app.kubernetes.io/name: {{ include "s3-scan-service.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
@@ -24,7 +24,7 @@ spec:
           [
             {
               "prometheus_url": "http://%%host%%:9404/metrics",
-              "namespace": "{{ .Chart.Name }}",
+              "namespace": "dmap",
               "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
             }
           ]
@@ -36,7 +36,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           {{ $vMap := $.Chart.Version | split "." }}
-          image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ .Values.image.tag | default $vMap._1 }}"
+          image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ .Values.image.tag | default (index $vMap "_1") }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -51,10 +51,6 @@ spec:
               path: /actuator/health
               port: 8080
           env:
-            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-ID
-              value: {{ .Values.global.adminClientId }}
-            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-SECRET
-              value: {{ .Values.global.adminClientSecret}}
             - name: SPRING_PROFILES_ACTIVE
               value: prod
             - name: MANAGEMENT_SERVER_PORT

@@ -51,6 +51,10 @@ spec:
               path: /actuator/health
               port: 8080
           env:
+            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-ID
+              value: {{ .Values.global.adminClientId }}
+            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-SECRET
+              value: {{ .Values.global.adminClientSecret}}
             - name: SPRING_PROFILES_ACTIVE
               value: prod
             - name: MANAGEMENT_SERVER_PORT

@@ -28,6 +28,9 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 - path: {{ $gitUrl }}@helmfile.d/cloudwatcher.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/openraven-datadog.yaml?ref={{ $gitRef }}
 {{ end }}
+{{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
+- path: {{ $gitUrl }}@helmfile.d/s3-scan-service.yaml?ref={{ $gitRef }}
+{{ end }}
 - path: {{ $gitUrl }}@helmfile.d/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/account-management.yaml?ref={{ $gitRef }}
 - path: {{ $gitUrl }}@helmfile.d/cluster-upgrade.yaml?ref={{ $gitRef }}

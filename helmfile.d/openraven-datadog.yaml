@@ -3,7 +3,7 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
 {{ $ourUrl       := (printf "https://%s.%s/monitoring" $s3Bucket $s3BucketHost) -}}
-- name: openraven-helm-monitoring
+- name: openraven-repo-monitoring
   url: {{ $ourUrl }}
 
   {{ $clusterType := "dev" -}}
@@ -30,7 +30,7 @@ repositories:
 releases:
 - name: datadog
   namespace: datadog
-  chart: openraven-helm-monitoring/openraven-datadog
+  chart: openraven-repo-monitoring/openraven-datadog
   version: 0.0.3
   wait: false
   recreatePods: true

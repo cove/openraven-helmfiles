@@ -5,13 +5,13 @@ repositories:
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 {{ $serviceClientId  := requiredEnv "SERVICE_CLIENT_ID" }}
 {{ $serviceClientSecret := requiredEnv "SERVICE_CLIENT_SECRET" }}
-- name: openraven-helm
+- name: openraven-repo
   url: {{ $ourUrl }}
 
 releases:
 - name: cross-account
   namespace: ui
-  chart: openraven-helm/cross-account
+  chart: openraven-repo/cross-account
   version: 0.191311790.0
   wait: false
   values:

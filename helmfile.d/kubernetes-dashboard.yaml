@@ -1,12 +1,12 @@
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 repositories:
-- name: kubernetes-dashboard
+- name: kubernetes-dashboard-repo
   url: https://kubernetes.github.io/dashboard/
 
 releases:
 - name: kubernetes-dashboard
   namespace: kube-system
-  chart: kubernetes-dashboard/kubernetes-dashboard
+  chart: kubernetes-dashboard-repo/kubernetes-dashboard
   # https://github.com/kubernetes/dashboard/blob/master/aio/deploy/helm-chart/kubernetes-dashboard/Chart.yaml#L17
   version: 2.2.0
   values:

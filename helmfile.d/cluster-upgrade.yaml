@@ -4,13 +4,13 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $s3Key        := env "HELM_S3_KEY"         | default "charts/helmfile.yaml" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-- name: openraven-helm
+- name: openraven-repo
   url: {{ $ourUrl }}
 
 releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
-  chart: openraven-helm/cluster-upgrade
+  chart: openraven-repo/cluster-upgrade
   version: 0.194343397.0
   wait: false
   values:

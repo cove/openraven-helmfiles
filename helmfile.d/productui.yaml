@@ -3,13 +3,13 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-- name: openraven
+- name: openraven-helm
   url: {{ $ourUrl }}
 
 releases:
 - name: ui
   namespace: ui
-  chart: openraven/productui
+  chart: openraven-helm/productui
   version: 0.194121868.0
   missingFileHandler: Warn
   wait: true

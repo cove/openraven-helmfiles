@@ -57,9 +57,9 @@ ingressauth:
 
 resources:
   requests:
-    memory: 1Gi
+    memory: 2Gi
   limits:
-    memory: 1Gi
+    memory: 2Gi
 java:
   vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 

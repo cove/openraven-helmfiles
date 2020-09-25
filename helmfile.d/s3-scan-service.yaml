@@ -3,13 +3,13 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-- name: openraven-helm
+- name: openraven-repo
   url: {{ $ourUrl }}
 
 releases:
 - name: s3-scan-service
   namespace: dmap
-  chart: openraven-helm/s3-scan-service
+  chart: openraven-repo/s3-scan-service
   version: 0.188945880.0
   installed: true
   hooks:

@@ -1,11 +1,11 @@
 repositories:
-- name: stable
+- name: stable-repo
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
 - name: metrics
   namespace: kube-system
-  chart: stable/metrics-server
+  chart: stable-repo/metrics-server
   # https://github.com/helm/charts/blob/master/stable/metrics-server/Chart.yaml#L5
   version: 2.10.0
   wait: true

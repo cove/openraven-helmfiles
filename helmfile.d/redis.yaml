@@ -1,5 +1,5 @@
 repositories:
-- name: bitnami
+- name: bitnami-repo
   url: https://charts.bitnami.com/bitnami
 
 releases:
@@ -7,7 +7,7 @@ releases:
 - name: redis
   namespace: ui
 
-  chart: bitnami/redis
+  chart: bitnami-repo/redis
   version: {{ $redisChartVersion }}
   values:
   - ./values/redis/{{ $redisChartVersion }}.yaml

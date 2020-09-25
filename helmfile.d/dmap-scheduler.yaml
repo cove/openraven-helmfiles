@@ -2,13 +2,13 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-- name: openraven-helm
+- name: openraven-repo
   url: {{ $ourUrl }}
 
 releases:
 - name: dmap-scheduler
   namespace: dmap
-  chart: openraven-helm/dmap-scheduler
+  chart: openraven-repo/dmap-scheduler
   version: 0.193692139.0
   wait: false
 

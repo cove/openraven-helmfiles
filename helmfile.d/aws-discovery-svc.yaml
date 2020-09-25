@@ -2,13 +2,13 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-  - name: openraven-helm
+  - name: openraven-repo
     url: {{ $ourUrl }}
 
 templates:
   default: &default
     namespace: "aws"
-    chart: "openraven-helm/aws-discovery-svc"
+    chart: "openraven-repo/aws-discovery-svc"
     version: 0.193680825.0
     missingFileHandler: Warn
     timeout: 600

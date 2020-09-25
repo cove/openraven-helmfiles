@@ -1,12 +1,12 @@
 repositories:
-- name: stable
+- name: stable-repo
   url: https://kubernetes-charts.storage.googleapis.com
 
 releases:
 {{ $version := "1.29.2" }}
 - name: ingress
   namespace: kube-system
-  chart: stable/nginx-ingress
+  chart: stable-repo/nginx-ingress
   # https://github.com/helm/charts/blob/master/stable/nginx-ingress/Chart.yaml#L3
   version: {{ $version }}
   values:

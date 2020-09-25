@@ -1,12 +1,12 @@
 {{- $version := "7.0.5" }}
 repositories:
-- name: bitnami
+- name: bitnami-repo
   url: https://charts.bitnami.com/bitnami
 
 releases:
 - name: kafka
   namespace: kafka
-  chart: bitnami/kafka
+  chart: bitnami-repo/kafka
   # https://hub.helm.sh/charts/bitnami/kafka/7.0.5
   version: {{ $version }}
   values:

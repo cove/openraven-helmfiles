@@ -9,7 +9,7 @@ releases:
 - name: etcd-prune
   namespace: kube-system
   chart: openraven-repo/etcd-prune
-  version: 0.1.0
+  version: 0.1.1
   hooks:
   - events: ['presync']
     showlogs: true
@@ -19,3 +19,4 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       kubectl -n $my_ns delete cronjob etcd-prune || true
+      helm repo update || true

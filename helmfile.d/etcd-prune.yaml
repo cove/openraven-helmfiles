@@ -11,6 +11,13 @@ releases:
   chart: openraven-repo/etcd-prune
   version: 0.1.0
   hooks:
+  - events: ['prepare']
+    showlogs: true
+    command: bash
+    args:
+    - -xc
+    - |
+      helm repo update || true
   - events: ['presync']
     showlogs: true
     command: bash
@@ -19,4 +26,3 @@ releases:
     - |
       my_ns="{{`{{ .Release.Namespace }}`}}"
       kubectl -n $my_ns delete cronjob etcd-prune || true
-      helm repo update || true

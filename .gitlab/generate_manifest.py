@@ -13,9 +13,9 @@ def get_all_images(nested_dictionary: dict) -> List[str]:
     for key, value in nested_dictionary.items():
         if isinstance(value, dict):
             images += get_all_images(value)
-        elif type(value) is list:
+        elif isinstance(value, list):
             for item in value:
-                if type(item) is not dict:
+                if not isinstance(item, dict):
                     break
                 images += get_all_images(item)
         else:

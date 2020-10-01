@@ -3,14 +3,14 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-- name: openraven
+- name: openraven-repo
   url: {{ $ourUrl }}
 
 releases:
 - name: asset-groups
   namespace: ui
-  chart: openraven/asset-groups
-  version: 0.197114750.0
+  chart: openraven-repo/asset-groups
+  version: 0.197114750.1
   wait: false
 
   values:

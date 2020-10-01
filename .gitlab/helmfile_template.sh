@@ -34,6 +34,8 @@ export GROUP_ID=ThEgRoUpId
 export OPENRAVEN_INGRESS_HOSTNAME=www.example.com
 export SERVICE_CLIENT_ID=seCLID
 export SERVICE_CLIENT_SECRET=scSec
+export OPENRAVEN_UNSTABLE_UNRELEASED_FEATURES=true
+export OPENRAVEN_UNRELEASED_FEATURES=true
 
 # test all of them, and don't go through the git ref
 rm -v helmfile.yaml

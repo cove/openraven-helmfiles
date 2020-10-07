@@ -39,11 +39,11 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 - path: {{ $baseDir }}/dmap.yaml?ref={{ $gitRef }}
 {{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
 - path: {{ $baseDir }}/s3-scan-service.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/asset-groups.yaml?ref={{ $gitRef }}
 {{ end }}
 - path: {{ $baseDir }}/dmap-scheduler.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cloudwatcher.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
 {{ if env "OPENRAVEN_UNSTABLE_UNRELEASED_FEATURES" }}
-- path: {{ $baseDir }}/asset-groups.yaml?ref={{ $gitRef }}
 {{ end }}
 {{ end }}

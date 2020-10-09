@@ -5,6 +5,8 @@ metadata:
   labels:
 {{ include "aws-discovery-svc.labels" . | indent 4 }}
 spec:
+  strategy:
+    type: Recreate
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:

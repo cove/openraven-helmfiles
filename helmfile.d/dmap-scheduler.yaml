@@ -9,12 +9,15 @@ releases:
 - name: dmap-scheduler
   namespace: dmap
   chart: openraven-repo/dmap-scheduler
-  version: 0.200107414.0
+  version: 0.200107414.1
   wait: false
 
   values:
   - global:
       groupId: {{ requiredEnv "GROUP_ID" }}
+  {{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
+    profiles: default,prod,dmap,s3
+  {{ end }}
 
   hooks:
   - events: ['presync']

@@ -34,6 +34,8 @@ securityContext: {}
 serviceAccount:
   create: false
 
+profiles: default,prod,dmap
+
 ingress:
   enabled: false
   annotations: {}

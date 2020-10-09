@@ -62,7 +62,6 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, producer, prod, S3
 
-{{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
   - name: aws-s3objects-discovery-svc
     <<: *default
     values:
@@ -70,7 +69,6 @@ releases:
       - extraEnv:
           - name: SPRING_PROFILES_ACTIVE
             value: default, producer, prod, S3Objects
-{{ end }}
 
   - name: aws-ec2-discovery-svc
     <<: *default

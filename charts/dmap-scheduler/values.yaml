@@ -34,7 +34,7 @@ securityContext: {}
 serviceAccount:
   create: false
 
-profiles: default,prod,dmap
+profiles: default,prod,dmap,s3
 
 ingress:
   enabled: false

@@ -16,7 +16,7 @@ spec:
     # Using -002 since the name must be valid DNS. When increasing the disk size
     # rev the name of the nodeset.
     # https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations
-  - name: default-002
+  - name: default-003
     count: 3
     volumeClaimTemplates:
     - metadata:
@@ -26,7 +26,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 20Gi
+            storage: 100Gi
         storageClassName: default-storage-class
     config:
       node.master: true

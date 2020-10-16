@@ -45,5 +45,6 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
 {{ end }}
 {{ if env "OPENRAVEN_UNSTABLE_UNRELEASED_FEATURES" }}
+- path: {{ $baseDir }}/policy.yaml?ref={{ $gitRef }}
 {{ end }}
 {{ end }}

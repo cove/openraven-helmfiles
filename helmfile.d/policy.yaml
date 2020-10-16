@@ -10,7 +10,7 @@ releases:
 - name: policy
   namespace: ui
   chart: openraven-repo/policy
-  version: 0.203321722.0
+  version: 0.203329078.0
   wait: false
 
   values:

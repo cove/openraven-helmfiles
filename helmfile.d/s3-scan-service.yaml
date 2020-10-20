@@ -10,7 +10,7 @@ releases:
 - name: s3-scan-service
   namespace: dmap
   chart: openraven-repo/s3-scan-service
-  version: 0.200665637.0
+  version: 0.205295979.0
   installed: true
   hooks:
   - events: ["presync"]

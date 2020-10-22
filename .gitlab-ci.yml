@@ -115,6 +115,8 @@ publish images for image scanning:
   <<: *dont_run_on_external_pipelines
   stage: deploy
   extends: .docker-dind
+  # Allow failure until this pipeline stabilizes
+  allow_failure: true
   dependencies:
     - template-the-charts
   # Running the install bits inline as it prevents needing to manage yet another image and these bits install fast

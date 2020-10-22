@@ -52,6 +52,7 @@ ingress:
       paths:
       - /api/rules
       - /api/policies
+      - /api/policyaudits
 
   tls: []
   #  - secretName: chart-example-tls

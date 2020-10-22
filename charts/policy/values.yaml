@@ -54,6 +54,7 @@ ingress:
       - /api/policies
       - /api/policyaudits
       - /api/policy-rule
+      - /api/s3-bucket-details
 
   tls: []
   #  - secretName: chart-example-tls

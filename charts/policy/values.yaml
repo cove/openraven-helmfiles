@@ -53,6 +53,8 @@ ingress:
       - /api/rules
       - /api/policies
       - /api/policyaudits
+      - /api/policy-rule
+      - /api/s3-bucket-details
 
   tls: []
   #  - secretName: chart-example-tls
@@ -83,7 +85,7 @@ opa:
   mgmt:
     port: 8082
     enabled: true
-  logLevel: info
+  logLevel: error
   logFormat: text
   prometheus:
     enabled: false

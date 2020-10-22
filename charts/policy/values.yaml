@@ -53,6 +53,7 @@ ingress:
       - /api/rules
       - /api/policies
       - /api/policyaudits
+      - /api/policy-rule
 
   tls: []
   #  - secretName: chart-example-tls
@@ -83,7 +84,7 @@ opa:
   mgmt:
     port: 8082
     enabled: true
-  logLevel: info
+  logLevel: error
   logFormat: text
   prometheus:
     enabled: false

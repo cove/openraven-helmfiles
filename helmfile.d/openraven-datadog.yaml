@@ -3,30 +3,11 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
 {{ $ourUrl       := (printf "https://%s.%s/monitoring" $s3Bucket $s3BucketHost) -}}
+{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "\\W+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
+{{ $values := ((tpl (readFile "./values/clusterType.yaml.gotmpl") . ) | fromYaml) }}
+{{ $clusterType := $values.global.clusterType }}
 - name: openraven-repo-monitoring
   url: {{ $ourUrl }}
-
-  {{ $clusterType := "dev" -}}
-  {{ if (env "INSTALL_EMAIL") -}}
-    {{ if (contains "openraven.com" (env "INSTALL_EMAIL")) -}}
-      {{ if (contains "operations" (env "INSTALL_EMAIL")) -}}
-        {{ $clusterType = "internal" -}}
-      {{ end -}}
-  {{ else -}}
-    {{ $clusterType = "customer" -}}
-  {{ end -}}
-{{ else -}}
-  {{ if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy-staging" -}}
-    {{ $clusterType = "internal" -}}
-  {{ end -}}
-  {{if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy-beta" -}}
-    {{ $clusterType = "internal" -}}
-  {{ end -}}
-  {{ if eq (env "OPENRAVEN_UPGRADES_NAME") "openraven-deploy" -}}
-    {{ $clusterType = "customer" -}}
-  {{ end -}}
-{{ end -}}
-{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "\\W+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 releases:
 - name: datadog
   namespace: datadog
@@ -36,6 +17,7 @@ releases:
   recreatePods: true
   installed: {{ not (eq $clusterType "dev") }}
   values:
+  - ./values/clusterType.yaml.gotmpl
   - datadog:
       datadog: # The second datadog is a result of it being a sub-chart
         clusterName: {{ $clusterName }}
@@ -43,6 +25,10 @@ releases:
           - "cluster_type:{{ $clusterType }}"
           - "group_id:{{ env "GROUP_ID" }}"
           - "release_channel:{{ env "OPENRAVEN_UPGRADES_NAME" }}"
+        logs:
+          # Enable logs if the cluster type is SaaS
+          enabled: {{ eq $clusterType "saas" }}
+          containerCollectAll: true
       clusterAgent:
         token: {{ sha256sum (env "GROUP_ID") }} # must be at least 32 chars
         env:

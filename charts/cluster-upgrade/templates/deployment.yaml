@@ -116,6 +116,8 @@ spec:
               value: {{ .Values.java.vmArgs }}
             - name: INSTALL_EMAIL
               value: {{ .Values.global.installEmail | quote }}
+            - name: CLUSTER_TYPE
+              value: {{ .Values.global.clusterType | quote }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -11,9 +11,10 @@ releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
   chart: openraven-repo/cluster-upgrade
-  version: 0.194343397.1
+  version: 0.194343397.2
   wait: false
   values:
+  - ./values/clusterType.yaml.gotmpl
   - global:
       cookieSecret: {{ env "COOKIE_SECRET" | toJson }}
       frontEndClientId: {{ env "FRONTEND_CLIENT_ID" }}
@@ -25,6 +26,7 @@ releases:
       adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
       installEmail: {{ env "INSTALL_EMAIL" | quote }}
+
 
     helmS3Bucket: {{ $s3Bucket }}
     helmS3Key: {{ $s3Key }}

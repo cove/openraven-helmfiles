@@ -29,6 +29,7 @@ global:
   serviceClientSecret: ~
   openravenIngressHostname: ~
   installEmail: ~
+  clusterType: ~
 
 helmS3Bucket: ~
 # openraven-deploy

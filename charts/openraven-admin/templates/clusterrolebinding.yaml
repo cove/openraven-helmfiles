@@ -9,9 +9,15 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
 subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: okta:/customers/{{ .Values.group_name }}/{{.Values.group_name}}-admins
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: okta:/customers/{{ .Values.group_name }}/{{.Values.group_name}}-owners
+  {{ if eq .Values.global.clusterType "saas" }}
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: "okta:SaaS - Admins"
+  {{ else }}
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: okta:/customers/{{ .Values.group_name }}/{{.Values.group_name}}-admins
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: okta:/customers/{{ .Values.group_name }}/{{.Values.group_name}}-owners
+  {{ end }}

@@ -1,0 +1,30 @@
+{{/* BE AWARE: this file __must__ be named .gotmpl for helmfile to use the text/template engine on it */}}
+{{ $clusterType := "dev" -}}
+{{ $instEmail := (env "INSTALL_EMAIL") }}
+{{ if $instEmail -}}
+  {{ if (contains "openraven.com" $instEmail) -}}
+    {{ if (contains "operations" $instEmail) -}}
+      {{ $clusterType = "internal" -}}
+    {{ end -}}
+  {{ else -}}
+    {{ $clusterType = "customer" -}}
+  {{ end -}}
+{{ else -}}
+  {{ $deployChannel := env "OPENRAVEN_UPGRADES_NAME" -}}
+  {{ if eq $deployChannel "openraven-deploy-staging" -}}
+    {{ $clusterType = "internal" -}}
+  {{ end -}}
+  {{if eq $deployChannel "openraven-deploy-beta" -}}
+    {{ $clusterType = "internal" -}}
+  {{ end -}}
+  {{ if eq $deployChannel "openraven-deploy" -}}
+    {{ $clusterType = "customer" -}}
+  {{ end -}}
+{{ end -}}
+# We are going to override to just use saas if it is what is passed in. Otherwise, use the previous logic.
+{{ if eq (env "CLUSTER_TYPE") "saas" -}}
+  {{ $clusterType = "saas" -}}
+{{ end }}
+
+global:
+  clusterType: {{ $clusterType }}

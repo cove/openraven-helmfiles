@@ -7,6 +7,7 @@ releases:
 - name: kubernetes-dashboard
   namespace: kube-system
   chart: kubernetes-dashboard-repo/kubernetes-dashboard
+  installed: {{ not (eq (env "CLUSTER_TYPE") "saas") }}
   # https://github.com/kubernetes/dashboard/blob/master/aio/deploy/helm-chart/kubernetes-dashboard/Chart.yaml#L17
   version: 2.2.0
   values:

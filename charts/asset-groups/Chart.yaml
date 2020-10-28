@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: the Open Raven service provides our asset groups functionality
 name: asset-groups
-version: 0.200664533.0
+version: 0.208877582.0

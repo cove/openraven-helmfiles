@@ -11,7 +11,7 @@ releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
   chart: openraven-repo/cluster-upgrade
-  version: 0.194343397.2
+  version: 0.209505439.0
   wait: false
   values:
   - ./values/clusterType.yaml.gotmpl

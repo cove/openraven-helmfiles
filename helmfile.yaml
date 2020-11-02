@@ -3,6 +3,11 @@
 {{ $baseDir := printf "%s@helmfile.d" $gitUrl }}
 helmfiles:
 - path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
+{{ if eq (env "CLUSTER_TYPE") "saas" }}
+# THIS MUST BE VERY EARLY
+- path: {{ $baseDir }}/kiam.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
+{{ end }}
 - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
 {{/* use the previous one for old clusters */}}
 {{ $volProv := "kubernetes.io/aws-ebs" }}
@@ -24,6 +29,7 @@ helmfiles:
 - path: {{ $baseDir }}/elastic-search-node-client.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cross-account.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/account-management.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/asset-groups.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cluster-upgrade.yaml?ref={{ $gitRef }}
 
 {{/*
@@ -33,15 +39,12 @@ you can pick almost any one from the list in charts/cluster-upgrade/templates/de
 so long as it's not in the list in helmfile0.pod.yml */}}
 {{ if env "OPENRAVEN_UPGRADES_NAME" }}
 - path: {{ $baseDir }}/graphql-api-server.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/mimir.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/aws-discovery-svc.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/metrics-server.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/dmap.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/s3-scan-service.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/asset-groups.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/dmap-scheduler.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cloudwatcher.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/aws-discovery-svc.yaml?ref={{ $gitRef }}
 {{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
 {{ end }}
 {{ if env "OPENRAVEN_UNSTABLE_UNRELEASED_FEATURES" }}

@@ -12,7 +12,7 @@ releases:
 - name: cross-account
   namespace: ui
   chart: openraven-repo/cross-account
-  version: 0.203808853.0
+  version: 0.203808853.2
   wait: false
   values:
   - global:
@@ -20,7 +20,6 @@ releases:
       openravenIngressHostname: {{ $ingHostname }}
       serviceClientId: {{ $serviceClientId }}
       serviceClientSecret: {{ $serviceClientSecret }}
-
   - ingress:
       tls:
       - secretName: www-tls
@@ -38,3 +37,4 @@ releases:
       if ! kubectl get -o name namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
+      kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ env "GROUP_ID" }}-.*"

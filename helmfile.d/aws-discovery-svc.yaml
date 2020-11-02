@@ -2,6 +2,11 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+{{ $clusterType  := env "CLUSTER_TYPE"        | default "dev" }}
+{{ $profileBase := "default, producer, prod" }}
+{{ if eq $clusterType "saas" }}
+  {{ $profileBase = (print $profileBase ", saas") }}
+{{ end }}
   - name: openraven-repo
     url: {{ $ourUrl }}
 
@@ -35,6 +40,8 @@ releases:
         if ! kubectl get -o name namespace $my_ns; then
           kubectl create namespace $my_ns
         fi
+        kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ env "GROUP_ID" }}-.*"
+
     values:
     - global: *global
     - resources:
@@ -52,7 +59,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, Accounts
+          value: {{ $profileBase }}, Accounts
 
   - name: aws-s3-discovery-svc
     <<: *default
@@ -60,7 +67,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, S3
+          value: {{ $profileBase }}, S3
 
   - name: aws-s3objects-discovery-svc
     <<: *default
@@ -68,7 +75,7 @@ releases:
       - global: *global
       - extraEnv:
           - name: SPRING_PROFILES_ACTIVE
-            value: default, producer, prod, S3Objects
+            value: {{ $profileBase }}, S3Objects
 
   - name: aws-ec2-discovery-svc
     <<: *default
@@ -76,7 +83,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, EC2
+          value: {{ $profileBase }}, EC2
 
   - name: aws-rds-discovery-svc
     <<: *default
@@ -84,7 +91,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, RDS
+          value: {{ $profileBase }}, RDS
 
   - name: aws-efs-discovery-svc
     <<: *default
@@ -92,7 +99,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, EFS
+          value: {{ $profileBase }}, EFS
 
   - name: aws-dynamodb-discovery-svc
     <<: *default
@@ -100,7 +107,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, dynamoDb
+          value: {{ $profileBase }}, dynamoDb
 
   - name: aws-redshift-discovery-svc
     <<: *default
@@ -108,7 +115,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, RSH
+          value: {{ $profileBase }}, RSH
 
   - name: aws-fsx-discovery-svc
     <<: *default
@@ -116,7 +123,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, FSX
+          value: {{ $profileBase }}, FSX
 
   - name: aws-backup-discovery-svc
     <<: *default
@@ -124,7 +131,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, BACKUP
+          value: {{ $profileBase }}, BACKUP
 
   - name: aws-ess-discovery-svc
     <<: *default
@@ -132,7 +139,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, ESS
+          value: {{ $profileBase }}, ESS
 
   - name: aws-elb-discovery-svc
     <<: *default
@@ -140,7 +147,7 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, ELB
+          value: {{ $profileBase }}, ELB
 
   - name: aws-elbv2-discovery-svc
     <<: *default
@@ -148,4 +155,4 @@ releases:
     - global: *global
     - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: default, producer, prod, ELBV2
+          value: {{ $profileBase }}, ELBV2

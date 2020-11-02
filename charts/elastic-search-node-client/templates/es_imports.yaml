@@ -31,16 +31,20 @@ spec:
           - -exc
           # language=sh
           - |
+            # Adding curl since it is not part of the base image and we are avoiding rolling a new image
+            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgrouptemplate.json
+            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgroups.json
+            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/configtemplate.json
             elasticdump \
-              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgrouptemplate.json \
+              --input=./assetgrouptemplate.json \
               --output={{ .url }}/assetgroup \
               --type=template
             elasticdump \
-              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/assetgroups.json \
+              --input=./assetgroups.json \
               --output={{ .url }}/assetgroup \
               --type=data
             elasticdump \
-              --input=s3://{{ .bucketname }}/{{ .keyprefix }}/configtemplate.json \
+              --input=./configtemplate.json \
               --output={{ .url }}/configservice \
               --type=template
       - name: kibana-and-es-updates

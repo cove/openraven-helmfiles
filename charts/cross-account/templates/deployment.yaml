@@ -30,6 +30,7 @@ spec:
               "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
             }
           ]
+        iam.amazonaws.com/role: "orvn-{{ .Values.global.groupId }}-{{ .Chart.Name }}"
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

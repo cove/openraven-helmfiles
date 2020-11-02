@@ -1,0 +1,69 @@
+repositories:
+  - name: uswitch
+    url: https://uswitch.github.io/kiam-helm-charts/charts/
+
+releases:
+- name: kiam
+  namespace: kube-system
+  chart: uswitch/kiam
+  # https://artifacthub.io/packages/helm/uswitch/kiam
+  # sadly, they seem to bump the chart version without any corresponding tags
+  # https://github.com/uswitch/kiam/blob/master/helm/kiam/Chart.yaml#L3
+  version: 5.10.0
+  values:
+    - agent:
+        host:
+          # the :8181 conflicts with nginx
+          # "grep 1692 /etc/services" says nothing, so 169.254 -> 1692
+          port: 1692
+          iptables: true
+          # toggle this if you accidentally schedule an Agent on a control plane Node
+          # iptablesRemoveOnShutdown: true
+        log:
+          level: debug
+        nodeSelector:
+          # by keeping the Agent off of the control-plane, we get off the perilous
+          # tightrope of having to specify the IAM Role for all the AWS-y toys in kube-system
+          # be careful, this differs from the scheme used by the control plane below
+          'node.kubernetes.io/role': 'worker'
+        # This could likely be more restrictive but is needed for services to discover region, etc
+        extraArgs:
+          whitelist-route-regexp: ".*"
+
+    - server:
+        log:
+          level: debug
+        nodeSelector:
+          # be careful, this differs from the scheme used by the Agent above
+          'role.kubernetes.io/role': 'master'
+        tolerations:
+        - effect: NoSchedule
+          operator: Exists
+        ## Base ARN for IAM roles
+        ## If not specified use EC2 metadata service to detect ARN prefix
+        # roleBaseArn: null
+
+        ## Pod cache settings
+        # cache:
+        #   syncInterval: 1m
+
+        ## IAM role for the server to assume
+        # assumeRoleArn: null
+
+        ## Session duration for STS tokens
+        # sessionDuration: 15m
+
+        ## Use hostNetwork for server
+        ## Set this to true when running the servers on the same nodes as the agents
+        ## (since the Agents only run iptables on the Calico interfaces)
+        # useHostNetwork: false
+
+
+# https://github.com/uswitch/kiam/blob/master/helm/kiam/values.yaml#L155-L158
+#  values:
+# it's undocumented(!) but omitting .Values.server.tlsFiles.ca causes it to
+# generate them (q.v. https://github.com/uswitch/kiam/blob/master/helm/kiam/templates/_helpers.tpl#L105 )
+#  - tlsFiles: {}
+#      ca: LS0tLS1...
+#      cert: LS0tLS1...
+#      key: LS0tLS1...

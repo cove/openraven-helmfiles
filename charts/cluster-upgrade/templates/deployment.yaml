@@ -16,6 +16,7 @@ spec:
         app.kubernetes.io/name: {{ include "cluster-upgrade.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
+        iam.amazonaws.com/role: "orvn-{{ .Values.global.groupId }}-{{ .Chart.Name }}"
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
           ["openmetrics"]
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |

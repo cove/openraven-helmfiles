@@ -11,7 +11,7 @@ releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
   chart: openraven-repo/cluster-upgrade
-  version: 0.209505439.0
+  version: 0.209505439.1
   wait: false
   values:
   - ./values/clusterType.yaml.gotmpl
@@ -31,6 +31,7 @@ releases:
     helmS3Bucket: {{ $s3Bucket }}
     helmS3Key: {{ $s3Key }}
     # helmS3Region:
+
   hooks:
   - events: ['presync']
     showlogs: true
@@ -42,3 +43,4 @@ releases:
       if ! kubectl get -o name namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
+      kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ env "GROUP_ID" }}-.*"

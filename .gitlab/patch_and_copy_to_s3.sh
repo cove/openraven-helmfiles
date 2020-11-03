@@ -16,12 +16,15 @@ if [[ -z "$HELM_S3_BUCKET" ]]; then
 fi
 HELM_S3_PATH="s3://${HELM_S3_BUCKET}/charts"
 
-# Intentionally not guarding against doing this on master.
-.gitlab/bump_release_version.sh "${CI_PIPELINE_ID}"
-new_sha=$(git rev-parse HEAD)
+CI_COMMIT_REF_NAME="${CI_COMMIT_REF_NAME:-}"
+if [ "$CI_COMMIT_REF_NAME" = "master" ]; then
+  .gitlab/bump_release_version.sh "${CI_PIPELINE_ID}"
+fi
+
+git_sha=$(git rev-parse HEAD)
 
 # we could also update HELMFILE_GIT_URL here if necessary, too
-sed -i.bak -e '/"HELMFILE_GIT_REF"/s@default "[^"]*"@default "'${new_sha}'"@' helmfile.yaml
+sed -i.bak -e '/"HELMFILE_GIT_REF"/s@default "[^"]*"@default "'${git_sha}'"@' helmfile.yaml
 cat helmfile.yaml
 aws s3 cp helmfile.yaml ${HELM_S3_PATH}/
 aws s3 cp manifest.json ${HELM_S3_PATH}/

@@ -45,9 +45,9 @@ so long as it's not in the list in helmfile0.pod.yml */}}
 - path: {{ $baseDir }}/dmap-scheduler.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cloudwatcher.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/aws-discovery-svc.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/policy.yaml?ref={{ $gitRef }}
 {{ if env "OPENRAVEN_UNRELEASED_FEATURES" }}
 {{ end }}
 {{ if env "OPENRAVEN_UNSTABLE_UNRELEASED_FEATURES" }}
-- path: {{ $baseDir }}/policy.yaml?ref={{ $gitRef }}
 {{ end }}
 {{ end }}

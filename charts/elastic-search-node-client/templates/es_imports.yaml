@@ -31,7 +31,14 @@ spec:
           - -exc
           # language=sh
           - |
-            # Adding curl since it is not part of the base image and we are avoiding rolling a new image
+            # yes, even 10 minutes may not be enough for ES to be a-ok
+            # and realistically we want this to wait forever, but we'll start here
+            for _ in $(seq 1 60); do
+              if wget --quiet -O /dev/null -T 1 {{ .url }}/_cat/health >/dev/null 2>&1; then
+                break
+              fi
+              sleep 10
+            done
             wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgrouptemplate.json
             wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgroups.json
             wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/configtemplate.json
@@ -47,6 +54,7 @@ spec:
               --input=./configtemplate.json \
               --output={{ .url }}/configservice \
               --type=template
+
       - name: kibana-and-es-updates
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
         image: docker.io/library/python:3.8

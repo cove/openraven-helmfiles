@@ -54,6 +54,7 @@ ingress:
       - /api/policies
       - /api/policyaudits
       - /api/policy-rule
+      - /api/policy-reports
       - /api/s3-bucket-details
 
   tls: []

@@ -6,8 +6,9 @@ helmfiles:
 {{ if eq (env "CLUSTER_TYPE") "saas" }}
 # THIS MUST BE VERY EARLY
 - path: {{ $baseDir }}/kiam.yaml?ref={{ $gitRef }}
-- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/logdna-agent.yaml?ref={{ $gitRef }}
 {{ end }}
+- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
 {{/* use the previous one for old clusters */}}
 {{ $volProv := "kubernetes.io/aws-ebs" }}

@@ -1,3 +1,4 @@
+{{ if ne (.Values.global.clusterType | default "") "saas" }}
 apiVersion: batch/v1beta1
 kind: CronJob
 {{ $name := include "cluster-upgrade.name" . }}
@@ -49,3 +50,4 @@ spec:
           {{- end }}
           restartPolicy: OnFailure
           serviceAccountName: {{ template "cluster-upgrade.serviceAccountName" . }}
+{{ end }}

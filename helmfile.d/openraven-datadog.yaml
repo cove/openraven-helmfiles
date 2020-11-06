@@ -3,7 +3,7 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
 {{ $ourUrl       := (printf "https://%s.%s/monitoring" $s3Bucket $s3BucketHost) -}}
-{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "\\W+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
+{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 {{ $values := ((tpl (readFile "./values/clusterType.yaml.gotmpl") . ) | fromYaml) }}
 {{ $clusterType := $values.global.clusterType }}
 - name: openraven-repo-monitoring

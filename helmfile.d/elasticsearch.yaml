@@ -29,10 +29,5 @@ releases:
   - global:
       openravenIngressHostname: {{ $ingHostname }}
   - ingress:
-      tls:
-      # be careful, this needs to be the same name from productui.yaml
-      - secretName: www-tls
-        hosts:
-        - {{ $ingHostname }}
       hosts:
       - host: {{ $ingHostname }}

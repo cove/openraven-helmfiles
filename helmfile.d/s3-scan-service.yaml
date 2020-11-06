@@ -28,8 +28,3 @@ releases:
   - global:
       openravenIngressHostname: {{ $ingHostname }}
       groupId: {{ requiredEnv "GROUP_ID" }}
-  - ingress:
-      tls:
-      - secretName: www-tls
-        hosts:
-        - {{ $ingHostname }}

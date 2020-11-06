@@ -4,6 +4,7 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $s3Key        := env "HELM_S3_KEY"         | default "charts/helmfile.yaml" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+{{ $groupId      := requiredEnv "GROUP_ID" }}
 - name: openraven-repo
   url: {{ $ourUrl }}
 
@@ -18,7 +19,7 @@ releases:
   - global:
       cookieSecret: {{ env "COOKIE_SECRET" | toJson }}
       frontEndClientId: {{ env "FRONTEND_CLIENT_ID" }}
-      groupId: {{ env "GROUP_ID" }}
+      groupId: {{ $groupId }}
       serviceClientId: {{ env "SERVICE_CLIENT_ID" }}
       serviceClientSecret: {{ env "SERVICE_CLIENT_SECRET" }}
       openravenIngressHostname: {{ env "OPENRAVEN_INGRESS_HOSTNAME" }}
@@ -43,4 +44,4 @@ releases:
       if ! kubectl get -o name namespace $my_ns; then
         kubectl create namespace $my_ns
       fi
-      kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ env "GROUP_ID" }}-.*"
+      kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ $groupId }}-.*"

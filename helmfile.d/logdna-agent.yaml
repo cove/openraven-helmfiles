@@ -3,7 +3,8 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
 {{ $ourUrl       := (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) -}}
-{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "\\W+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
+{{ $clusterNameEnv := requiredEnv "CLUSTER_NAME" }}
+{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" $clusterNameEnv "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 {{ $encryptedKey := "BkoKtFO4yI2L5bSH5hZNGQEnX8i4FPITiBiz5dVAorwGhDr2Pu0A1az4Oe691z2wCoGLcpkuG0vIlARdbXnGxg==" }}
 {{ $decryptedKey := $encryptedKey | decryptAES (env "COOKIE_SECRET") }}
 - name: openraven-repo

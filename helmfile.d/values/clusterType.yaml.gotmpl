@@ -10,7 +10,7 @@
     {{ $clusterType = "customer" -}}
   {{ end -}}
 {{ else -}}
-  {{ $deployChannel := env "OPENRAVEN_UPGRADES_NAME" -}}
+  {{ $deployChannel := env "HELM_S3_BUCKET" -}}
   {{ if eq $deployChannel "openraven-deploy-staging" -}}
     {{ $clusterType = "internal" -}}
   {{ end -}}

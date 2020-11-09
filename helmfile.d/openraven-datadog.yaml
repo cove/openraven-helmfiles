@@ -3,9 +3,12 @@ repositories:
 {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" -}}
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" -}}
 {{ $ourUrl       := (printf "https://%s.%s/monitoring" $s3Bucket $s3BucketHost) -}}
-{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" (env "CLUSTER_NAME") "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
+{{ $clusterNameEnv := requiredEnv "CLUSTER_NAME" }}
+{{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" $clusterNameEnv "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 {{ $values := ((tpl (readFile "./values/clusterType.yaml.gotmpl") . ) | fromYaml) }}
 {{ $clusterType := $values.global.clusterType }}
+{{ $groupId := requiredEnv "GROUP_ID" }}
+{{ $releaseChannel := $s3Bucket }}
 - name: openraven-repo-monitoring
   url: {{ $ourUrl }}
 releases:
@@ -23,15 +26,16 @@ releases:
         clusterName: {{ $clusterName }}
         tags:
           - "cluster_type:{{ $clusterType }}"
-          - "group_id:{{ env "GROUP_ID" }}"
-          - "release_channel:{{ env "OPENRAVEN_UPGRADES_NAME" }}"
+          - "group_id:{{ $groupId }}"
+          - "release_channel:{{ $releaseChannel }}"
         logs:
           enabled: false
       clusterAgent:
-        token: {{ sha256sum (env "GROUP_ID") }} # must be at least 32 chars
+        {{/* must be at least 32 chars */}}
+        token: {{ sha256sum $groupId }}
         env:
           - name: DD_CLUSTER_CHECKS_EXTRA_TAGS
-            value: "cluster_type:{{ $clusterType }} group_id:{{ env "GROUP_ID" }} release_channel:{{ env "OPENRAVEN_UPGRADES_NAME" }}"
+            value: "cluster_type:{{ $clusterType }} group_id:{{ $groupId }} release_channel:{{ $releaseChannel }}"
   hooks:
   - events: ['presync']
     showlogs: true

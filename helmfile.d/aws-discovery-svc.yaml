@@ -3,11 +3,12 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $clusterType  := env "CLUSTER_TYPE"        | default "dev" }}
-{{ $groupId      := requiredEnv "GROUP_ID" }}
 {{ $profileBase := "default, producer, prod" }}
+{{ $groupId      := requiredEnv "GROUP_ID" }}
 {{ if eq $clusterType "saas" }}
   {{ $profileBase = (print $profileBase ", saas") }}
 {{ end }}
+{{ $producers := (readFile "./values/aws-discovery-producers.yaml" | fromYaml) }}
   - name: openraven-repo
     url: {{ $ourUrl }}
 
@@ -15,7 +16,7 @@ templates:
   default: &default
     namespace: "aws"
     chart: "openraven-repo/aws-discovery-svc"
-    version: 0.213188773.0
+    version: 0.213188773.1
     missingFileHandler: Warn
     timeout: 600
     installed: true
@@ -45,6 +46,8 @@ releases:
 
     values:
     - global: *global
+    - deployment:
+        enabled: true
     - resources:
         requests:
           memory: 2Gi
@@ -54,106 +57,36 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
 
-  - name: aws-account-iam-discovery-svc
+{{- range $producers.producers }}
+  - name: aws-{{ .name | lower }}-discovery-svc
     <<: *default
     values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, Accounts
+      - global: *global
+      - cronJob:
+          enabled: true
+{{- if index . "schedule" }}
+          schedule: {{ .schedule }}
+{{- end }}
+      - extraEnv:
+          - name: SPRING_PROFILES_ACTIVE
+            value: {{ $profileBase }}, cronJob, {{ .name }}
+{{- end }}
 
-  - name: aws-s3-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, S3
-
+  # Handle s3Objects as a one off and run it as a deployment
+  # it uses an in memory bloom filter that resets on every restart... we want to preserve that filter across runs.
   - name: aws-s3objects-discovery-svc
     <<: *default
     values:
       - global: *global
+      - deployment:
+          enabled: true
       - extraEnv:
-          - name: SPRING_PROFILES_ACTIVE
-            value: {{ $profileBase }}, S3Objects
-
-  - name: aws-ec2-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, EC2
+          value: {{ $profileBase }}, S3Objects
 
-  - name: aws-rds-discovery-svc
+  - name: aws-account-iam-discovery-svc
     <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, RDS
-
-  - name: aws-efs-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, EFS
-
-  - name: aws-dynamodb-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, dynamoDb
-
+    installed: false
   - name: aws-redshift-discovery-svc
     <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, RSH
-
-  - name: aws-fsx-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, FSX
-
-  - name: aws-backup-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, BACKUP
-
-  - name: aws-ess-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, ESS
-
-  - name: aws-elb-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, ELB
-
-  - name: aws-elbv2-discovery-svc
-    <<: *default
-    values:
-    - global: *global
-    - extraEnv:
-        - name: SPRING_PROFILES_ACTIVE
-          value: {{ $profileBase }}, ELBV2
+    installed: false

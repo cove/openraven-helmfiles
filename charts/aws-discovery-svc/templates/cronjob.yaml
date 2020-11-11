@@ -1,0 +1,49 @@
+{{ if .Values.cronJob.enabled }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "aws-discovery-svc.fullname" . }}
+  labels:
+{{ include "aws-discovery-svc.labels" . | indent 4 }}
+spec:
+  schedule: "{{ .Values.cronJob.schedule }}"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "aws-discovery-svc.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name }}
+          annotations:
+            iam.amazonaws.com/role: "orvn-{{ .Values.global.groupId }}-{{ .Chart.Name }}"
+            ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
+              ["openmetrics"]
+            ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
+              [{}]
+            ad.datadoghq.com/{{ .Chart.Name }}.instances: |
+              [
+                {
+                  "prometheus_url": "http://%%host%%:9404/metrics",
+                  "namespace": "{{ .Chart.Name }}",
+                  "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"],
+                  "tags": [{"aws_discovery": "{{ .Release.Name }}"}]
+                }
+              ]
+        spec:
+          restartPolicy: OnFailure
+{{ include "aws-discovery-svc.containers2sp" . | indent 8 }}
+          priority: {{ .Values.cronJob.priority }}
+        {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+        {{- end }}
+{{- end }}

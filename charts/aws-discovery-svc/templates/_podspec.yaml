@@ -1,0 +1,56 @@
+{{ if false }}
+# ^^^^^^^^^ BE AWARE
+# this exists to toggle on schema validation in this file
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dummy
+spec:
+{{ end }}
+{{/*
+this is named as "2sp" due to the leading 2 spaces as a concession to the "spec:" checking above
+*/}}
+{{- define "aws-discovery-svc.containers2sp" -}}
+  {{ $vMap := $.Chart.Version | split "." }}
+  {{ $imageTag := .Values.image.tag | default (index $vMap "_1") }}
+  containers:
+  - name: {{ .Chart.Name }}
+    image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ $imageTag }}"
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    livenessProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+      initialDelaySeconds: 120
+      failureThreshold: 12 # Translates to 120 seconds
+      periodSeconds: 10 # This is the default, setting it explicitly to make it easier reason about.
+    readinessProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+      initialDelaySeconds: 120
+    resources:
+      {{- toYaml .Values.resources | nindent 12 }}
+    env:
+      - name: MANAGEMENT_SERVER_PORT
+        value: "8080"
+      - name: MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED
+        value: "false"
+      - name: SERVER_PORT
+        value: "80"
+      - name: OPENRAVEN_APP_V1_SERVICES_ANALYTICS_CLUSTERID
+        value: {{ .Values.global.groupId }}
+      - name: SENTRY_DSN
+        value: {{ .Values.sentry_dsn | quote }}
+      - name: SENTRY_ENVIRONMENT
+        value: {{ .Values.global.groupId }}
+      - name: SENTRY_RELEASE
+        value: "{{ .Chart.Version }}"
+      - name: SENTRY_EXTRA
+        value: "groupId:{{ .Values.global.groupId }},service:{{ .Release.Name }}"
+      - name: JAVA_TOOL_OPTIONS
+        value: {{ .Values.java.vmArgs }}
+{{ if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | indent 6 }}
+{{ end }}
+{{- end -}}

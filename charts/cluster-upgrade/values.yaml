@@ -77,11 +77,11 @@ ingress:
 
 resources:
   requests:
-    memory: 512Mi
+    memory: 1768Mi
   limits:
-    memory: 1Gi
+    memory: 1768Mi
 java:
-  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=100
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 
 nodeSelector: {}
 

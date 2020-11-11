@@ -1,0 +1,35 @@
+producers:
+  - name: Accounts
+  - name: Athena
+  - name: BACKUP
+  - name: Batch
+  - name: Cassandra
+  - name: CloudFront
+  - name: CloudSearch
+  - name: dynamoDb
+  - name: EC2
+    schedule: "15,45 * * * *"
+  - name: ECS
+  - name: EFS
+  - name: EKS
+  - name: ELB
+  - name: ELBV2
+  - name: EMR
+  - name: ESS
+  - name: ElastiCache
+  - name: ElasticBeanstalk
+  - name: FSX
+  - name: Glacier
+  - name: KMS
+  - name: LakeFormation
+  - name: Lambda
+  - name: Lightsail
+  - name: Neptune
+  - name: QLDB
+  - name: RDS
+  - name: RSH
+  - name: Route53
+  - name: S3
+    schedule: "5,35 * * * *"
+  - name: SecretsManager
+  - name: StorageGateway

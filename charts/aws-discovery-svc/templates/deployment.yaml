@@ -1,3 +1,4 @@
+{{- if .Values.deployment.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -33,51 +34,7 @@ spec:
               }
             ]
     spec:
-      containers:
-        - name: {{ .Chart.Name }}
-          {{ $vMap := $.Chart.Version | split "." }}
-          image: "{{.Values.image.registry}}/{{ .Values.image.repository }}:{{ .Values.image.tag | default (index $vMap "_1") }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 120
-            failureThreshold: 12 # Translates to 120 seconds
-            periodSeconds: 10 # This is the default, setting it explicitly to make it easier reason about.
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 120
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: MANAGEMENT_SERVER_PORT
-              value: "8080"
-            - name: MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED
-              value: "false"
-            - name: SERVER_PORT
-              value: "80"
-            - name: OPENRAVEN_APP_V1_SERVICES_ANALYTICS_CLUSTERID
-              value: {{ .Values.global.groupId }}
-            - name: SENTRY_DSN
-              value: {{ .Values.sentry_dsn | quote }}
-            - name: SENTRY_ENVIRONMENT
-              value: {{ .Values.global.groupId }}
-            - name: SENTRY_RELEASE
-              value: "{{ .Chart.Version }}"
-            - name: SENTRY_EXTRA
-              value: "groupId:{{ .Values.global.groupId }},service:{{ .Release.Name }}"
-            - name: JAVA_TOOL_OPTIONS
-              value: {{ .Values.java.vmArgs }}
-{{ if .Values.extraEnv }}
-            {{- toYaml .Values.extraEnv | indent 12 }}
-{{ end }}
+{{ include "aws-discovery-svc.containers2sp" . | indent 4 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -90,3 +47,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- end }}

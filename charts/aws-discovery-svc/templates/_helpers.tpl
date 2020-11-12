@@ -54,3 +54,7 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "aws-discovery-svc.priorityClassName" -}}
+{{ .Values.priorityClass.baseName }}-{{ .Values.priorityClass.priority }}
+{{- end -}}

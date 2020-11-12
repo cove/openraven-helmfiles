@@ -22,7 +22,11 @@ deployment:
 cronJob:
   enabled: false
   schedule: "*/30 * * * *"
+
+priorityClass:
+  create: false
   priority: -1000
+  baseName: aws-discovery-svc
 
 resources:
   requests:

@@ -29,6 +29,12 @@ templates:
         openravenIngressHostname: {{ requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
 
 releases:
+  - name: aws-discovery-priority-class
+    <<: *default
+    values:
+      - priorityClass:
+          create: true
+
   - name: aws-consumer-svc
     <<: *default
     hooks:

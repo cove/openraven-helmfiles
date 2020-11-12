@@ -1,0 +1,10 @@
+{{ if .Values.priorityClass.create }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ include "aws-discovery-svc.priorityClassName" . }}
+  labels:
+{{ include "aws-discovery-svc.labels" . | indent 4 }}
+value: {{ .Values.priorityClass.priority }}
+description: Lower the priority for discovery services
+{{ end }}

@@ -14,6 +14,8 @@ releases:
   wait: false
 
   values:
+  - ./values/aws-s3-scanner-version.yaml
+  - ./values/dmap-lambda-version.yaml
   - global:
       groupId: {{ $groupId }}
 

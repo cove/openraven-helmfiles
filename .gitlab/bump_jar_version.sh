@@ -1,6 +1,10 @@
 #! /usr/bin/env bash
 set -euo pipefail
 CI="${CI:-}"
+if [[ -n "$CI" ]]; then
+  # purposefully dereference this when in CI to die early if not set
+  GLR_PAT="${GLR_PAT}"
+fi
 CHATOPS="${CHAT_CHANNEL:-}"
 TRACE="${TRACE:-}"
 trace_on() {

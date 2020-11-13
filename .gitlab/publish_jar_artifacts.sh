@@ -8,26 +8,27 @@ if [[ -z "$HELM_S3_BUCKET" ]]; then
     exit 1
 fi
 
-HELM_S3_BUCKET_HOST="${HELM_S3_BUCKET_HOST:-s3.amazonaws.com}"
+DMAP_ART_ID=dmap-lambda
+AWS_S3_ART_ID=aws-s3-scanner
 
-HELM_S3_PATH_BASE="s3://${HELM_S3_BUCKET}/dmap"
+if [[ -z "${all_regions:-}" ]]; then
+  all_regions=(us-west-2 us-west-1 us-east-2 us-east-1 ca-central-1 sa-east-1 eu-west-3 eu-west-2 eu-west-1 eu-north-1 eu-central-1 ap-southeast-2 ap-southeast-1 ap-south-1 ap-northeast-2 ap-northeast-1)
+fi
 
-#Extract the version from ./values/aws-s3-scanner-version.yaml and ./values/dmap-lambda-version.yaml
+copy_to_all_regions() {
+  local fn="$1"
+  for region in "${all_regions[@]}"; do
+    aws s3 cp $fn s3://${HELM_S3_BUCKET}-${region}/dmap/dataclassification/$fn
+  done
+}
 
-DMAP_LAMBDA_VERSION="$(awk '{print $2}' ./helmfile.d/values/dmap-lambda-version.yaml)"
-AWS_S3_SCANNER_VERSION="$(awk  '{print $2}' ./helmfile.d/values/aws-s3-scanner-version.yaml)"
-DMAP_LAMBDA_FN=dmap-lambda-${DMAP_LAMBDA_VERSION}.jar
-AWS_S3_SCANNER_FN=aws-s3-scanner-${AWS_S3_SCANNER_VERSION}.jar
+copy_mvn_jar() {
+  local art_id="$1"
+  local v
+  v="$(awk '{print $2}' ./helmfile.d/values/${art_id}-version.yaml)"
+  mvn -U --batch-mode --settings ${GITLAB_MAVEN_SETTINGS_XML} dependency:copy -DoutputDirectory=. -Dartifact=io.openraven:${art_id}:${v}
+  copy_to_all_regions ${art_id}-${v}.jar
+}
 
-mvn -U dependency:copy -DoutputDirectory=. -Dartifact=io.openraven:aws-s3-scanner:${AWS_S3_SCANNER_VERSION}
-mvn -U dependency:copy -DoutputDirectory=. -Dartifact=io.openraven:dmap-lambda:${DMAP_LAMBDA_VERSION}
-
-all_regions=(us-west-2 us-west-1 us-east-2 us-east-1 ca-central-1 sa-east-1 eu-west-3 eu-west-2 eu-west-1 eu-north-1 eu-central-1 ap-southeast-2 ap-southeast-1 ap-south-1 ap-northeast-2 ap-northeast-1)
-
-for region in "${all_regions[@]}";do
-  aws s3 cp $AWS_S3_SCANNER_FN s3://$HELM_S3_BUCKET-$region/dmap/dataclassification/$AWS_S3_SCANNER_FN;
-done;
-
-# Fetch the artifacts from mvn
-
-# Iterate all the regions, uploading to s3 the artifacts
+copy_mvn_jar ${DMAP_ART_ID}
+copy_mvn_jar ${AWS_S3_ART_ID}

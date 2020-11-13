@@ -45,7 +45,7 @@ fi
 
 exit_if_not_dirty() {
   local fn="$1"
-  if ! git status --porc "$fn" | grep -- "$fn"; then
+  if ! git status --porc "$fn" | grep -q -- "$fn"; then
     echo "Expected the change to dirty \"$fn\" but nope" >&2
     exit 1
   fi

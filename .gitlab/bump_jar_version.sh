@@ -33,7 +33,7 @@ if [[ -z "$CHATOPS" ]]; then
 fi
 
 if [[ ! -e "$jar_version_fn" ]]; then
-    chat_start; echo "Sorry, your chart file \"$jar_version_fn\" is 404" >&2; chat_stop
+    chat_start; echo "Sorry, your jar file \"$jar_version_fn\" is 404" >&2; chat_stop
     exit 1
 fi
 

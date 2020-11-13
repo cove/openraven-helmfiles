@@ -16,7 +16,7 @@ HELM_S3_PATH_BASE="s3://${HELM_S3_BUCKET}/dmap"
 
 DMAP_LAMBDA_VERSION="$(awk '{print $2}' ./helmfile.d/values/dmap-lambda-version.yaml)"
 AWS_S3_SCANNER_VERSION="$(awk  '{print $2}' ./helmfile.d/values/aws-s3-scanner-version.yaml)"
-DMAP_LAMBDA_FN=aws-s3-scanner-${DMAP_LAMBDA_VERSION}.jar
+DMAP_LAMBDA_FN=dmap-lambda-${DMAP_LAMBDA_VERSION}.jar
 AWS_S3_SCANNER_FN=aws-s3-scanner-${AWS_S3_SCANNER_VERSION}.jar
 
 mvn -U dependency:copy -DoutputDirectory=. -Dartifact=io.openraven:aws-s3-scanner:${AWS_S3_SCANNER_VERSION}

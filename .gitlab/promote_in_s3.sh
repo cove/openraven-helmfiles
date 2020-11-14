@@ -53,6 +53,4 @@ export HELM_S3_BUCKET=$dest_bucket
 aws s3 cp "s3://${src_bucket}/charts/helmfile.yaml" "s3://${dest_bucket}/charts/helmfile.yaml"
 aws s3 cp manifest.json "s3://${dest_bucket}/charts/manifest.json"
 
-../.gitlab/publish_jar_artifacts.sh
-
 chat_start; echo "Promoted $src_bucket to $dest_bucket"; chat_stop

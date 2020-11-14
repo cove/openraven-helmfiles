@@ -31,4 +31,4 @@ aws s3 cp index.yaml ${HELM_S3_PATH}/
 
 cd -
 
-../.gitlab/publish_jar_artifacts.sh
+.gitlab/publish_jar_artifacts.sh

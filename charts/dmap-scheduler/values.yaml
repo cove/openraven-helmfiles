@@ -14,6 +14,10 @@ image:
 global:
   groupId: ~
 
+awsS3ScannerVersion: ~
+dmapLambdaVersion: ~
+releaseChannel: ~
+
 sentry_dsn: https://092daf12f2d241dda7249f61fcfbebb6@o322024.ingest.sentry.io/5379408
 
 imagePullSecrets: []

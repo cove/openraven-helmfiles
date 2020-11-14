@@ -18,6 +18,7 @@ fi
 copy_to_all_regions() {
   local fn="$1"
   for region in $all_regions; do
+    aws s3 cp $fn s3://${HELM_S3_BUCKET}-${region}/dmap/dataclassification/$fn
   done
 }
 

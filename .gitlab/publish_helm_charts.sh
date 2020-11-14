@@ -28,3 +28,5 @@ for ch in *.tgz; do
   aws s3 cp "$ch" ${HELM_S3_PATH}/
 done
 aws s3 cp index.yaml ${HELM_S3_PATH}/
+
+../.gitlab/publish_jar_artifacts.sh

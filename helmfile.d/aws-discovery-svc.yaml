@@ -16,7 +16,7 @@ templates:
   default: &default
     namespace: "aws"
     chart: "openraven-repo/aws-discovery-svc"
-    version: 0.215919873.0
+    version: 0.215995972.0
     missingFileHandler: Warn
     timeout: 600
     installed: true

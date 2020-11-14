@@ -27,7 +27,7 @@ include:
 package-helm-charts:
   <<: *dont_run_on_external_pipelines
   stage: build
-  image: &img registry.gitlab.com/openraven/openraven/ci/helmfile-awscli:helm3-130859405
+  image: &img registry.gitlab.com/openraven/openraven/ci/helmfile-awscli:helm3-216157963
   artifacts:
     name: helm artifacts
     expire_in: 30 days
@@ -60,6 +60,11 @@ template-the-charts:
   image: *img
   script:
   - &publish_charts_sh .gitlab/publish_helm_charts.sh
+  cache:
+    key: helmfiles-maven
+    paths:
+      # this appears to only cache things within the workspace
+      - .m2/repository
 
 .publish-helmfile-to-s3: &publish_helmfile_to_s3
   <<: *dont_run_on_external_pipelines
@@ -77,6 +82,11 @@ publish-helm-charts:
   except:
     refs:
       - master
+  cache:
+    key: helmfiles-maven
+    paths:
+      # this appears to only cache things within the workspace
+      - .m2/repository
 
 publish-helmfile-to-s3:
   <<: *force_helm_s3_bucket
@@ -98,6 +108,11 @@ publish-helm-charts-staging:
     refs:
       - master
   resource_group: staging
+  cache:
+    key: helmfiles-maven
+    paths:
+      # this appears to only cache things within the workspace
+      - .m2/repository
 
 publish-helmfile-to-s3-staging:
   <<: *force_helm_s3_bucket

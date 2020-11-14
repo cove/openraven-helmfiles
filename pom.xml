@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>ignored</groupId>
+  <artifactId>ignored</artifactId>
+  <version>0.0.0</version>
+  <repositories>
+    <repository>
+      <!-- this name squares up with the Job-Token name in $GITLAB_MAVEN_SETTINGS_XML -->
+      <id>gitlab-maven</id>
+      <url>https://gitlab.com/api/v4/groups/openraven/-/packages/maven</url>
+    </repository>
+  </repositories>
+
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <activation>
+        <property>
+          <name>env.CI</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <!-- this name squares up with the write token in $GITLAB_MAVEN_SETTINGS_XML -->
+          <id>gitlab-maven-deploy</id>
+          <!--suppress MavenModelInspection -->
+          <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+          <id>gitlab-maven-deploy</id>
+          <!--suppress MavenModelInspection -->
+          <url>https://gitlab.com/api/v4/projects/${env.CI_PROJECT_ID}/packages/maven</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+</project>
+

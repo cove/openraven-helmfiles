@@ -26,7 +26,8 @@ copy_mvn_jar() {
   local art_id="$1"
   local v
   v="$(awk '{print $2}' ./helmfile.d/values/${art_id}-version.yaml)"
-  ./mvnw -U --batch-mode --settings ${GITLAB_MAVEN_SETTINGS_XML} dependency:copy -DoutputDirectory=. -Dartifact=io.openraven:${art_id}:${v}
+  echo "Fetching version ${v} of ${art_id}"
+  mvn -U --batch-mode --settings ${GITLAB_MAVEN_SETTINGS_XML} dependency:copy -DoutputDirectory=. -Dmaven.repo.local=$PWD/.m2/repository -Dartifact=io.openraven:${art_id}:${v}
   copy_to_all_regions ${art_id}-${v}.jar
 }
 

@@ -187,7 +187,7 @@ bump-jar-from-external-pipeline:
   stage: build
   image: *img
   script:
-    - .gitlab/bump_jar_version.sh ${$JAR_NAME} 0.0.${UPSTREAM_TAG}
+    - .gitlab/bump_jar_version.sh ${JAR_NAME} 0.0.${UPSTREAM_TAG}
   rules:
     - if: '$CI_PIPELINE_SOURCE == "pipeline" && $JAR_NAME && $UPSTREAM_TAG'
       when: always

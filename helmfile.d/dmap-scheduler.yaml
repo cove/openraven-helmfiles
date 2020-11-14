@@ -16,6 +16,7 @@ releases:
   values:
   - ./values/aws-s3-scanner-version.yaml
   - ./values/dmap-lambda-version.yaml
+  - releaseChannel: {{ $s3Bucket }}
   - global:
       groupId: {{ $groupId }}
 

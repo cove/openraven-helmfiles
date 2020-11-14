@@ -76,8 +76,12 @@ spec:
               value: "{{ .Chart.Version }}"
             - name: OPENRAVEN_APP_V1_DMAP_SCHEDULING_VERSION
               value: {{ .Values.dmapLambdaVersion }}
+            - name: OPENRAVEN_APP_V1_DMAP_SCHEDULING_DEPLOYCHANNEL
+              value: {{ .Values.releaseChannel }}
             - name: OPENRAVEN_APP_V1_S3_SCHEDULING_VERSION
               value: {{ .Values.awsS3ScannerVersion }}
+            - name: OPENRAVEN_APP_V1_S3_SCHEDULING_DEPLOYCHANNEL
+              value: {{ .Values.releaseChannel }}
             - name: SENTRY_EXTRA
               value: "groupId:{{ .Values.global.groupId }}"
       {{- with .Values.nodeSelector }}

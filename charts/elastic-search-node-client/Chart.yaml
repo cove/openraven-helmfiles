@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: elastic search proxy for the FE
 name: elastic-search-node-client
-version: 0.184428693.1
+version: 0.215479071.0

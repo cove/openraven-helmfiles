@@ -5,7 +5,8 @@ metadata:
   labels:
 {{ include "elastic-search-node-client.labels" . | indent 4 }}
 spec:
-  backoffLimit: 4
+  # Yes this is ridiculous, but we need to REALLY try hard to get this into the cluster
+  backoffLimit: 25
   template:
     metadata:
       labels:
@@ -39,21 +40,21 @@ spec:
               fi
               sleep 10
             done
-            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgrouptemplate.json
-            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/assetgroups.json
             wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/configtemplate.json
-            elasticdump \
-              --input=./assetgrouptemplate.json \
-              --output={{ .url }}/assetgroup \
-              --type=template
-            elasticdump \
-              --input=./assetgroups.json \
-              --output={{ .url }}/assetgroup \
-              --type=data
+            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/demodb.json
+
             elasticdump \
               --input=./configtemplate.json \
               --output={{ .url }}/configservice \
               --type=template
+
+            demodb="$(wget --quiet -O - http://account-management.ui.svc.cluster.local/api/server/settings/demodb)"
+            if [ "$demodb" != "false" ]; then
+              elasticdump \
+                --input=./demodb.json \
+                --output={{ .url }}/ \
+                --type=data
+            fi
 
       - name: kibana-and-es-updates
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
@@ -71,9 +72,6 @@ spec:
             curl -sSL -XPUT -H "Content-Type: application/json" \
                 -d '{"index.number_of_replicas": 2}' \
                 {{ .url }}/aws*/_settings
-            curl -sSL -XPUT -H "Content-Type: application/json" \
-                -d '{"index.number_of_replicas": 2}' \
-            {{ .url }}/assetgroup/_settings
             curl -sSL -XPUT -H "Content-Type: application/json" \
                 -d '{"index.number_of_replicas": 2}' \
             {{ .url }}/orvn*/_settings

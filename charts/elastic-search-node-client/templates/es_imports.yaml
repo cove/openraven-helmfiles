@@ -41,7 +41,6 @@ spec:
               sleep 10
             done
             wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/configtemplate.json
-            wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/demodb.json
 
             elasticdump \
               --input=./configtemplate.json \
@@ -50,43 +49,31 @@ spec:
 
             demodb="$(wget --quiet -O - http://account-management.ui.svc.cluster.local/api/server/settings/demodb)"
             if [ "$demodb" != "false" ]; then
+              wget https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/demodb.json
               elasticdump \
                 --input=./demodb.json \
                 --output={{ .url }}/ \
                 --type=data
+
+              # Explicitly waiting until after the elasticdump to do this work as it is not as critical as the above
+              # Add the aliases needed for the index pattern in kibana
+              apk add curl
+              curl -X PUT -fsSL '{{ .url }}/aws*/_alias/or_assets'
+              curl -X PUT -fsSL '{{ .url }}/aws*/_alias/or_assets_first_added'
+              curl -X PUT -fsSL '{{ .url }}/aws*/_alias/or_assets_last_updated'
+
+              out_fn=dashboards.ndjson
+              curl -fsSLo ${out_fn} https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/$out_fn
+              for _ in 1 2 3 4 5 6 7 8 9 10; do
+                if curl -fsSL -H "kbn-xsrf: true" \
+                       --form "file=@${out_fn}" \
+                      "{{ $kibanaUrl }}/api/saved_objects/_import?overwrite=true"
+                then
+                  break
+                fi
+                sleep 30 # 10 seconds wasnt enough
+              done
             fi
-
-      - name: kibana-and-es-updates
-        imagePullPolicy: {{ $.Values.image.pullPolicy }}
-        image: docker.io/library/python:3.8
-        command:
-          - /bin/bash
-          - -exc
-          # language=sh
-          - |
-            # Explicitly not throwing a -f to curl. The indexes wont always be there. Think of this block as a way to
-            # apply settings to existing clusters.
-            curl -sSL -XPUT -H "Content-Type: application/json" \
-                -d '{"index.max_docvalue_fields_search": 250}' \
-                {{ .url }}/_all/_settings
-            curl -sSL -XPUT -H "Content-Type: application/json" \
-                -d '{"index.number_of_replicas": 2}' \
-                {{ .url }}/aws*/_settings
-            curl -sSL -XPUT -H "Content-Type: application/json" \
-                -d '{"index.number_of_replicas": 2}' \
-            {{ .url }}/orvn*/_settings
-
-            out_fn=dashboards.ndjson
-            curl -fsSLo ${out_fn} https://{{ .bucketname }}.s3.amazonaws.com/{{ .keyprefix }}/dashboards.ndjson
-            for _ in 1 2 3 4 5 6 7 8 9 10; do
-              if curl -fsSL -H "kbn-xsrf: true" \
-                     --form "file=@${out_fn}" \
-                    "{{ $kibanaUrl }}/api/saved_objects/_import?overwrite=true"
-              then
-                break
-              fi
-              sleep 30 # 10 seconds wasnt enough
-            done
       {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -55,7 +55,7 @@ exit_if_not_dirty() {
   fi
 }
 
-sed -i.bak -e "s/^version: .*/version: $jar_ver/" "$jar_version_fn"
+sed -i.bak -E "s/^(.*)Version: .*/\1Version: $jar_ver/" "$jar_version_fn"
 exit_if_not_dirty "$jar_version_fn"
 
 git add "$jar_version_fn"

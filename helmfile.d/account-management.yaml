@@ -11,7 +11,7 @@ releases:
 - name: account-management
   namespace: ui
   chart: openraven-repo/account-management
-  version: 0.196072530.0
+  version: 0.216700840.0
   wait: false
   values:
   - ./values/releaseVersion.yaml

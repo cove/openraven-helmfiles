@@ -6,6 +6,7 @@ repositories:
 {{ $clusterNameEnv := requiredEnv "CLUSTER_NAME" }}
 {{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" $clusterNameEnv "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 {{ $values := ((tpl (readFile "./values/clusterType.yaml.gotmpl") . ) | fromYaml) }}
+{{ $releaseInfo := readFile "./values/releaseVersion.yaml" | fromYaml }}
 {{ $clusterType := $values.global.clusterType }}
 {{ $groupId := requiredEnv "GROUP_ID" }}
 {{ $releaseChannel := $s3Bucket }}
@@ -35,7 +36,7 @@ releases:
         token: {{ sha256sum $groupId }}
         env:
           - name: DD_CLUSTER_CHECKS_EXTRA_TAGS
-            value: "cluster_type:{{ $clusterType }} group_id:{{ $groupId }} release_channel:{{ $releaseChannel }}"
+            value: "cluster_type:{{ $clusterType }} group_id:{{ $groupId }} release_channel:{{ $releaseChannel }} release_version:{{ $releaseInfo.releaseVersion }}"
   hooks:
   - events: ['presync']
     showlogs: true

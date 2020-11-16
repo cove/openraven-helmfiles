@@ -29,6 +29,7 @@ releases:
           - "cluster_type:{{ $clusterType }}"
           - "group_id:{{ $groupId }}"
           - "release_channel:{{ $releaseChannel }}"
+          - "release_version:{{ $releaseInfo.releaseVersion }}"
         logs:
           enabled: false
       clusterAgent:

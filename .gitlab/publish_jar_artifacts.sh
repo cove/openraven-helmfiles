@@ -16,20 +16,22 @@ if [[ -z "${all_regions:-}" ]]; then
 fi
 
 copy_to_all_regions() {
-  local fn="$1"
+  local parent_dir="$1"
+  local fn="$2"
   for region in $all_regions; do
-    aws s3 cp $fn s3://${HELM_S3_BUCKET}-${region}/dmap/dataclassification/$fn
+    aws s3 cp $fn s3://${HELM_S3_BUCKET}-${region}/dmap/${parent_dir}/$fn
   done
 }
 
 copy_mvn_jar() {
-  local art_id="$1"
+  local parent_dir="$1"
+  local art_id="$2"
   local v
   v="$(awk '{print $2}' ./helmfile.d/values/${art_id}-version.yaml)"
   echo "Fetching version ${v} of ${art_id}"
   mvn -U --batch-mode --settings ${GITLAB_MAVEN_SETTINGS_XML} dependency:copy -DoutputDirectory=. -Dmaven.repo.local=$PWD/.m2/repository -Dartifact=io.openraven:${art_id}:${v}
-  copy_to_all_regions ${art_id}-${v}.jar
+  copy_to_all_regions ${parent_dir} ${art_id}-${v}.jar
 }
 
-copy_mvn_jar ${DMAP_ART_ID}
-copy_mvn_jar ${AWS_S3_ART_ID}
+copy_mvn_jar application ${DMAP_ART_ID}
+copy_mvn_jar dataclassification ${AWS_S3_ART_ID}

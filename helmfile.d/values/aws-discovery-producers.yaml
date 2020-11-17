@@ -24,7 +24,6 @@ producers:
   - name: LakeFormation
   - name: Lambda
   - name: Lightsail
-  - name: Neptune
   - name: QLDB
   - name: RDS
   - name: RSH

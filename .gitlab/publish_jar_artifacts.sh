@@ -33,5 +33,7 @@ copy_mvn_jar() {
   copy_to_all_regions ${parent_dir} ${art_id}-${v}.jar
 }
 
+cd ${CI_PROJECT_DIR}
+
 copy_mvn_jar application ${DMAP_ART_ID}
 copy_mvn_jar dataclassification ${AWS_S3_ART_ID}

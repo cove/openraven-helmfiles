@@ -10,7 +10,7 @@ releases:
 - name: asset-groups
   namespace: ui
   chart: openraven-repo/asset-groups
-  version: 0.218205319.0
+  version: 0.219333170.0
   wait: false
 
   values:

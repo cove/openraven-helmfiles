@@ -38,6 +38,21 @@ spec:
           username: anonymous
           roles: superuser
           authz_exception: false
+    podTemplate:
+      spec:
+        containers:
+          - env:
+              - name: ES_JAVA_OPTS
+                # MUST BE 1/2 of the memory below
+                value: -Xms2g -Xmx2g
+            name: elasticsearch
+            resources:
+              limits:
+                cpu: "1"
+                memory: 4Gi
+              requests:
+                cpu: "1"
+                memory: 4Gi
   http:
     tls:
       selfSignedCertificate:

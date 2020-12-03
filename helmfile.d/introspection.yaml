@@ -10,7 +10,7 @@ releases:
 - name: introspect
   namespace: ui
   chart: openraven-repo/introspection
-  version: 0.1.0
+  version: 0.1.1
   missingFileHandler: Warn
   wait: true
   timeout: 300

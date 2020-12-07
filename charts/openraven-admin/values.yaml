@@ -1,3 +1,7 @@
 global:
   clusterType: ~
+  deploy_channel: ~
 group_name: ~
+customer_facing_channels:
+  - openraven-deploy
+  - openraven-deploy-beta

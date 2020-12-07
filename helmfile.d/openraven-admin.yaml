@@ -10,7 +10,9 @@ releases:
 - name: openraven-repo-admin
   namespace: kube-system
   chart: openraven-repo/openraven-admin
-  version: 0.0.4
+  version: 0.0.5
   values:
     - ./values/clusterType.yaml.gotmpl
     - group_name: {{ $clusterName }}
+    - global:
+        deploy_channel: {{ $s3Bucket }}

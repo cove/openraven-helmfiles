@@ -13,6 +13,13 @@ subjects:
   - apiGroup: rbac.authorization.k8s.io
     kind: Group
     name: "okta:SaaS - Admins"
+  {{ if not (has .Values.global.deploy_channel .Values.customer_facing_channels)}}
+  # See this article for more info
+  # https://openraven.atlassian.net/wiki/spaces/OPS/pages/831389726/0001+-+Customer+Facing+Deploy+Channels
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: "okta:Engineering"
+  {{ end }}
   {{ else }}
   - apiGroup: rbac.authorization.k8s.io
     kind: Group

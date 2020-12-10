@@ -1,0 +1,49 @@
+# Default values for asset-groups.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  registry: registry.gitlab.com
+  repository: openraven/open/odin-metrics
+  # Pulled from minor value in Chart.yaml version:
+  tag: ~
+  pullPolicy: IfNotPresent
+
+global:
+  groupId: ~
+
+sentry_dsn: https://21bd8b55b911434eaa1f727ef883b6bb@o322024.ingest.sentry.io/5551382
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+serviceAccount:
+  create: false
+
+resources:
+  requests:
+    memory: 512Mi
+  limits:
+    memory: 512Mi
+java:
+  vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=50
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

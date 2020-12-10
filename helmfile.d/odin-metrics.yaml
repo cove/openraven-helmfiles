@@ -1,0 +1,31 @@
+repositories:
+{{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+{{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+{{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+{{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+- name: openraven-repo
+  url: {{ $ourUrl }}
+
+releases:
+- name: odin-metrics
+  namespace: datadog
+  chart: openraven-repo/odin-metrics
+  version: 0.227660186.0
+  wait: false
+
+  values:
+  - global:
+      groupId: {{ requiredEnv "GROUP_ID" }}
+
+
+  hooks:
+  - events: ['presync']
+    showlogs: true
+    command: bash
+    args:
+    - -exc
+    - |
+      my_ns="{{`{{ .Release.Namespace }}`}}"
+      if ! kubectl get -o name namespace $my_ns; then
+        kubectl create namespace $my_ns
+      fi

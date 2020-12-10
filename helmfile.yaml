@@ -32,6 +32,7 @@ helmfiles:
 - path: {{ $baseDir }}/account-management.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/asset-groups.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/cluster-upgrade.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/odin-metrics.yaml?ref={{ $gitRef }}
 
 {{/*
 We are purposefully picking an environment variable that cluster-upgrade

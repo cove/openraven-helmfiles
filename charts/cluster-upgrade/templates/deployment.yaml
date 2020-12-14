@@ -119,7 +119,15 @@ spec:
               value: {{ .Values.global.installEmail | quote }}
             - name: CLUSTER_TYPE
               value: {{ .Values.global.clusterType | quote }}
-
+            {{ if .Values.global.marketplaceCustomerIdentifier }}
+              # Values come from the workspace being created via the marketplace
+            - name: MARKETPLACE_CUSTOMER_IDENTIFIER
+              value: {{ .Values.global.marketplaceCustomerIdentifier | quote }}
+            {{ end }}
+            {{ if .Values.global.marketplaceProductCode }}
+            - name: MARKETPLACE_PRODUCT_CODE
+              value: {{ .Values.global.marketplaceProductCode | quote }}
+            {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

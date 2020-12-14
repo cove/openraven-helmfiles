@@ -12,7 +12,7 @@ releases:
 - name: cluster-upgrade
   namespace: cluster-upgrade
   chart: openraven-repo/cluster-upgrade
-  version: 0.209505439.1
+  version: 0.209505439.2
   wait: false
   values:
   - ./values/clusterType.yaml.gotmpl
@@ -27,7 +27,8 @@ releases:
       adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}
       clusterName: {{ env "CLUSTER_NAME" | quote }}
       installEmail: {{ env "INSTALL_EMAIL" | quote }}
-
+      marketplaceProductCode: {{ env "MARKETPLACE_PRODUCT_CODE" | quote }}
+      marketplaceCustomerIdentifier: {{ env "MARKETPLACE_CUSTOMER_IDENTIFIER" | quote }}
 
     helmS3Bucket: {{ $s3Bucket }}
     helmS3Key: {{ $s3Key }}

@@ -30,6 +30,8 @@ global:
   openravenIngressHostname: ~
   installEmail: ~
   clusterType: ~
+  marketplaceProductCode: ~
+  marketplaceCustomerIdentifier: ~
 
 helmS3Bucket: ~
 # openraven-deploy

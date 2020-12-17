@@ -66,6 +66,7 @@ ingress:
         - "/api/server"
         - "/api/scan"
         - "/api/cloudwatcher"
+        - "/api/integrations"
 
   tls: []
   #  - secretName: chart-example-tls

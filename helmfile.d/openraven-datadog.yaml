@@ -10,12 +10,12 @@ repositories:
 {{ $clusterType := $values.global.clusterType }}
 {{ $groupId := requiredEnv "GROUP_ID" }}
 {{ $releaseChannel := $s3Bucket }}
-- name: openraven-repo-monitoring
+- name: openraven-monitoring
   url: {{ $ourUrl }}
 releases:
 - name: datadog
   namespace: datadog
-  chart: openraven-repo-monitoring/openraven-datadog
+  chart: openraven-monitoring/openraven-datadog
   version: 0.0.3
   wait: false
   recreatePods: true

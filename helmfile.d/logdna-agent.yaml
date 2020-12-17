@@ -7,12 +7,12 @@ repositories:
 {{ $clusterName := (regexReplaceAll "(^[0-9])" (regexReplaceAll "[^A-Za-z0-9]+" $clusterNameEnv "-") "o-${1}" | trunc 39 | trimAll "-" | lower) }}
 {{ $encryptedKey := "BkoKtFO4yI2L5bSH5hZNGQEnX8i4FPITiBiz5dVAorwGhDr2Pu0A1az4Oe691z2wCoGLcpkuG0vIlARdbXnGxg==" }}
 {{ $decryptedKey := $encryptedKey | decryptAES (env "COOKIE_SECRET") }}
-- name: openraven-repo
+- name: openraven
   url: {{ $ourUrl }}
 releases:
 - name: logdna-agent
   namespace: logdna-agent
-  chart: openraven-repo/logdna-agent
+  chart: openraven/logdna-agent
   version: 0.1.0
   wait: false
   values:

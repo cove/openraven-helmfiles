@@ -4,13 +4,13 @@ repositories:
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $groupId      := requiredEnv "GROUP_ID" }}
 {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-- name: openraven-repo
+- name: openraven
   url: {{ $ourUrl }}
 
 releases:
 - name: account-management
   namespace: ui
-  chart: openraven-repo/account-management
+  chart: openraven/account-management
   version: 0.231010025.0
   wait: false
   values:

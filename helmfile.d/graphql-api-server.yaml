@@ -3,13 +3,13 @@ repositories:
   {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
   {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-  - name: openraven-repo
+  - name: openraven
     url: {{ $ourUrl }}
 
 releases:
 - name: graphql-api-server
   namespace: ui
-  chart: openraven-repo/graphql-api-server
+  chart: openraven/graphql-api-server
   version: 0.184437693.0
   missingFileHandler: Warn
   wait: true

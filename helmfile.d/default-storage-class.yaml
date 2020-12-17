@@ -2,12 +2,12 @@
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 repositories:
-- name: openraven-repo
+- name: openraven
   url: {{ $ourUrl }}
 releases:
 - name: default-storage-class
   namespace: kube-system
-  chart: openraven-repo/default-storage-class
+  chart: openraven/default-storage-class
   version: 0.0.3
   wait: true
   values:

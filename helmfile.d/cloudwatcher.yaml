@@ -3,13 +3,13 @@ repositories:
 {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
 {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
 {{ $groupId      := requiredEnv "GROUP_ID" }}
-- name: openraven-repo
+- name: openraven
   url: {{ $ourUrl }}
 
 releases:
 - name: cloudwatcher
   namespace: ui
-  chart: openraven-repo/cloudwatcher
+  chart: openraven/cloudwatcher
   version: 0.177202707.0
   wait: false
 

@@ -3,13 +3,13 @@ repositories:
   {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
   {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
-  - name: openraven-repo
+  - name: openraven
     url: {{ $ourUrl }}
 
 releases:
 - name: elasticsearch
   namespace: elasticsearch
-  chart: openraven-repo/elasticsearch
+  chart: openraven/elasticsearch
   version: 1.1590644377.10
   atomic: true
   wait: true

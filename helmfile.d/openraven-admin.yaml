@@ -3,13 +3,13 @@ repositories:
   {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
   {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   {{ $clusterName  := requiredEnv "CLUSTER_NAME" | quote }}
-  - name: openraven-repo
+  - name: openraven
     url: {{ $ourUrl }}
 
 releases:
-- name: openraven-repo-admin
+- name: openraven-admin
   namespace: kube-system
-  chart: openraven-repo/openraven-admin
+  chart: openraven/openraven-admin
   version: 0.0.5
   values:
     - ./values/clusterType.yaml.gotmpl

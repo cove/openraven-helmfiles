@@ -1,6 +1,6 @@
 repositories:
-- name: stable-repo
-  url: https://kubernetes-charts.storage.googleapis.com
+- name: stable
+  url: https://charts.helm.sh/stable
 
 releases:
 {{ $clientId     := requiredEnv "SERVICE_CLIENT_ID" }}
@@ -17,7 +17,7 @@ releases:
   # is to put oauth2-proxy on `login.whatever.openraven.net` but that's a bigger change)
   namespace: ui
 
-  chart: stable-repo/oauth2-proxy
+  chart: stable/oauth2-proxy
   # https://github.com/helm/charts/blob/master/stable/oauth2-proxy/Chart.yaml#L2
   version: 3.2.0
   values:

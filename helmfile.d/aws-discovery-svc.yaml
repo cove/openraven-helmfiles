@@ -9,13 +9,13 @@ repositories:
   {{ $profileBase = (print $profileBase ", saas") }}
 {{ end }}
 {{ $producers := (readFile "./values/aws-discovery-producers.yaml" | fromYaml) }}
-  - name: openraven-repo
+  - name: openraven
     url: {{ $ourUrl }}
 
 templates:
   default: &default
     namespace: "aws"
-    chart: "openraven-repo/aws-discovery-svc"
+    chart: "openraven/aws-discovery-svc"
     version: 0.225513922.0
     missingFileHandler: Warn
     timeout: 600

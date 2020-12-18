@@ -17,7 +17,7 @@ global:
   groupId: ~
   openravenIngressHostname: ~
 
-sentry_dsn: https://eea6b3c7bbcb4b9cbbdfccef714d42cd@o322024.ingest.sentry.io/5406671
+sentry_dsn: https://f7b2669a7437459aa7632ba39772d3d3@o322024.ingest.sentry.io/5563380
 
 #imagePullSecrets: []
 nameOverride: ""

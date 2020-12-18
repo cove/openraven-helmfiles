@@ -12,7 +12,10 @@ image:
   pullPolicy: IfNotPresent
 
 global:
+  adminClientId: ~
+  adminClientSecret: ~
   groupId: ~
+  openravenIngressHostname: ~
 
 sentry_dsn: https://eea6b3c7bbcb4b9cbbdfccef714d42cd@o322024.ingest.sentry.io/5406671
 

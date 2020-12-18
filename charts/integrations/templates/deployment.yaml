@@ -56,6 +56,10 @@ spec:
               value: default,prod
             - name: MANAGEMENT_SERVER_PORT
               value: '8080'
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-ID
+              value: {{ .Values.global.adminClientId }}
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-SECRET
+              value: {{ .Values.global.adminClientSecret}}
             - name: JAVA_TOOL_OPTIONS
               value: {{ .Values.java.vmArgs }}
             - name: SENTRY_DSN

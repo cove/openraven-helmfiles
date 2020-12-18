@@ -31,7 +31,7 @@ ingress:
   enabled: true
   hosts:
     - host: ~ #Check in ingress.yaml
-      paths: ["/api/integrations"]
+      paths: ["/api/integrations/test"]
 
 resources:
   requests:

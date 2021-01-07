@@ -13,7 +13,7 @@ releases:
 - name: logdna-agent
   namespace: logdna-agent
   chart: openraven/logdna-agent
-  version: 0.1.0
+  version: 0.1.1
   wait: false
   values:
   - global:

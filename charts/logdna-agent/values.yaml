@@ -2,3 +2,9 @@ global:
   clusterName: ~
 
 base64key: ~
+
+image:
+  registry: docker.io
+  repository: logdna/logdna-agent
+  tag: 2.1.9
+  pullPolicy: IfNotPresent

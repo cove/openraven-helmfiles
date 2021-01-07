@@ -22,8 +22,8 @@ spec:
       serviceAccountName: logdna-agent
       containers:
         - name: {{ .Chart.Name }}
-          image: logdna/logdna-agent:stable
-          imagePullPolicy: Always
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: LOGDNA_TAGS
               value: {{ .Values.global.clusterName }}

@@ -13,6 +13,9 @@ image:
 
 global:
   groupId: ~
+  clusterName: ~
+  deployChannel: ~
+  clusterType: ~
 
 sentry_dsn: https://21bd8b55b911434eaa1f727ef883b6bb@o322024.ingest.sentry.io/5551382
 

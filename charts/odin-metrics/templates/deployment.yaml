@@ -71,6 +71,14 @@ spec:
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA
               value: "groupId:{{ .Values.global.groupId }}"
+            - name: CLUSTER_NAME
+              value: {{ .Values.global.clusterName }}
+            - name: CLUSTER_TYPE
+              value: {{ .Values.global.clusterType }}
+            - name: DEPLOY_CHANNEL
+              value: {{ .Values.global.deployChannel }}
+            - name: GROUP_ID
+              value: {{ .Values.global.groupId }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

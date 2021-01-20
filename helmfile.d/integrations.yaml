@@ -11,7 +11,7 @@ releases:
 - name: integrations
   namespace: ui
   chart: openraven/integrations
-  version: 0.237694954.0
+  version: 0.244567903.0
   installed: true
   hooks:
   - events: ["presync"]

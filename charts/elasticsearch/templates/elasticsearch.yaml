@@ -13,11 +13,8 @@ metadata:
 spec:
   version: 7.7.0
   nodeSets:
-    # Using -002 since the name must be valid DNS. When increasing the disk size
-    # rev the name of the nodeset.
-    # https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations
-  - name: default-003
-    count: 3
+  - name: {{ .Values.nodeSetName }}
+    count: {{ .Values.nodeCount }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -26,8 +23,8 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 100Gi
-        storageClassName: default-storage-class
+            storage: {{ .Values.storageRequest }}
+        storageClassName: {{ .Values.storageClassName }}
     config:
       node.master: true
       node.data: true

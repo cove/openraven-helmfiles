@@ -25,9 +25,9 @@ spec:
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
           [
             {
-              "prometheus_url": "http://%%host%%:9404/metrics",
+              "prometheus_url": "http://%%host%%:{{ .Values.serverManagementPort }}/actuator/prometheus",
               "namespace": "{{ .Chart.Name }}",
-              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+              "metrics": ["*"]
             }
           ]
     spec:
@@ -52,19 +52,19 @@ spec:
             initialDelaySeconds: 15
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{ .Values.serverManagementPort }}
           readinessProbe:
             initialDelaySeconds: 15
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{ .Values.serverManagementPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: default, prod
             - name: MANAGEMENT_SERVER_PORT
-              value: "8080"
+              value: "{{ .Values.serverManagementPort }}"
             - name: SERVER_PORT
               value: "80"
             - name: SERVER_MAX-HTTP-HEADER-SIZE

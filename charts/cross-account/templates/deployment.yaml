@@ -25,9 +25,9 @@ spec:
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
           [
             {
-              "prometheus_url": "http://%%host%%:9404/metrics",
+              "prometheus_url": "http://%%host%%:8080/actuator/prometheus",
               "namespace": "{{ .Chart.Name }}",
-              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+              "metrics": ["*"]
             }
           ]
         iam.amazonaws.com/role: "orvn-{{ .Values.global.groupId }}-{{ .Chart.Name }}"

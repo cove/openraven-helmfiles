@@ -25,9 +25,21 @@ spec:
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
           [
             {
-              "prometheus_url": "http://%%host%%:9404/metrics",
+              "prometheus_url": "http://%%host%%:{{ .Values.serverManagementPort }}/actuator/prometheus",
               "namespace": "{{ .Chart.Name }}",
-              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+              "metrics": ["*"]
+            }
+          ]
+        ad.datadoghq.com/opa.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/opa.init_configs: |
+          [{}]
+        ad.datadoghq.com/opa.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:{{ .Values.opa.mgmt.port  }}/metrics",
+              "namespace": "opa",
+              "metrics": ["*"]
             }
           ]
     spec:
@@ -51,11 +63,11 @@ spec:
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{ .Values.serverManagementPort }}
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{ .Values.serverManagementPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
@@ -64,7 +76,7 @@ spec:
             - name: SERVER_PORT
               value: "80"
             - name: MANAGEMENT_SERVER_PORT
-              value: "8080"
+              value: "{{ .Values.serverManagementPort }}"
             - name: MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED
               value: "false"
             - name: JAVA_TOOL_OPTIONS

@@ -81,6 +81,8 @@ resources:
 releaseChannel: ~
 releaseVersion: ~
 
+serverManagementPort: 8080
+
 java:
   vmArgs: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
 

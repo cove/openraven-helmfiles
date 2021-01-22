@@ -77,6 +77,8 @@ tolerations: []
 
 affinity: {}
 
+serverManagementPort: 8080
+
 # OPA Values
 opa:
   name: opa

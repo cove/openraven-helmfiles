@@ -10,7 +10,7 @@ releases:
 - name: odin-metrics
   namespace: datadog
   chart: openraven/odin-metrics
-  version: 0.227660186.1
+  version: 0.251043154.0
   wait: false
 
   values:

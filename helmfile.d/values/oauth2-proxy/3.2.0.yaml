@@ -8,11 +8,12 @@ extraArgs:
   pass-basic-auth: "true"
   pass-user-headers: "true"
   pass-host-header: "true"
-  pass-authorization-header: "false"
+  pass-authorization-header: "true"
   set-xauthrequest: "true"
   set-authorization-header: "true"
   cookie-secure: "true"
   cookie-refresh: "6h"
+  cookie-expire: "8h"
   skip-provider-button: "true"
   skip-auth-regex: "/robots.txt|/favicon.ico"
   skip-jwt-bearer-tokens: "true"
@@ -22,6 +23,7 @@ extraArgs:
   session-store-type: "redis"
   redis-connection-url: "redis://redis-master.ui.svc.cluster.local:6379/0"
   scope: "openid profile email offline_access"
+  whitelist-domain: .openraven.net
 
 image:
   tag: "v6.0.0"

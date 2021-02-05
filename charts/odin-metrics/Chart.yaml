@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "1.0"
 description: Metrics from Odin
 name: odin-metrics
-version: 0.251149544.0
+version: 0.252138541.0

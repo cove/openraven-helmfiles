@@ -4,9 +4,9 @@ repositories:
   {{ $ourUrl             := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
   {{ $ingHostname        := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
   {{ $esNodeCount        := env "ES_NODE_COUNT" | default 3 }}
-  {{ /* default is set to -003 since the name must be valid DNS. */ }}
-  {{ /* When increasing the disk size, rev the name of the nodeset. */ }}
-  {{ /* https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations */ }}
+  {{/* default is set to -003 since the name must be valid DNS. */}}
+  {{/* When increasing the disk size, rev the name of the nodeset. */}}
+  {{/* https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations */}}
   {{ $esNodeSetName      := env "ES_NODE_SET_NAME" | default "default-003" }}
   {{ $esStorageRequest   := env "ES_STORAGE_REQUEST" | default "100Gi" }}
   {{ $esStorageClassName := env "ES_STORAGE_CLASS_NAME" | default "default-storage-class" }}

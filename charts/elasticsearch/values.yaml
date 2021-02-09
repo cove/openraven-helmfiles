@@ -17,10 +17,7 @@ elasticsearch_route: /elasticsearch
 elasticsearch_service: elasticsearch
 controller_version: 1.1.1
 
-nodeCount: 3
-# Using -003 since the name must be valid DNS.
-# When increasing the disk size, rev the name of the nodeset.
-# https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations
-nodeSetName: default-003
-storageRequest: 100Gi
-storageClassName: default-storage-class
+nodeCount: ~
+nodeSetName: ~
+storageRequest: ~
+storageClassName: ~

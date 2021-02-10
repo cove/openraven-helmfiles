@@ -28,6 +28,7 @@ spec:
               "metrics": ["*"]
             }
           ]
+        iam.amazonaws.com/role: "orvn-{{ .Values.global.groupId }}-cross-account"
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

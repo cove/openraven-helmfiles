@@ -62,6 +62,7 @@ ingress:
   hosts:
     - host: #Check in ingress.yml
       paths:
+        - "/api/user"
         - "/api/orgs"
         - "/api/server"
         - "/api/scan"

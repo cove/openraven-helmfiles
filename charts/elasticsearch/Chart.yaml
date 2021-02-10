@@ -3,4 +3,4 @@ appVersion: "1.0"
 name: elasticsearch
 description: Open Raven ElasticSearch and Kibana
 type: application
-version: 1.1590644377.10
+version: 1.1590644377.11

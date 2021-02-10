@@ -16,3 +16,10 @@ kibana_service: kibana
 elasticsearch_route: /elasticsearch
 elasticsearch_service: elasticsearch
 controller_version: 1.1.1
+
+# These values have been moved to helmfile.d/elasticsearch.yaml
+# Please go look there before setting these values, as there be dragons
+nodeCount: ~
+nodeSetName: ~
+storageRequest: ~
+storageClassName: ~

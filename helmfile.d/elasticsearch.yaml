@@ -1,8 +1,16 @@
 repositories:
-  {{ $s3Bucket     := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
-  {{ $s3BucketHost := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
-  {{ $ourUrl       := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
-  {{ $ingHostname  := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+  {{ $s3Bucket           := env "HELM_S3_BUCKET"      | default "openraven-deploy" }}
+  {{ $s3BucketHost       := env "HELM_S3_BUCKET_HOST" | default "s3.amazonaws.com" }}
+  {{ $ourUrl             := env "HELM_S3_URL"         | default (printf "https://%s.%s/charts" $s3Bucket $s3BucketHost) }}
+  {{ $ingHostname        := requiredEnv "OPENRAVEN_INGRESS_HOSTNAME" }}
+  {{ $esNodeCount        := env "ES_NODE_COUNT" | default "3" }}
+  {{/* default is set to -003 since the name must be valid DNS. */}}
+  {{/* When increasing the disk size, rev the name of the nodeset. */}}
+  {{/* https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-orchestration.html#k8s-orchestration-limitations */}}
+  {{ $esNodeSetName      := env "ES_NODE_SET_NAME" | default "default-003" }}
+  {{ $esStorageRequest   := env "ES_STORAGE_REQUEST" | default "100Gi" }}
+  {{ $esStorageClassName := env "ES_STORAGE_CLASS_NAME" | default "default-storage-class" }}
+
   - name: openraven
     url: {{ $ourUrl }}
 
@@ -10,7 +18,7 @@ releases:
 - name: elasticsearch
   namespace: elasticsearch
   chart: openraven/elasticsearch
-  version: 1.1590644377.10
+  version: 1.1590644377.11
   atomic: true
   wait: true
   force: true
@@ -31,3 +39,7 @@ releases:
   - ingress:
       hosts:
       - host: {{ $ingHostname }}
+  - nodeCount: {{ $esNodeCount }}
+    nodeSetName: {{ $esNodeSetName }}
+    storageRequest: {{ $esStorageRequest }}
+    storageClassName: {{ $esStorageClassName }}

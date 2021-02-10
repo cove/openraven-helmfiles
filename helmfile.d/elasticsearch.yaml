@@ -40,6 +40,6 @@ releases:
       hosts:
       - host: {{ $ingHostname }}
   - nodeCount: {{ $esNodeCount }}
-  - nodeSetName: {{ $esNodeSetName }}
-  - storageRequest: {{ $esStorageRequest }}
-  - storageClassName: {{ $esStorageClassName }}
+    nodeSetName: {{ $esNodeSetName }}
+    storageRequest: {{ $esStorageRequest }}
+    storageClassName: {{ $esStorageClassName }}

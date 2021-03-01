@@ -63,6 +63,40 @@ releases:
         - name: SPRING_PROFILES_ACTIVE
           value: default, consumer, prod
 
+  - name: aws-consumer-s3objects-svc
+    <<: *default
+    hooks:
+      - events: ["presync"]
+        showlogs: true
+        command: bash
+        args:
+          - -exc
+          - |
+            my_ns="{{`{{ .Release.Namespace }}`}}"
+            kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ $groupId }}-.*"
+
+    values:
+      - global: *global
+      - deployment:
+          enabled: true
+      - resources:
+          requests:
+            memory: 2Gi
+          limits:
+            memory: 2Gi
+      - extraEnv:
+          - name: SPRING_PROFILES_ACTIVE
+            value: default, consumer, prod
+          - name: SPRING_KAFKA_CONSUMER_AUTO-OFFSET-RESET
+            value: earliest
+          - name: OPENRAVEN_APP_V1_KAFKA_CONSUMER_PERSISTENCEBATCHSIZE
+            value: '500'
+          - name: OPENRAVEN_APP_V1_KAFKA_CONSUMER_GROUP
+            value: AWS-CONSUMERS
+          - name: OPENRAVEN_APP_V1_KAFKA_CONSUMER_TOPIC
+            value: DISCOVERED_S3_OBJECTS
+
+
 {{- range $producers.producers }}
   - name: aws-{{ .name | lower }}-discovery-svc
     <<: *default
@@ -89,6 +123,8 @@ releases:
       - extraEnv:
         - name: SPRING_PROFILES_ACTIVE
           value: {{ $profileBase }}, S3Objects
+        - name: SPRING_KAFKA_TEMPLATE_DEFAULT-TOPIC
+          value: DISCOVERED_S3_OBJECTS
 
   - name: aws-account-iam-discovery-svc
     <<: *default

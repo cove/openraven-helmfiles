@@ -73,9 +73,6 @@ releases:
           - -exc
           - |
             my_ns="{{`{{ .Release.Namespace }}`}}"
-            if ! kubectl get -o name namespace $my_ns; then
-              kubectl create namespace $my_ns
-            fi
             kubectl annotate --overwrite ns $my_ns "iam.amazonaws.com/permitted=orvn-{{ $groupId }}-.*"
 
     values:

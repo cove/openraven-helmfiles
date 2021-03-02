@@ -1,19 +1,20 @@
 {{ $gitUrl := env "HELMFILE_GIT_URL" | default "git::https://gitlab.com/openraven/open/helm-charts/helmfiles.git" }}
 {{ $gitRef := env "HELMFILE_GIT_REF" | default "__GITLAB_CI_FIX_THIS__" }}
 {{ $baseDir := printf "%s@helmfile.d" $gitUrl }}
-{{/* use the previous one for old clusters */}}
-{{ $volProv := "kubernetes.io/aws-ebs" }}
 helmfiles:
-  - path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
-  {{ if eq (env "CLUSTER_TYPE") "saas" }}
-  # THIS MUST BE VERY EARLY
+- path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
+{{ if eq (env "CLUSTER_TYPE") "saas" }}
+# THIS MUST BE VERY EARLY
 - path: {{ $baseDir }}/kiam.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/logdna-agent.yaml?ref={{ $gitRef }}
+{{ end }}
+- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
+{{/* use the previous one for old clusters */}}
+{{ $volProv := "kubernetes.io/aws-ebs" }}
+{{ if (env "CLUSTER_TAGS_JSON") }}
 - path: {{ $baseDir }}/aws-ebs-csi-driver.yaml?ref={{ $gitRef }}
-  {{ $volProv = "ebs.csi.aws.com" }}
-  {{ end }}
-  - path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
-  - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
+{{ $volProv = "ebs.csi.aws.com" }}
 {{ end }}
 - path: {{ $baseDir }}/default-storage-class.yaml?ref={{ $gitRef }}
   values:

@@ -128,11 +128,6 @@ spec:
             - name: MARKETPLACE_PRODUCT_CODE
               value: {{ .Values.global.marketplaceProductCode | quote }}
             {{ end }}
-            {{ if .Values.global.clusterTagsJson }}
-            - name: CLUSTER_TAGS_JSON
-              value: {{ .Values.global.clusterTagsJson | quote }}
-            {{ end }}
-
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

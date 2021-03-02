@@ -32,7 +32,6 @@ global:
   clusterType: ~
   marketplaceProductCode: ~
   marketplaceCustomerIdentifier: ~
-  clusterTagsJson: ~
 
 helmS3Bucket: ~
 # openraven-deploy

@@ -1,9 +1,12 @@
-{{ $version := "v0.6.0" }}
 {{ $tagJson := env "CLUSTER_TAGS_JSON" }}
+repositories:
+  - name: aws-ebs-csi-driver
+    url: https://kubernetes-sigs.github.io/aws-ebs-csi-driver
 releases:
 - name: aws-ebs-csi-driver
   namespace: kube-system
-  chart: https://github.com/kubernetes-sigs/aws-ebs-csi-driver/releases/download/{{ $version }}/helm-chart.tgz
+  chart: aws-ebs-csi-driver/aws-ebs-csi-driver
+  version: 0.9.12
   wait: true
   values:
   - enableVolumeScheduling: "true"

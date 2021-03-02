@@ -4,16 +4,16 @@
 {{/* use the previous one for old clusters */}}
 {{ $volProv := "kubernetes.io/aws-ebs" }}
 helmfiles:
-  - path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
-  {{ if eq (env "CLUSTER_TYPE") "saas" }}
+- path: {{ $baseDir }}/etcd-prune.yaml?ref={{ $gitRef }}
+{{ if eq (env "CLUSTER_TYPE") "saas" }}
   # THIS MUST BE VERY EARLY
 - path: {{ $baseDir }}/kiam.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/logdna-agent.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/aws-ebs-csi-driver.yaml?ref={{ $gitRef }}
-  {{ $volProv = "ebs.csi.aws.com" }}
-  {{ end }}
-  - path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
-  - path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
+{{ $volProv = "ebs.csi.aws.com" }}
+{{ end }}
+- path: {{ $baseDir }}/openraven-datadog.yaml?ref={{ $gitRef }}
+- path: {{ $baseDir }}/openraven-admin.yaml?ref={{ $gitRef }}
 - path: {{ $baseDir }}/default-storage-class.yaml?ref={{ $gitRef }}
   values:
   - provisioner: {{ $volProv }}

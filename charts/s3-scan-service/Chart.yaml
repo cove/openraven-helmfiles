@@ -4,4 +4,4 @@ description: A Helm chart to install s3 scan service
 name: s3-scan-service
 # Minor version is our image tag, no need to set in values
 # Please use patch for multiple revs of a specific build
-version: 0.262614714.0
+version: 0.264325890.0

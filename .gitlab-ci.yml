@@ -27,7 +27,7 @@ include:
 package-helm-charts:
   <<: *dont_run_on_external_pipelines
   stage: build
-  image: &img registry.gitlab.com/openraven/openraven/ci/helmfile-awscli:helm3-256754346
+  image: &img registry.gitlab.com/openraven/openraven/ci/helmfile-awscli:helm3-263820943
   artifacts:
     name: helm artifacts
     expire_in: 30 days

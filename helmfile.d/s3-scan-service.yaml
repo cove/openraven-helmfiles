@@ -29,3 +29,5 @@ releases:
   - global:
       openravenIngressHostname: {{ $ingHostname }}
       groupId: {{ $groupId }}
+      adminClientId: {{ env "ADMIN_CLIENT_ID" }}
+      adminClientSecret: {{ env "ADMIN_CLIENT_SECRET" }}

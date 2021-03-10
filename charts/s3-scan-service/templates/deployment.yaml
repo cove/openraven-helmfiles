@@ -66,6 +66,10 @@ spec:
               value: "{{ .Chart.Version }}"
             - name: SENTRY_EXTRA
               value: "groupId:{{ .Values.global.groupId }}"
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-ID
+              value: {{ .Values.global.adminClientId }}
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-SECRET
+              value: {{ .Values.global.adminClientSecret}}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

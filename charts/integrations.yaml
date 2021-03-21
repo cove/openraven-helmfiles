@@ -1,0 +1,124 @@
+---
+# Source: integrations/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-integrations
+  labels:
+    app.kubernetes.io/name: integrations
+    helm.sh/chart: integrations-0.261953786.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: integrations
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: integrations/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-integrations
+  labels:
+    app.kubernetes.io/name: integrations
+    helm.sh/chart: integrations-0.261953786.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: integrations
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: integrations
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        ad.datadoghq.com/integrations.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/integrations.init_configs: |
+          [{}]
+        ad.datadoghq.com/integrations.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+              "namespace": "integrations",
+              "metrics": ["*"]
+            }
+          ]
+        iam.amazonaws.com/role: "orvn--cross-account"
+    spec:
+      containers:
+        - name: integrations
+          
+          image: "registry.gitlab.com/openraven/open/integrations-service-repo-docker:261953786"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default,prod
+            - name: MANAGEMENT_SERVER_PORT
+              value: '8080'
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-ID
+              value: 
+            - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ASGARD_CLIENT-SECRET
+              value: 
+            - name: OPENRAVEN_APP_V1_SERVICES_SERVICE_CLUSTER-URL
+              value: "https://"
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
+            - name: SENTRY_DSN
+              value: "https://f7b2669a7437459aa7632ba39772d3d3@o322024.ingest.sentry.io/5563380"
+            - name: SENTRY_ENVIRONMENT
+              value: 
+            - name: SENTRY_RELEASE
+              value: "0.261953786.0"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 512Mi
+---
+# Source: integrations/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-integrations
+  labels:
+    app.kubernetes.io/name: integrations
+    helm.sh/chart: integrations-0.261953786.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /api/integrations/test
+            backend:
+              serviceName: RELEASE-NAME-integrations
+              servicePort: 80

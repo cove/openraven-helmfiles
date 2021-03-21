@@ -1,0 +1,202 @@
+---
+# Source: cluster-upgrade/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cluster-upgrade-sa
+  labels:
+    app.kubernetes.io/name: cluster-upgrade
+    helm.sh/chart: cluster-upgrade-0.209505439.4
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: cluster-upgrade/templates/cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+    name: RELEASE-NAME-cluster-upgrade
+    labels:
+        app.kubernetes.io/name: cluster-upgrade
+        helm.sh/chart: cluster-upgrade-0.209505439.4
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "1.0"
+        app.kubernetes.io/managed-by: Helm
+roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cluster-admin
+subjects:
+    - kind: ServiceAccount
+      name: cluster-upgrade-sa
+      namespace: "default"
+---
+# Source: cluster-upgrade/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-cluster-upgrade
+  labels:
+    app.kubernetes.io/name: cluster-upgrade
+    helm.sh/chart: cluster-upgrade-0.209505439.4
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cluster-upgrade
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cluster-upgrade
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        iam.amazonaws.com/role: "orvn--cluster-upgrade"
+        ad.datadoghq.com/cluster-upgrade.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/cluster-upgrade.init_configs: |
+          [{}]
+        ad.datadoghq.com/cluster-upgrade.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9404/metrics",
+              "namespace": "cluster-upgrade",
+              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+            }
+          ]
+    spec:
+      serviceAccountName: cluster-upgrade-sa
+      securityContext:
+        {}
+      containers:
+        - name: cluster-upgrade
+          securityContext:
+            {}
+          image: "registry.gitlab.com/openraven/open/cluster-upgrade:209505439"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 15
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 15
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default, prod
+              # These values come from the environment of the current container and are set during initial install
+            - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
+              value: 
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            
+            
+            
+            - name: COOKIE_SECRET
+              value: ''
+            # Carries the current FRONTEND_CLIENT_ID forward during upgrades when the pod is recreated
+            - name: FRONTEND_CLIENT_ID
+              value: 
+              # Carries the current GROUP_ID forward during upgrades when the pod is recreated
+            - name: GROUP_ID
+              value: 
+            - name: SEGMENT_ANALYTICS_WRITEKEY
+              value: "mLZedQqPeRGL19unziVuoVQXDXjMl94F"
+              # Carries the current SERVICE_CLIENT_ID forward during upgrades when the pod is recreated
+            - name: SERVICE_CLIENT_ID
+              value: 
+              # Carries the current SERVICE_CLIENT_SECRET forward during upgrades when the pod is recreated
+            - name: SERVICE_CLIENT_SECRET
+              value: 
+              # Carries the current OPENRAVEN_INGRESS_HOSTNAME forward during upgrades when the pod is recreated
+            - name: OPENRAVEN_INGRESS_HOSTNAME
+              value: 
+              # The service application's client id, used to auth to asgard
+            - name: ADMIN_CLIENT_ID
+              value: 
+              # The service application's secret, used to auth to asgard
+            - name: ADMIN_CLIENT_SECRET
+              value: 
+              # The name of the cluster selected during provisioning
+            - name: CLUSTER_NAME
+              value: 
+            - name: SENTRY_DSN
+              value: "https://54e5f8625c5e4fdba66c69eb47bf9e1a@o322024.ingest.sentry.io/5367691"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+            - name: SENTRY_RELEASE
+              value: "0.209505439.4"
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
+            - name: INSTALL_EMAIL
+              value: 
+            - name: CLUSTER_TYPE
+              value:
+---
+# Source: cluster-upgrade/templates/tls-refresh-job.yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+
+metadata:
+  name: cluster-upgrade-tls-refresh
+  labels:
+    app.kubernetes.io/name: cluster-upgrade
+    helm.sh/chart: cluster-upgrade-0.209505439.4
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: cluster-upgrade
+            app.kubernetes.io/instance: RELEASE-NAME
+        spec:
+          containers:
+          - name: refresh
+            image: "registry.gitlab.com/openraven/open/cluster-upgrade:209505439"
+            command:
+            - bash
+            - -exc
+            # language=sh
+            - |
+              out_fn=cluster-tls.json
+              crt_fn=www-tls.crt
+              key_fn=www-tls.key
+              curl -fsSLo $out_fn $ASGARD_URL/api/account/activate/tls/$GROUP_ID
+              # jq 1.5 does not have "|@base64d"
+              jq -r .tlsCertificateB64 < $out_fn | base64 --decode > $crt_fn
+              jq -r .tlsPrivateKeyB64  < $out_fn | base64 --decode > $key_fn
+              # we need the dry-run in order to use "replace" below
+              kubectl -n $TLS_NAMESPACE create secret tls www-tls \
+                  --cert=${crt_fn} --key=${key_fn} \
+                  --dry-run -o json > www-tls.secret.json
+              exec kubectl -n $TLS_NAMESPACE replace -f www-tls.secret.json
+            env:
+            - name: ASGARD_URL
+              value: "https://api.openraven.com"
+            - name: GROUP_ID
+              value: 
+            - name: TLS_NAMESPACE
+              value: ui
+            imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          serviceAccountName: cluster-upgrade-sa

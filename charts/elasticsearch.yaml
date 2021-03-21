@@ -1,0 +1,163 @@
+---
+# Source: elasticsearch/templates/elasticsearch-ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "elasticsearch"
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 50m
+    ingress.kubernetes.io/proxy-request-buffering: "off"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: "/elasticsearch(/|$)(.*)"
+            backend:
+              serviceName: elasticsearch-es-http
+              servicePort: 9200
+---
+# Source: elasticsearch/templates/kibana-ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "kibana"
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 50m
+    ingress.kubernetes.io/proxy-request-buffering: "off"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+        - path: "/kibana"
+          backend:
+            serviceName: kibana-kb-http
+            servicePort: 5601
+---
+# Source: elasticsearch/templates/elasticsearch.yaml
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  annotations:
+    # We are setting this for two reasons...
+    # 1. We are hitting the bug where it gets set to 0.0.0-UNKNOWN
+    # 2. It allows us to upgrade controller versions for this resource by cheating
+    # https://github.com/elastic/cloud-on-k8s/issues/3023
+    common.k8s.elastic.co/controller-version: 1.1.1
+  name: "elasticsearch"
+  labels:
+    helm.sh/chart: elasticsearch-1.1590644377.11
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  version: 7.7.0
+  nodeSets:
+  - name: 
+    count: 
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 
+        storageClassName: 
+    config:
+      node.master: true
+      node.data: true
+      node.ingest: true
+      node.store.allow_mmap: false
+      xpack.security.authc:
+        anonymous:
+          username: anonymous
+          roles: superuser
+          authz_exception: false
+    podTemplate:
+      spec:
+        containers:
+          - env:
+              - name: ES_JAVA_OPTS
+                # MUST BE 1/2 of the memory below
+                value: -Xms2g -Xmx2g
+            name: elasticsearch
+            resources:
+              limits:
+                cpu: "1"
+                memory: 4Gi
+              requests:
+                cpu: "1"
+                memory: 4Gi
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+---
+# Source: elasticsearch/templates/kibana.yaml
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  annotations:
+    # We are setting this for two reasons...
+    # 1. We are hitting the bug where it gets set to 0.0.0-UNKNOWN
+    # 2. It allows us to upgrade controller versions for this resource by cheating
+    # https://github.com/elastic/cloud-on-k8s/issues/3023
+    common.k8s.elastic.co/controller-version: 1.1.1
+  name: "kibana"
+  labels:
+    helm.sh/chart: elasticsearch-1.1590644377.11
+    app.kubernetes.io/name: elasticsearch
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  version: 7.7.0
+  count: 1
+  elasticsearchRef:
+    name: "elasticsearch"
+  config:
+    xpack.security.enabled: false
+    server.basePath: "/kibana"
+    server.rewriteBasePath: true
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  podTemplate:
+    metadata:
+      labels:
+        helm.sh/chart: elasticsearch-1.1590644377.11
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/version: "1.0"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      containers:
+      - name: "kibana"
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: "/kibana"
+            port: 5601
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5

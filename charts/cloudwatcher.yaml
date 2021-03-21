@@ -1,0 +1,124 @@
+---
+# Source: cloudwatcher/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-cloudwatcher
+  labels:
+    helm.sh/chart: cloudwatcher-0.177202707.0
+    app.kubernetes.io/name: cloudwatcher
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: cloudwatcher
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: cloudwatcher/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-cloudwatcher
+  labels:
+    helm.sh/chart: cloudwatcher-0.177202707.0
+    app.kubernetes.io/name: cloudwatcher
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudwatcher
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cloudwatcher
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        ad.datadoghq.com/cloudwatcher.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/cloudwatcher.init_configs: |
+          [{}]
+        ad.datadoghq.com/cloudwatcher.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9404/metrics",
+              "namespace": "cloudwatcher",
+              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+            }
+          ]
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: cloudwatcher
+          securityContext:
+            {}
+          image: "registry.gitlab.com/openraven/open/cloudwatcher-repo-docker:177202707"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+          resources:
+            limits:
+              memory: 1G
+            requests:
+              memory: 1G
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default, prod, extractor
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            - name: SERVER_PORT
+              value: "80"
+            - name: SERVER_MAX-HTTP-HEADER-SIZE
+              value: "128KB"
+            - name: SENTRY_DSN
+              value: "https://de53a7acdf9d459184af52cd52af4521@o322024.ingest.sentry.io/2084588"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+            - name: SENTRY_RELEASE
+              value: "0.177202707.0"
+            - name: OPENRAVEN_APP_V1_CLOUD-INGESTION_ANALYTICS_CLUSTERID
+              value: 
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=90
+---
+# Source: cloudwatcher/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "RELEASE-NAME-cloudwatcher-test-connection"
+  labels:
+
+    helm.sh/chart: cloudwatcher-0.177202707.0
+    app.kubernetes.io/name: cloudwatcher
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['RELEASE-NAME-cloudwatcher:80']
+  restartPolicy: Never

@@ -1,0 +1,189 @@
+---
+# Source: elastic-search-node-client/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-elastic-search-node-client
+  labels:
+    app.kubernetes.io/name: elastic-search-node-client
+    helm.sh/chart: elastic-search-node-client-0.217604975.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: elastic-search-node-client
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: elastic-search-node-client/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-elastic-search-node-client
+  labels:
+    app.kubernetes.io/name: elastic-search-node-client
+    helm.sh/chart: elastic-search-node-client-0.217604975.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: elastic-search-node-client
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elastic-search-node-client
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: elastic-search-node-client
+          securityContext:
+            {}
+          image: "registry.gitlab.com/openraven/open/elastic-search-node-client:217604975"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ELASTIC_URL
+              value: http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200
+            - name: SENTRY_DSN
+              value: "https://7188f75192984a8bbc36a212ab341b2c@o322024.ingest.sentry.io/5270430"
+            - name: SENTRY_ENVIRONMENT
+              value: 
+            - name: SENTRY_RELEASE
+              value: "0.217604975.1"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /es/ping
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /es/ping
+              port: http
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+---
+# Source: elastic-search-node-client/templates/es_imports.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: RELEASE-NAME-elastic-search-node-client-imports
+  labels:
+    app.kubernetes.io/name: elastic-search-node-client
+    helm.sh/chart: elastic-search-node-client-0.217604975.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  # Yes this is ridiculous, but we need to REALLY try hard to get this into the cluster
+  backoffLimit: 25
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: elastic-search-node-client-imports
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      restartPolicy: OnFailure
+      
+      
+      containers:
+      - name: elasticdump-imports
+        image: elasticdump/elasticsearch-dump:v6.28.4
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/sh
+          - -exc
+          # language=sh
+          - |
+            # yes, even 10 minutes may not be enough for ES to be a-ok
+            # and realistically we want this to wait forever, but we'll start here
+            for _ in $(seq 1 60); do
+              if wget --quiet -O /dev/null -T 1 http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/_cat/health >/dev/null 2>&1; then
+                break
+              fi
+              sleep 10
+            done
+            wget https://.s3.amazonaws.com/es/configtemplate.json
+
+            elasticdump \
+              --input=./configtemplate.json \
+              --output=http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/configservice \
+              --type=template
+
+            demodb="$(wget --quiet -O - http://account-management.ui.svc.cluster.local/api/server/settings/demodb)"
+            if [ "$demodb" != "false" ]; then
+              wget https://.s3.amazonaws.com/es/demodb.json
+              elasticdump \
+                --input=./demodb.json \
+                --output=http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/ \
+                --type=data
+
+              # Explicitly waiting until after the elasticdump to do this work as it is not as critical as the above
+              # Add the aliases needed for the index pattern in kibana
+              apk add curl
+              curl -X PUT -fsSL 'http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/aws*/_alias/or_assets'
+              curl -X PUT -fsSL 'http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/aws*/_alias/or_assets_first_added'
+              curl -X PUT -fsSL 'http://elasticsearch-es-http.elasticsearch.svc.cluster.local:9200/aws*/_alias/or_assets_last_updated'
+
+              out_fn=dashboards.ndjson
+              curl -fsSLo ${out_fn} https://.s3.amazonaws.com/es/$out_fn
+              for _ in 1 2 3 4 5 6 7 8 9 10; do
+                if curl -fsSL -H "kbn-xsrf: true" \
+                       --form "file=@${out_fn}" \
+                      "http://kibana-kb-http.elasticsearch.svc.cluster.local:5601/kibana/api/saved_objects/_import?overwrite=true"
+                then
+                  break
+                fi
+                sleep 30 # 10 seconds wasnt enough
+              done
+            fi
+---
+# Source: elastic-search-node-client/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-elastic-search-node-client
+  labels:
+    app.kubernetes.io/name: elastic-search-node-client
+    helm.sh/chart: elastic-search-node-client-0.217604975.1
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email, authorization, x-auth-request-access-token
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header cookie "";
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /es
+            backend:
+              serviceName: RELEASE-NAME-elastic-search-node-client
+              servicePort: 80

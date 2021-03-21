@@ -1,0 +1,19 @@
+---
+# Source: default-storage-class/templates/storageclass.yml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    'storageclass.kubernetes.io/is-default-class': 'true'
+  name: RELEASE-NAME
+  namespace: default
+  labels:
+    helm.sh/chart: default-storage-class-0.0.3
+    app.kubernetes.io/version: "0.0.0"
+provisioner: kubernetes.io/aws-ebs
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  encrypted: "true"
+  fsType: ext4
+  type: gp2
+allowVolumeExpansion: true

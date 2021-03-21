@@ -1,0 +1,84 @@
+---
+# Source: odin-metrics/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-odin-metrics
+  labels:
+    app.kubernetes.io/name: odin-metrics
+    helm.sh/chart: odin-metrics-0.252138541.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: odin-metrics
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: odin-metrics
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        ad.datadoghq.com/odin-metrics.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/odin-metrics.init_configs: |
+          [{}]
+        ad.datadoghq.com/odin-metrics.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+              "namespace": "odin-metrics",
+              "metrics": ["*"]
+            }
+          ]
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: odin-metrics
+          securityContext:
+            {}
+          image: "registry.gitlab.com/openraven/open/odin-metrics:252138541"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 512Mi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default,prod
+            - name: SERVER_PORT
+              value: "80"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=50
+            - name: SENTRY_DSN
+              value: "https://21bd8b55b911434eaa1f727ef883b6bb@o322024.ingest.sentry.io/5551382"
+            - name: SENTRY_ENVIRONMENT
+              value: 
+            - name: SENTRY_RELEASE
+              value: "0.252138541.0"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+            - name: CLUSTER_NAME
+              value: 
+            - name: CLUSTER_TYPE
+              value: 
+            - name: DEPLOY_CHANNEL
+              value: 
+            - name: GROUP_ID
+              value:

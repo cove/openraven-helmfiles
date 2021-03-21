@@ -1,0 +1,159 @@
+---
+# Source: etcd-prune/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-etcd-prune
+  labels:
+    helm.sh/chart: etcd-prune-0.1.0
+    app.kubernetes.io/name: etcd-prune
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: etcd-prune
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: etcd-prune
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      containers:
+        - name: etcd-prune
+          image: "docker.io/library/python:3.8"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              memory: 64Mi
+          command:
+          - /bin/bash
+          - -ec
+          # language=sh
+          - |
+            SLEEP_SECS=$(expr "$HOST_IP" : '.*\([0-9]\)$' || true)
+            # we want to keep two prunes from running simultaneously
+            export SLEEP_SECS
+            echo "$WATCH_SH" > etcd_watch.sh
+            chmod 755          etcd_watch.sh
+            unset WATCH_SH
+            echo "$PRUNE_SH" > etcd_prune.sh
+            chmod 755          etcd_prune.sh
+            unset PRUNE_SH
+            PATH=$PATH:/opt/bin
+            export ETCDCTL_API
+            export ETCDCTL_CACERT
+            export ETCDCTL_CERT
+            export ETCDCTL_KEY
+            # etcdctl does not pass along these vars into the subprocess
+            # (perhaps understandably) so we have to manually make them available
+            printenv | sed -ne '/^ETCDCTL_/s/^/export /p' > etcdctl.env
+            # the "grep Key" is to keep etcdctl from dumping the WATCH_KEY to stdout
+            # as it's still in binary (the JSON output is better, but huge)
+            /opt/bin/etcdctl watch --prefix=true --write-out=simple /registry/minions -- ./etcd_watch.sh | grep Key
+          env:
+          # this makes the yaml quoting a ton easier
+          - name: WATCH_SH
+            # language=sh
+            value: |
+              #! /usr/bin/env bash
+              doit=0
+              if [[ "$ETCD_WATCH_EVENT_TYPE" == '"DELETE"' ]]; then
+                 set &>/tmp/cp-delete-$$.log
+                 for _ in 1 2 3 4 5; do
+                   echo "Key change \"$ETCD_WATCH_KEY\" is a DELETE type" >&2
+                 done
+                 doit=1
+              fi
+              if expr "$ETCD_WATCH_VALUE" : '.*kubernetes[.]io/master' &>/dev/null; then
+                 set &>/tmp/cp-set-$$.log
+                 echo "Key change \"$ETCD_WATCH_KEY\" affects a control plane instance" >&2
+                 doit=1
+              fi
+              if [[ $doit -eq 1 ]]; then
+                  SLEEP_SECS=${SLEEP_SECS:-1}
+                  echo "Running prune due to matching key criteria after $SLEEP_SECS seconds" >&2
+                  sleep $SLEEP_SECS
+                  exec ./etcd_prune.sh
+              fi
+          - name: PRUNE_SH
+            # language=sh
+            value: |
+              #! /usr/bin/env bash
+              PATH=$PATH:/opt/bin
+              . ./etcdctl.env
+              get_endpoints() {
+                etcdctl --write-out=json member list | python -c '
+              import json
+              import sys
+              data = json.load(sys.stdin)
+              print(",".join([m["clientURLs"][0] for m in data["members"]]))
+              '
+              }
+              get_member_id_by_client_url() {
+                etcdctl --write-out=json member list | python -c '
+              import json
+              import re
+              import sys
+              client_url = sys.argv[1]
+              data = json.load(sys.stdin)
+              print("".join([re.sub(r"^0x", "", hex(m["ID"]))
+                    for m in data["members"] if client_url in m["clientURLs"]]))
+              ' "$1"
+              }
+              get_unhealthy_urls() {
+                etcdctl endpoint health 2>&1 | awk '/is unhealthy/{print $1}'
+              }
+              export ETCDCTL_ENDPOINTS="$(get_endpoints)"
+              echo "== endpoint health" >&2
+              if ! etcdctl endpoint health >&2; then
+                echo "BOGUS: unable to sniff out endpoint health of \"$ETCDCTL_ENDPOINTS\"" >&2
+              fi
+              echo "==/endpoint health" >&2
+              for ep in $(get_unhealthy_urls); do
+                m_id=$(get_member_id_by_client_url "$ep")
+                etcdctl member remove "$m_id" >&2
+              done
+          - name: ETCDCTL_API
+            value: "3"
+          - name: ETCDCTL_CACERT
+            value: /etc/kubernetes/pki/etcd/ca.crt
+          - name: ETCDCTL_CERT
+            value: /etc/kubernetes/pki/etcd/server.crt
+          - name: ETCDCTL_KEY
+            value: /etc/kubernetes/pki/etcd/server.key
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          volumeMounts:
+          - mountPath: /opt
+            name: opt
+            readOnly: true
+          - mountPath: /etc/kubernetes/pki/etcd
+            name: pki-etcd
+            readOnly: true
+      volumes:
+      - hostPath:
+          path: /opt
+          type: Directory
+        name: opt
+      - hostPath:
+          path: /etc/kubernetes/pki/etcd
+          type: Directory
+        name: pki-etcd
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: kubernetes.io/hostname
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists

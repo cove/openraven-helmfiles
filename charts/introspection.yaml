@@ -1,0 +1,105 @@
+---
+# Source: introspection/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-introspection
+  labels:
+    helm.sh/chart: introspection-0.1.1
+    app.kubernetes.io/name: introspection
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: introspection
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: introspection/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-introspection
+  labels:
+    helm.sh/chart: introspection-0.1.1
+    app.kubernetes.io/name: introspection
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: introspection
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: introspection
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      securityContext:
+        {}
+      containers:
+        - name: introspection
+          securityContext:
+            {}
+          image: "docker.io/library/python:3.8"
+          imagePullPolicy: IfNotPresent
+          args:
+          - python
+          - -u
+          - -c
+          -           "#! /usr/bin/env python\r\n# coding=utf-8\r\nimport json\r\nfrom http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer\r\n\r\n\r\nclass IntrospectionHandler(SimpleHTTPRequestHandler):\r\n\r\n    def do_GET(self) -> None:\r\n        if self.path == '/healthz':\r\n            # this is the non-logging version\r\n            self.send_response_only(200)\r\n            self.send_header('content-length', '0')\r\n            self.end_headers()\r\n            return\r\n        try:\r\n            results = {}\r\n            for header, value in self.headers.items():\r\n                # the original introspection endpoint sent back the headers\r\n                # in a List<String> so we (obviously) recreate that shape\r\n                results[header.lower()] = [value]\r\n            resp = json.dumps(results).encode('utf-8')\r\n            c_len = len(resp)\r\n            self.send_response(200)\r\n            self.send_header('content-length', str(c_len))\r\n            self.send_header('content-type', 'application/json;charset=utf-8')\r\n            self.end_headers()\r\n            self.wfile.write(resp)\r\n            self.wfile.flush()\r\n        except Exception as e:\r\n            self.log_error('Bogus: %s', str(e))\r\n            self.send_error(500)\r\n            self.send_header('content-length', '0')\r\n\r\n\r\nif __name__ == '__main__':\r\n    server_address = ('0.0.0.0', 80)\r\n    s = ThreadingHTTPServer(server_address, IntrospectionHandler)\r\n    # noinspection PyBroadException\r\n    try:\r\n        s.serve_forever()\r\n    except Exception:\r\n        s.shutdown()\r\n"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      automountServiceAccountToken: false
+---
+# Source: introspection/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-introspection
+  labels:
+    helm.sh/chart: introspection-0.1.1
+    app.kubernetes.io/name: introspection
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email, authorization, x-auth-request-access-token
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header cookie "";
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /explorer/introspection
+            backend:
+              serviceName: RELEASE-NAME-introspection
+              servicePort: 80

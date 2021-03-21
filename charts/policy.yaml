@@ -1,0 +1,194 @@
+---
+# Source: policy/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-policy
+  labels:
+    app.kubernetes.io/name: policy
+    helm.sh/chart: policy-0.260725765.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: policy
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: policy/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-policy
+  labels:
+    app.kubernetes.io/name: policy
+    helm.sh/chart: policy-0.260725765.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: policy
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: policy
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        ad.datadoghq.com/policy.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/policy.init_configs: |
+          [{}]
+        ad.datadoghq.com/policy.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:8080/actuator/prometheus",
+              "namespace": "policy",
+              "metrics": ["*"]
+            }
+          ]
+        ad.datadoghq.com/opa.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/opa.init_configs: |
+          [{}]
+        ad.datadoghq.com/opa.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:8082/metrics",
+              "namespace": "opa",
+              "metrics": ["*"]
+            }
+          ]
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: policy
+          securityContext:
+            {}
+          image: "registry.gitlab.com/openraven/open/policy-service-repo-docker:260725765"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          resources:
+            limits:
+              memory: 0.5Gi
+            requests:
+              memory: 0.5Gi
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: default,prod
+            - name: SERVER_PORT
+              value: "80"
+            - name: MANAGEMENT_SERVER_PORT
+              value: "8080"
+            - name: MANAGEMENT_HEALTH_ELASTICSEARCH_ENABLED
+              value: "false"
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75
+            - name: SENTRY_DSN
+              value: "https://60337d192ae74aacbe9b16fb6426dbc6@o322024.ingest.sentry.io/5465446"
+            - name: SENTRY_ENVIRONMENT
+              value: 
+            - name: SENTRY_RELEASE
+              value: "0.260725765.0"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+        - name: opa
+          securityContext:
+            {}
+          
+          image: docker.io/openpolicyagent/opa:0.15.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+          args:
+            - "run"
+            - "--server"
+            - "--addr=0.0.0.0:8081"
+            - "--log-level=error"
+            - "--log-format=text"
+            - "--addr=http://0.0.0.0:8082"
+          resources:
+            limits:
+              memory: 0.5Gi
+            requests:
+              memory: 0.5Gi
+---
+# Source: policy/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-policy
+  labels:
+    app.kubernetes.io/name: policy
+    helm.sh/chart: policy-0.260725765.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email, authorization, x-auth-request-access-token
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header cookie "";
+      auth_request_set $auth_cookie $upstream_http_set_cookie;
+      add_header Set-Cookie $auth_cookie;
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /api/rules
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80
+          - path: /api/policies
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80
+          - path: /api/policyaudits
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80
+          - path: /api/policy-rule
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80
+          - path: /api/policy-reports
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80
+          - path: /api/s3-bucket-details
+            backend:
+              serviceName: RELEASE-NAME-policy
+              servicePort: 80

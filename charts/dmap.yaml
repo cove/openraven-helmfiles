@@ -1,0 +1,168 @@
+---
+# Source: dmap/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: RELEASE-NAME-dmap
+  labels:
+    app.kubernetes.io/name: dmap
+    helm.sh/chart: dmap-0.270854898.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: dmap
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: dmap/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: RELEASE-NAME-dmap
+  labels:
+    app.kubernetes.io/name: dmap
+    helm.sh/chart: dmap-0.270854898.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dmap
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dmap
+        app.kubernetes.io/instance: RELEASE-NAME
+      annotations:
+        ad.datadoghq.com/dmap.check_names: |
+          ["openmetrics"]
+        ad.datadoghq.com/dmap.init_configs: |
+          [{}]
+        ad.datadoghq.com/dmap.instances: |
+          [
+            {
+              "prometheus_url": "http://%%host%%:9404/metrics",
+              "namespace": "dmap",
+              "metrics": ["java_*", "jvm_*", "kafka_*", "process_*"]
+            }
+          ]
+    spec:
+      containers:
+        - name: dmap
+          
+          image: "registry.gitlab.com/openraven/open/dmap:270854898"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+          env:
+            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-ID
+              value: 
+            - name: OPENRAVEN_APP_V1_DMAP-ML_ADMIN-CLIENT-SECRET
+              value: 
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: MANAGEMENT_SERVER_PORT
+              value: '8080'
+            - name: JAVA_TOOL_OPTIONS
+              value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=70
+            - name: SENTRY_DSN
+              value: "https://d557df44b5df4057bac234d40efbadde@o322024.ingest.sentry.io/5379389"
+            - name: SENTRY_ENVIRONMENT
+              value: 
+            - name: SENTRY_RELEASE
+              value: "0.270854898.0"
+            - name: SENTRY_EXTRA
+              value: "groupId:"
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 2Gi
+---
+# Source: dmap/templates/ingress-authenticated.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-dmap-authed
+  labels:
+    app.kubernetes.io/name: dmap
+    helm.sh/chart: dmap-0.270854898.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    nginx.ingress.kubernetes.io/auth-response-headers: x-auth-request-user, x-auth-request-email, authorization, x-auth-request-access-token
+    nginx.ingress.kubernetes.io/auth-url: https://$host/oauth2/auth
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header cookie "";
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /api/dmap
+            backend:
+              serviceName: RELEASE-NAME-dmap
+              servicePort: http
+---
+# Source: dmap/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: RELEASE-NAME-dmap
+  labels:
+    app.kubernetes.io/name: dmap
+    helm.sh/chart: dmap-0.270854898.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - path: /api/dmap/scanner
+            backend:
+              serviceName: RELEASE-NAME-dmap
+              servicePort: http
+---
+# Source: dmap/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "RELEASE-NAME-dmap-test-connection"
+  labels:
+    app.kubernetes.io/name: dmap
+    helm.sh/chart: dmap-0.270854898.0
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/version: "0.0.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args:  ['RELEASE-NAME-dmap:80']
+  restartPolicy: Never
